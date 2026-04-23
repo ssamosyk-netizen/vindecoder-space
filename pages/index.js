@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 const translations = {
-  en: { dir: 'ltr', title: "VINDECODER", subtitle: "Free vehicle specification check", placeholder: "Enter VIN...", button: "CHECK", country: "Country", engine: "Engine", model: "Model", make: "Make" },
-  uk: { dir: 'ltr', title: "VINDECODER", subtitle: "Безкоштовна розшифровка специфікацій", placeholder: "Введіть VIN...", button: "ПЕРЕВІРИТИ", country: "Країна", engine: "Двигун", model: "Модель", make: "Марка" },
-  es: { dir: 'ltr', title: "VINDECODER", subtitle: "Comprobación gratuita de especificaciones", placeholder: "Ingrese VIN...", button: "VERIFICAR", country: "País", engine: "Motor", model: "Modelo", make: "Marca" },
-  de: { dir: 'ltr', title: "VINDECODER", subtitle: "Kostenlose Fahrzeug-Prüfung", placeholder: "VIN eingeben...", button: "PRÜFEN", country: "Land", engine: "Motor", model: "Modell", make: "Marke" },
-  zh: { dir: 'ltr', title: "车架号解析", subtitle: "免费车辆规格查询", placeholder: "输入17位VIN码...", button: "查询", country: "生产国", engine: "发动机", model: "型号", make: "品牌" },
-  ar: { dir: 'rtl', title: "فك رمز VIN", subtitle: "فحص مواصفات السيارة مجاناً", placeholder: "أدخل رمز VIN...", button: "تحقق", country: "البلد", engine: "المحرك", model: "الموديل", make: "العلامة التجارية" }
+  en: { dir: 'ltr', titleVin: "VIN", titleDecoder: "DECODER", subtitle: "Free vehicle specification check", placeholder: "Enter VIN...", button: "CHECK", country: "Country", engine: "Engine", model: "Model", make: "Make" },
+  uk: { dir: 'ltr', titleVin: "VIN", titleDecoder: "ДЕКОДЕР", subtitle: "Безкоштовна розшифровка специфікацій", placeholder: "Введіть VIN...", button: "ПЕРЕВІРИТИ", country: "Країна", engine: "Двигун", model: "Модель", make: "Марка" },
+  es: { dir: 'ltr', titleVin: "VIN", titleDecoder: "DECODIFICADOR", subtitle: "Comprobación gratuita de especificaciones", placeholder: "Ingrese VIN...", button: "VERIFICAR", country: "País", engine: "Motor", model: "Modelo", make: "Marca" },
+  de: { dir: 'ltr', titleVin: "VIN", titleDecoder: "DECODER", subtitle: "Kostenlose Fahrzeug-Prüfung", placeholder: "VIN eingeben...", button: "PRÜFEN", country: "Land", engine: "Motor", model: "Modell", make: "Marke" },
+  zh: { dir: 'ltr', titleVin: "VIN", titleDecoder: "解析", subtitle: "免费车辆规格查询", placeholder: "输入17位VIN码...", button: "查询", country: "生产国", engine: "发动机", model: "型号", make: "品牌" },
+  ar: { dir: 'rtl', titleVin: "VIN", titleDecoder: "فك رمز", subtitle: "فحص مواصفات السيارة مجاناً", placeholder: "أدخل رمز VIN...", button: "تحقق", country: "البلد", engine: "المحرك", model: "الموديل", make: "العلامة التجارية" }
 };
 
 export default function VinDecoder() {
@@ -17,13 +17,10 @@ export default function VinDecoder() {
 
   // ЛОГІКА ПАМ'ЯТІ ТА АВТОВИЗНАЧЕННЯ
   useEffect(() => {
-    // 1. Спочатку перевіряємо, чи є збережена мова в пам'яті браузера
     const savedLang = localStorage.getItem('userLanguage');
-    
     if (savedLang && translations[savedLang]) {
       setLang(savedLang);
     } else {
-      // 2. Якщо немає збереженої, дивимось на мову браузера
       const browserLang = navigator.language.split('-')[0];
       if (translations[browserLang]) {
         setLang(browserLang);
@@ -31,10 +28,9 @@ export default function VinDecoder() {
     }
   }, []);
 
-  // Функція для зміни мови зі збереженням
   const changeLanguage = (newLang) => {
     setLang(newLang);
-    localStorage.setItem('userLanguage', newLang); // Записуємо вибір у пам'ять
+    localStorage.setItem('userLanguage', newLang);
   };
 
   const t = translations[lang];
@@ -52,7 +48,7 @@ export default function VinDecoder() {
   };
 
   return (
-    <div dir={t.dir} style={{minHeight: '100vh', backgroundColor: '#000', color: '#fff', padding: '20px', fontFamily: 'sans-serif', textAlign: t.dir === 'rtl' ? 'right' : 'center'}}>
+    <div dir={t.dir} style={{minHeight: '100vh', backgroundColor: '#000', color: '#fff', padding: '20px', fontFamily: 'sans-serif'}}>
       
       {/* КНОПКИ МОВ */}
       <div style={{marginBottom: '30px', display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap'}}>
@@ -60,18 +56,24 @@ export default function VinDecoder() {
           <button key={l} onClick={() => changeLanguage(l)} style={{
             backgroundColor: lang === l ? '#facc15' : '#111', 
             color: lang === l ? '#000' : '#fff', 
-            border: '1px solid #333', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold'
+            border: '1px solid #333', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase'
           }}>
-            {l.toUpperCase()}
+            {l}
           </button>
         ))}
       </div>
 
-      <div style={{textAlign: 'center'}}>
-        <h1 style={{color: '#facc15', fontSize: '2.5rem', fontWeight: '900', margin: '0'}}>{t.title}</h1>
-        <p style={{color: '#444', marginBottom: '40px'}}>{t.subtitle}</p>
+      {/* ОНОВЛЕНИЙ ДИЗАЙН ЛОГОТИПУ */}
+      <div style={{textAlign: 'center', marginBottom: '40px'}}>
+        <h1 style={{fontSize: '3rem', fontWeight: '900', margin: '0', letterSpacing: '-2px'}}>
+          <span style={{color: '#fff'}}>{t.titleVin}</span>
+          <span style={{color: '#facc15'}}>{t.titleDecoder}</span>
+          <span style={{color: '#fff', fontSize: '1.5rem', fontWeight: '300', verticalAlign: 'super'}}>.SPACE</span>
+        </h1>
+        <p style={{color: '#444', marginTop: '5px'}}>{t.subtitle}</p>
       </div>
       
+      {/* ФОРМА ПОШУКУ */}
       <form onSubmit={decodeVin} style={{margin: '40px 0', textAlign: 'center'}}>
         <div style={{display: 'inline-flex', borderRadius: '12px', overflow: 'hidden', border: '1px solid #333', flexDirection: t.dir === 'rtl' ? 'row-reverse' : 'row'}}>
           <input 
@@ -88,20 +90,22 @@ export default function VinDecoder() {
         </div>
       </form>
 
+      {/* РЕЗУЛЬТАТИ */}
       {data && data.Make ? (
         <div style={{maxWidth: '600px', margin: '0 auto', backgroundColor: '#0a0a0a', padding: '30px', borderRadius: '16px', border: '1px solid #1a1a1a'}}>
-          <h2 style={{color: '#facc15', marginBottom: '20px', textAlign: 'center'}}>{data.ModelYear} {data.Make} {data.Model}</h2>
-          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', textAlign: t.dir === 'rtl' ? 'right' : 'left'}}>
-            <div><span style={{color: '#444', fontSize: '10px'}}>{t.make.toUpperCase()}</span><br/><b>{data.Make}</b></div>
-            <div><span style={{color: '#444', fontSize: '10px'}}>{t.model.toUpperCase()}</span><br/><b>{data.Model}</b></div>
-            <div><span style={{color: '#444', fontSize: '10px'}}>{t.engine.toUpperCase()}</span><br/><b>{data.DisplacementL}L {data.EngineConfiguration}</b></div>
-            <div><span style={{color: '#444', fontSize: '10px'}}>{t.country.toUpperCase()}</span><br/><b>{data.PlantCountry}</b></div>
+          <h2 style={{color: '#facc15', marginBottom: '25px', textAlign: 'center', fontSize: '1.8rem'}}>{data.ModelYear} {data.Make} {data.Model}</h2>
+          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px', textAlign: t.dir === 'rtl' ? 'right' : 'left'}}>
+            <div><span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.make}</span><br/><b style={{fontSize: '1.2rem'}}>{data.Make}</b></div>
+            <div><span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.model}</span><br/><b style={{fontSize: '1.2rem'}}>{data.Model}</b></div>
+            <div><span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.engine}</span><br/><b style={{fontSize: '1.2rem'}}>{data.DisplacementL}L {data.EngineConfiguration}</b></div>
+            <div><span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.country}</span><br/><b style={{fontSize: '1.2rem'}}>{data.PlantCountry}</b></div>
           </div>
         </div>
       ) : null}
 
+      {/* FOOTER */}
       <div style={{marginTop: '100px', padding: '20px', color: '#222', fontSize: '10px', textAlign: 'center'}}>
-         <p>© 2026 VINDECODER.SPACE</p>
+         <p>© 2026 vindecoder.space</p>
       </div>
     </div>
   );
