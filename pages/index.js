@@ -18,75 +18,85 @@ export default function VinDecoder() {
   };
 
   return (
-    <div style={{minHeight: '100vh', backgroundColor: '#000', color: 'white', padding: '20px', fontFamily: 'sans-serif', textAlign: 'center'}}>
+    <div style={{minHeight: '100vh', backgroundColor: '#000', color: '#fff', padding: '20px', fontFamily: 'sans-serif', textAlign: 'center'}}>
       
-      {/* РЕКЛАМНИЙ СЛОТ №1: TOP BANNER */}
-      <div style={{maxWidth: '728px', height: '90px', backgroundColor: '#1a1a1a', border: '1px dashed #444', margin: '0 auto 30px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666', borderRadius: '8px'}}>
-         <span style={{fontSize: '12px', textTransform: 'uppercase'}}>Місце для вашої реклами (728x90)</span>
+      {/* ВЕРХНІЙ РЕКЛАМНИЙ БЛОК */}
+      <div style={{maxWidth: '728px', height: '90px', backgroundColor: '#111', border: '1px dashed #333', margin: '0 auto 30px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#444', borderRadius: '8px'}}>
+         <span style={{fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px'}}>Місце для вашої реклами</span>
       </div>
 
-      <h1 style={{color: '#facc15', fontSize: '3rem', fontWeight: '900', letterSpacing: '-1px'}}>VINDECODER<span style={{color: '#fff'}}>.SPACE</span></h1>
+      <h1 style={{color: '#facc15', fontSize: '2.5rem', fontWeight: '900', letterSpacing: '-1px', margin: '0'}}>VINDECODER<span style={{color: '#fff'}}>.SPACE</span></h1>
+      <p style={{color: '#666', marginTop: '10px'}}>Безкоштовна розшифровка специфікацій автомобіля за VIN кодом</p>
       
       <form onSubmit={decodeVin} style={{margin: '40px 0'}}>
-        <div style={{display: 'inline-flex', boxShadow: '0 0 20px rgba(250, 204, 21, 0.2)', borderRadius: '12px'}}>
+        <div style={{display: 'inline-flex', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', borderRadius: '12px', overflow: 'hidden'}}>
           <input 
             type="text" 
             maxLength="17" 
             value={vin} 
             onChange={(e) => setVin(e.target.value.toUpperCase())}
-            placeholder="Введіть VIN код авто..."
-            style={{padding: '20px', fontSize: '18px', borderRadius: '12px 0 0 12px', border: '2px solid #facc15', borderRight: 'none', backgroundColor: '#111', color: 'white', width: '350px', outline: 'none'}}
+            placeholder="Введіть 17 символів..."
+            style={{padding: '20px', fontSize: '18px', border: '2px solid #333', borderRight: 'none', backgroundColor: '#111', color: 'white', width: '320px', outline: 'none'}}
           />
-          <button type="submit" style={{padding: '20px 40px', fontSize: '18px', backgroundColor: '#facc15', border: '2px solid #facc15', borderRadius: '0 12px 12px 0', fontWeight: 'bold', cursor: 'pointer', color: '#000'}}>
+          <button type="submit" style={{padding: '20px 30px', fontSize: '18px', backgroundColor: '#facc15', border: '2px solid #facc15', fontWeight: 'bold', cursor: 'pointer', color: '#000'}}>
             {loading ? 'ПОШУК...' : 'ПЕРЕВІРИТИ'}
           </button>
         </div>
       </form>
 
       {data && data.Make ? (
-        <div style={{maxWidth: '800px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 300px', gap: '20px', textAlign: 'left'}}>
+        <div style={{maxWidth: '900px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 300px', gap: '25px', textAlign: 'left'}}>
           
-          {/* РЕЗУЛЬТАТИ */}
-          <div style={{backgroundColor: '#111', padding: '30px', borderRadius: '16px', border: '1px solid #333'}}>
-            <h2 style={{color: '#facc15', fontSize: '24px', marginBottom: '20px'}}>{data.ModelYear} {data.Make} {data.Model}</h2>
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
-              <div><span style={{color: '#666', fontSize: '12px'}}>МАРКА</span><br/><b>{data.Make}</b></div>
-              <div><span style={{color: '#666', fontSize: '12px'}}>МОДЕЛЬ</span><br/><b>{data.Model}</b></div>
-              <div><span style={{color: '#666', fontSize: '12px'}}>ДВИГУН</span><br/><b>{data.DisplacementL}L {data.EngineConfiguration}</b></div>
-              <div><span style={{color: '#666', fontSize: '12px'}}>КРАЇНА</span><br/><b>{data.PlantCountry}</b></div>
+          {/* ОСНОВНА ІНФОРМАЦІЯ */}
+          <div style={{backgroundColor: '#111', padding: '30px', borderRadius: '16px', border: '1px solid #222'}}>
+            <h2 style={{color: '#facc15', fontSize: '26px', marginBottom: '25px', borderBottom: '1px solid #222', paddingBottom: '15px'}}>
+               {data.ModelYear} {data.Make} {data.Model}
+            </h2>
+            
+            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+              <div><span style={{color: '#555', fontSize: '11px', fontWeight: 'bold'}}>МАРКА</span><br/><span style={{fontSize: '18px'}}>{data.Make}</span></div>
+              <div><span style={{color: '#555', fontSize: '11px', fontWeight: 'bold'}}>МОДЕЛЬ</span><br/><span style={{fontSize: '18px'}}>{data.Model}</span></div>
+              <div><span style={{color: '#555', fontSize: '11px', fontWeight: 'bold'}}>ДВИГУН</span><br/><span style={{fontSize: '18px'}}>{data.DisplacementL}L {data.EngineConfiguration} {data.EngineCylinders} цил.</span></div>
+              <div><span style={{color: '#555', fontSize: '11px', fontWeight: 'bold'}}>КРАЇНА ВИРОБНИК</span><br/><span style={{fontSize: '18px'}}>{data.PlantCountry}</span></div>
+              <div><span style={{color: '#555', fontSize: '11px', fontWeight: 'bold'}}>ТИП КУЗОВА</span><br/><span style={{fontSize: '18px'}}>{data.BodyClass}</span></div>
+              <div><span style={{color: '#555', fontSize: '11px', fontWeight: 'bold'}}>ПРИВІД</span><br/><span style={{fontSize: '18px'}}>{data.DriveType}</span></div>
             </div>
             
-            {/* РЕКЛАМНИЙ СЛОТ №2: NATIVE AD (Ваш магазин) */}
-            <div style={{marginTop: '30px', padding: '20px', backgroundColor: '#facc15', borderRadius: '12px', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+            {/* ЗАМІСТЬ ПОСИЛАННЯ - НЕЙТРАЛЬНИЙ БЛОК */}
+            <div style={{marginTop: '40px', padding: '25px', backgroundColor: '#1a1a1a', borderRadius: '12px', border: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
               <div>
-                <div style={{fontSize: '12px', fontWeight: 'bold', opacity: '0.6'}}>РЕКЛАМА</div>
-                <div style={{fontWeight: '900', fontSize: '18px'}}>Запчастини для {data.Make}</div>
-                <div style={{fontSize: '14px'}}>В наявності на складі в Україні</div>
+                <div style={{fontSize: '10px', fontWeight: 'bold', color: '#facc15', marginBottom: '5px'}}>ПРОПОЗИЦІЯ</div>
+                <div style={{fontWeight: '700', fontSize: '18px'}}>Запчастини та аксесуари</div>
+                <div style={{fontSize: '13px', color: '#666'}}>Швидкий підбір за технічними даними авто</div>
               </div>
-              <a href="https://usamotors.com.ua/" target="_blank" style={{backgroundColor: '#000', color: '#fff', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold'}}>КУПИТИ</a>
+              <div style={{backgroundColor: '#333', color: '#fff', padding: '12px 25px', borderRadius: '8px', fontSize: '14px', fontWeight: 'bold'}}>
+                СКОРО БУДЕ
+              </div>
             </div>
           </div>
 
-          {/* ПРАВА КОЛОНКА (SIDEBAR AD) */}
+          {/* БІЧНА ПАНЕЛЬ */}
           <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-             <div style={{height: '250px', backgroundColor: '#1a1a1a', border: '1px dashed #444', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: '#666', padding: '20px'}}>
-                <span style={{fontSize: '12px'}}>Тут може бути ваша реклама<br/>(300x250)</span>
+             <div style={{height: '300px', backgroundColor: '#111', border: '1px dashed #333', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: '#444', padding: '20px'}}>
+                <span style={{fontSize: '11px', textTransform: 'uppercase'}}>Тут може бути<br/>ваша реклама</span>
              </div>
-             <div style={{height: '150px', backgroundColor: '#1a1a1a', border: '1px dashed #444', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: '#666', padding: '20px'}}>
-                <span style={{fontSize: '12px'}}>Перевірка історії ДТП<br/>(Скоро буде)</span>
+             
+             <div style={{padding: '20px', backgroundColor: '#111', borderRadius: '12px', border: '1px solid #222'}}>
+                <h4 style={{margin: '0 0 10px 0', fontSize: '14px', color: '#facc15'}}>Історія авто</h4>
+                <p style={{fontSize: '12px', color: '#666', margin: '0'}}>Повна перевірка на ДТП, угони та страхові випадки (в розробці).</p>
              </div>
           </div>
 
         </div>
       ) : (
-        <div style={{marginTop: '50px', color: '#444'}}>
-            <p>Введіть 17-значний код для отримання повної специфікації автомобіля.</p>
+        <div style={{marginTop: '60px', color: '#333'}}>
+            <p style={{fontSize: '14px'}}>Сервіс використовує офіційні дані NHTSA для розшифровки параметрів транспортних засобів.</p>
         </div>
       )}
 
-      {/* FOOTER AD */}
-      <div style={{marginTop: '100px', padding: '40px', borderTop: '1px solid #222', color: '#444', fontSize: '12px'}}>
-         <p>© 2026 VINDECODER.SPACE | <a href="#" style={{color: '#444'}}>Розмістити рекламу</a></p>
+      {/* FOOTER */}
+      <div style={{marginTop: '100px', padding: '30px', color: '#333', fontSize: '11px', borderTop: '1px solid #111'}}>
+         <p>© 2026 VINDECODER.SPACE — Професійний інструмент дешифрування VIN</p>
       </div>
 
     </div>
