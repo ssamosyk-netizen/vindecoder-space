@@ -1,32 +1,47 @@
 import React, { useState } from 'react';
 
+// Словник перекладів
+const translations = {
+  en: { title: "VINDECODER", subtitle: "Free vehicle specification check", placeholder: "Enter VIN...", button: "CHECK", country: "Country", engine: "Engine", model: "Model", make: "Make" },
+  uk: { title: "VINDECODER", subtitle: "Безкоштовна розшифровка специфікацій", placeholder: "Введіть VIN...", button: "ПЕРЕВІРИТИ", country: "Країна", engine: "Двигун", model: "Модель", make: "Марка" },
+  es: { title: "VINDECODER", subtitle: "Comprobación gratuita de especificaciones", placeholder: "Ingrese VIN...", button: "VERIFICAR", country: "País", engine: "Motor", model: "Modelo", make: "Marca" },
+  de: { title: "VINDECODER", subtitle: "Kostenlose Überprüfung der Fahrzeugspezifikationen", placeholder: "VIN eingeben...", button: "PRÜFEN", country: "Land", engine: "Motor", model: "Modell", make: "Marke" }
+};
+
 export default function VinDecoder() {
+  const [lang, setLang] = useState('en'); // Мова за замовчуванням
   const [vin, setVin] = useState('');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const t = translations[lang];
+
   const decodeVin = async (e) => {
     e.preventDefault();
-    if (vin.length !== 17) return alert("Потрібно 17 символів");
+    if (vin.length !== 17) return alert("17 symbols required");
     setLoading(true);
     try {
       const res = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvaluesextended/${vin}?format=json`);
       const result = await res.json();
       setData(result.Results[0]);
-    } catch (err) { alert("Помилка зв'язку з базою"); }
+    } catch (err) { alert("Error"); }
     finally { setLoading(false); }
   };
 
   return (
     <div style={{minHeight: '100vh', backgroundColor: '#000', color: '#fff', padding: '20px', fontFamily: 'sans-serif', textAlign: 'center'}}>
       
-      {/* МІСЦЕ ПІД БАНЕР */}
-      <div style={{maxWidth: '728px', height: '90px', backgroundColor: '#0a0a0a', border: '1px dashed #222', margin: '0 auto 30px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', borderRadius: '8px'}}>
-         <span style={{fontSize: '10px', textTransform: 'uppercase'}}>Рекламний блок</span>
+      {/* ПЕРЕМИКАЧ МОВ */}
+      <div style={{marginBottom: '20px', display: 'flex', justifyContent: 'center', gap: '10px'}}>
+        {Object.keys(translations).map(l => (
+          <button key={l} onClick={() => setLang(l)} style={{backgroundColor: lang === l ? '#facc15' : '#111', color: lang === l ? '#000' : '#fff', border: '1px solid #333', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold'}}>
+            {l.toUpperCase()}
+          </button>
+        ))}
       </div>
 
-      <h1 style={{color: '#facc15', fontSize: '2.5rem', fontWeight: '900', letterSpacing: '-1px', margin: '0'}}>VINDECODER<span style={{color: '#fff'}}>.SPACE</span></h1>
-      <p style={{color: '#444', marginTop: '10px'}}>Інформаційний сервіс перевірки специфікацій транспортних засобів</p>
+      <h1 style={{color: '#facc15', fontSize: '2.5rem', fontWeight: '900', letterSpacing: '-1px'}}>{t.title}<span style={{color: '#fff'}}>.SPACE</span></h1>
+      <p style={{color: '#444'}}>{t.subtitle}</p>
       
       <form onSubmit={decodeVin} style={{margin: '40px 0'}}>
         <div style={{display: 'inline-flex', borderRadius: '12px', overflow: 'hidden', border: '1px solid #333'}}>
@@ -35,58 +50,26 @@ export default function VinDecoder() {
             maxLength="17" 
             value={vin} 
             onChange={(e) => setVin(e.target.value.toUpperCase())}
-            placeholder="Введіть VIN..."
-            style={{padding: '18px', fontSize: '18px', border: 'none', backgroundColor: '#0a0a0a', color: 'white', width: '300px', outline: 'none'}}
+            placeholder={t.placeholder}
+            style={{padding: '18px', fontSize: '18px', border: 'none', backgroundColor: '#0a0a0a', color: 'white', width: '280px', outline: 'none'}}
           />
           <button type="submit" style={{padding: '18px 30px', fontSize: '18px', backgroundColor: '#facc15', border: 'none', fontWeight: 'bold', cursor: 'pointer', color: '#000'}}>
-            {loading ? '...' : 'ПЕРЕВІРИТИ'}
+            {loading ? '...' : t.button}
           </button>
         </div>
       </form>
 
       {data && data.Make ? (
-        <div style={{maxWidth: '900px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 300px', gap: '20px', textAlign: 'left'}}>
-          
-          <div style={{backgroundColor: '#0a0a0a', padding: '30px', borderRadius: '16px', border: '1px solid #1a1a1a'}}>
-            <h2 style={{color: '#facc15', fontSize: '22px', marginBottom: '20px', borderBottom: '1px solid #1a1a1a', paddingBottom: '15px'}}>
-               {data.ModelYear} {data.Make} {data.Model}
-            </h2>
-            
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
-              <div><span style={{color: '#444', fontSize: '10px', fontWeight: 'bold'}}>МАРКА</span><br/><b>{data.Make}</b></div>
-              <div><span style={{color: '#444', fontSize: '10px', fontWeight: 'bold'}}>МОДЕЛЬ</span><br/><b>{data.Model}</b></div>
-              <div><span style={{color: '#444', fontSize: '10px', fontWeight: 'bold'}}>ДВИГУН</span><br/><b>{data.DisplacementL}L {data.EngineConfiguration}</b></div>
-              <div><span style={{color: '#444', fontSize: '10px', fontWeight: 'bold'}}>ВИРОБНИК</span><br/><b>{data.PlantCountry}</b></div>
-            </div>
-            
-            {/* ПОВНІСТЮ НЕЙТРАЛЬНИЙ БЛОК БЕЗ ПОСИЛАНЬ */}
-            <div style={{marginTop: '30px', padding: '20px', backgroundColor: '#111', borderRadius: '12px', border: '1px solid #222', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-              <div>
-                <div style={{fontSize: '10px', color: '#facc15', marginBottom: '5px'}}>ІНФОРМАЦІЯ</div>
-                <div style={{fontWeight: '700', fontSize: '16px'}}>Сервісне обслуговування</div>
-                <div style={{fontSize: '12px', color: '#444'}}>Дані базуються на офіційних звітах виробника</div>
-              </div>
-              <div style={{color: '#333', fontSize: '12px', fontWeight: 'bold'}}>
-                SERVICE
-              </div>
-            </div>
+        <div style={{maxWidth: '600px', margin: '0 auto', backgroundColor: '#0a0a0a', padding: '30px', borderRadius: '16px', border: '1px solid #1a1a1a', textAlign: 'left'}}>
+          <h2 style={{color: '#facc15', marginBottom: '20px'}}>{data.ModelYear} {data.Make} {data.Model}</h2>
+          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
+            <div><span style={{color: '#444', fontSize: '10px'}}>{t.make.toUpperCase()}</span><br/><b>{data.Make}</b></div>
+            <div><span style={{color: '#444', fontSize: '10px'}}>{t.model.toUpperCase()}</span><br/><b>{data.Model}</b></div>
+            <div><span style={{color: '#444', fontSize: '10px'}}>{t.engine.toUpperCase()}</span><br/><b>{data.DisplacementL}L {data.EngineConfiguration}</b></div>
+            <div><span style={{color: '#444', fontSize: '10px'}}>{t.country.toUpperCase()}</span><br/><b>{data.PlantCountry}</b></div>
           </div>
-
-          <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-             <div style={{height: '250px', backgroundColor: '#0a0a0a', border: '1px dashed #222', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222'}}>
-                <span style={{fontSize: '10px'}}>ADVERTISING BLOCK</span>
-             </div>
-             <div style={{padding: '15px', backgroundColor: '#0a0a0a', borderRadius: '12px', border: '1px solid #1a1a1a'}}>
-                <div style={{fontSize: '12px', color: '#444'}}>Для перевірки історії експлуатації зверніться до офіційних реєстрів.</div>
-             </div>
-          </div>
-
         </div>
       ) : null}
-
-      <div style={{marginTop: '100px', padding: '20px', color: '#222', fontSize: '10px'}}>
-         <p>© 2026 VINDECODER.SPACE</p>
-      </div>
 
     </div>
   );
