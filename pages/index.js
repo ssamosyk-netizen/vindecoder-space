@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const translations = {
   en: { dir: 'ltr', title: "VINDECODER", subtitle: "Free vehicle specification check", placeholder: "Enter VIN...", button: "CHECK", country: "Country", engine: "Engine", model: "Model", make: "Make" },
@@ -14,6 +14,14 @@ export default function VinDecoder() {
   const [vin, setVin] = useState('');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // МАГІЯ АВТОВИЗНАЧЕННЯ МОВИ
+  useEffect(() => {
+    const browserLang = navigator.language.split('-')[0]; // Отримуємо 'uk', 'en', 'de' і т.д.
+    if (translations[browserLang]) {
+      setLang(browserLang);
+    }
+  }, []);
 
   const t = translations[lang];
 
