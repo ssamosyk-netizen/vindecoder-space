@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+// === [ЗМІНА] Імпортуємо компонент Head ===
+import Head from 'next/head';
 
 const translations = {
   en: { dir: 'ltr', subtitle: "Free vehicle specification check", placeholder: "Enter VIN...", button: "CHECK", country: "Country", engine: "Engine", model: "Model", make: "Make", ad: "ADVERTISEMENT" },
@@ -52,6 +54,14 @@ export default function VinDecoder() {
 
   return (
     <div dir={t.dir} className="container">
+
+      {/* === [ЗМІНА] Додаємо Head для підключення PNG favicon === */}
+      <Head>
+        <title>VIN DECODER - {t.subtitle}</title>
+        {/* Цей рядок каже браузеру використовувати /favicon.png */}
+        <link rel="icon" type="image/png" href="/favicon.png" />
+      </Head>
+      {/* ======================================================= */}
       
       <div className="ad-placeholder top-ad">
         <span>{t.ad}</span>
@@ -121,7 +131,6 @@ export default function VinDecoder() {
         body { background-color: #000; margin: 0; padding: 0; line-height: 1.5; }
         .container { min-height: 100vh; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; box-sizing: border-box; color: #fff; }
         
-        /* Рекламні блоки - текст завжди по центру */
         .ad-placeholder { background-color: #0a0a0a; border: 1px dashed #333; display: flex; align-items: center; justify-content: center; color: #555; font-size: 10px; letter-spacing: 2px; border-radius: 8px; margin: 20px auto; overflow: hidden; text-align: center; direction: ltr !important; }
         .top-ad { max-width: 728px; height: 90px; }
         .native-ad { width: 100%; height: 120px; margin-top: 25px; border-color: #facc1533; }
@@ -161,18 +170,12 @@ export default function VinDecoder() {
         .sidebar { display: flex; justify-content: center; }
         .footer { text-align: center; margin-top: 60px; color: #555; font-size: 11px; direction: ltr; }
 
-        /* Десктопна версія - логіка RTL */
         @media (min-width: 900px) {
           .input-group { flex-direction: row; gap: 0; }
-          
-          /* Для LTR (англійська, українська і т.д.) */
           [dir='ltr'] .input-group input { border-radius: 12px 0 0 12px; border-right: none; }
           [dir='ltr'] .input-group button { border-radius: 0 12px 12px 0; width: auto; padding: 0 40px; }
-          
-          /* Для RTL (арабська) */
           [dir='rtl'] .input-group input { border-radius: 0 12px 12px 0; border-left: none; }
           [dir='rtl'] .input-group button { border-radius: 12px 0 0 12px; width: auto; padding: 0 40px; }
-
           .results-wrapper { flex-direction: row; align-items: flex-start; }
           .sidebar-ad { display: flex; }
         }
