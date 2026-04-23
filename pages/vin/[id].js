@@ -35,8 +35,9 @@ export default function Home() {
   const router = useRouter();
   const [lang, setLang] = useState('en');
   const [vin, setVin] = useState('');
-  const [region, setRegion] = useState('us'); // Стейт для збереження вибраного ринку
+  const [region, setRegion] = useState('us');
   const [history, setHistory] = useState([]);
+  const [isSearching, setIsSearching] = useState(false); // Додали стан завантаження
 
   useEffect(() => {
     document.body.style.margin = "0";
@@ -48,22 +49,36 @@ export default function Home() {
       setLang(savedLang);
     }
 
-    const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || "[]");
-    setHistory(savedHistory.length > 0 ? savedHistory : popularVins);
+    try {
+      const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || "[]");
+      setHistory(Array.isArray(savedHistory) && savedHistory.length > 0 ? savedHistory : popularVins);
+    } catch (e) {
+      setHistory(popularVins); // Захист від зламаного кешу
+    }
   }, []);
 
   const t = translations[lang] || translations.en;
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (vin.length === 17) {
-      const newHistory = [vin.toUpperCase(), ...history.filter(h => h !== vin.toUpperCase())].slice(0, 5);
-      localStorage.setItem('vinHistory', JSON.stringify(newHistory));
+    
+    // Очищаємо VIN від будь-яких пробілів на початку, в кінці або всередині
+    const cleanVin = vin.replace(/\s+/g, '').toUpperCase();
+    
+    if (cleanVin.length === 17) {
+      setIsSearching(true); // Показуємо, що йде пошук
       
-      // Передаємо вибраний регіон у параметри посилання (?region=eu)
-      router.push(`/vin/${vin.toUpperCase()}?region=${region}`);
+      try {
+        const safeHistory = Array.isArray(history) ? history : popularVins;
+        const newHistory = [cleanVin, ...safeHistory.filter(h => h !== cleanVin)].slice(0, 5);
+        localStorage.setItem('vinHistory', JSON.stringify(newHistory));
+      } catch (e) {
+        console.error("Помилка збереження історії");
+      }
+      
+      router.push(`/vin/${cleanVin}?region=${region}`);
     } else {
-      alert(lang === 'uk' ? "Потрібно 17 символів" : "17 symbols required");
+      alert(`Потрібно рівно 17 символів! Ви ввели: ${cleanVin.length}`);
     }
   };
 
@@ -74,7 +89,6 @@ export default function Home() {
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
 
-      {/* Перемикач мов */}
       <div className="lang-switcher">
         {Object.keys(translations).map(l => (
           <button key={l} onClick={() => { setLang(l); localStorage.setItem('userLanguage', l); }} className={lang === l ? 'active' : ''}>
@@ -91,8 +105,6 @@ export default function Home() {
       </div>
       
       <form onSubmit={handleSearch} className="vin-form">
-        
-        {/* НОВИЙ БЛОК: Вибір ринку */}
         <div className="region-selector">
           <button type="button" className={`region-btn ${region === 'us' ? 'active' : ''}`} onClick={() => setRegion('us')}>
             {t.regions.us}
@@ -105,16 +117,17 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Поле вводу */}
         <div className="input-group">
           <input 
             type="text" 
-            maxLength="17" 
+            maxLength="20" // Дозволяємо вставити з пробілами, код їх сам виріже
             value={vin} 
-            onChange={(e) => setVin(e.target.value.toUpperCase())}
+            onChange={(e) => setVin(e.target.value)}
             placeholder={t.placeholder}
           />
-          <button type="submit">{t.button}</button>
+          <button type="submit" disabled={isSearching}>
+            {isSearching ? "..." : t.button}
+          </button>
         </div>
       </form>
 
@@ -122,7 +135,7 @@ export default function Home() {
         <p>{t.history}</p>
         <div className="history-chips">
           {history.map((h, i) => (
-            <span key={i} onClick={() => router.push(`/vin/${h}?region=us`)} className="chip">
+            <span key={i} onClick={() => { setIsSearching(true); router.push(`/vin/${h}?region=${region}`); }} className="chip">
               {h}
             </span>
           ))}
@@ -153,7 +166,6 @@ export default function Home() {
 
         .vin-form { max-width: 600px; margin: 0 auto 30px; }
         
-        /* Стилі для вибору регіону */
         .region-selector { display: flex; background: #0a0a0a; border: 1px solid #333; border-radius: 12px; padding: 5px; margin-bottom: 15px; }
         .region-btn { flex: 1; background: transparent; color: #888; border: none; padding: 12px; font-size: 0.9rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
         .region-btn:hover { color: #fff; }
@@ -170,6 +182,7 @@ export default function Home() {
           font-weight: bold; color: #000; cursor: pointer; width: 100%; transition: 0.2s;
         }
         .input-group button:hover { background: #eab308; }
+        .input-group button:disabled { opacity: 0.7; cursor: not-allowed; }
 
         .history-section { margin-bottom: 40px; }
         .history-section p { color: #444; font-size: 11px; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; font-weight: bold; }
