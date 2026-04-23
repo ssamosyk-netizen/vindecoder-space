@@ -11,7 +11,6 @@ const translations = {
   ar: { dir: 'rtl', subtitle: "فحص مواصفات السيارة مجاناً", placeholder: "أدخل رمز VIN...", button: "تحقق", history: "عمليات البحث الأخيرة", ad: "إعلان" }
 };
 
-// Статичний список для старту (щоб сайт не був порожнім)
 const popularVins = ["1FA6P8CF5G", "1C4PJMDS7FW", "3VW637AJ7H"];
 
 export default function Home() {
@@ -21,11 +20,13 @@ export default function Home() {
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
+    document.body.style.margin = "0";
+    document.body.style.padding = "0";
     document.body.style.backgroundColor = "#000";
+
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang) setLang(savedLang);
 
-    // Завантажуємо історію з пам'яті браузера
     const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || "[]");
     setHistory(savedHistory.length > 0 ? savedHistory : popularVins);
   }, []);
@@ -35,7 +36,6 @@ export default function Home() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (vin.length === 17) {
-      // Зберігаємо в історію перед переходом
       const newHistory = [vin.toUpperCase(), ...history.filter(h => h !== vin.toUpperCase())].slice(0, 5);
       localStorage.setItem('vinHistory', JSON.stringify(newHistory));
       router.push(`/vin/${vin.toUpperCase()}`);
@@ -79,9 +79,8 @@ export default function Home() {
         </div>
       </form>
 
-      {/* БЛОК ІСТОРІЇ */}
       <div className="history-section">
-        <p>{t.history}:</p>
+        <p>{t.history}</p>
         <div className="history-chips">
           {history.map((h, i) => (
             <span key={i} onClick={() => router.push(`/vin/${h}`)} className="chip">
@@ -91,42 +90,61 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="ad-block">{t.ad}</div>
+      <div className="ad-placeholder top-ad">
+        <span>{t.ad}</span>
+      </div>
 
       <footer className="footer">
         <p>© 2026 VIN DECODER</p>
       </footer>
 
       <style jsx global>{`
-        body { background-color: #000; margin: 0; padding: 0; }
-        .container { min-height: 100vh; padding: 20px; font-family: sans-serif; text-align: center; color: #fff; }
-        .lang-switcher { display: flex; justify-content: center; gap: 6px; margin-bottom: 40px; }
-        .lang-switcher button { background: #111; color: #fff; border: 1px solid #333; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; }
-        .lang-switcher button.active { background: #facc15; color: #000; }
+        body { background-color: #000; margin: 0; padding: 0; line-height: 1.5; }
+        .container { min-height: 100vh; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; box-sizing: border-box; color: #fff; text-align: center; }
         
-        .header h1 { font-size: clamp(2.5rem, 10vw, 4rem); font-weight: 900; letter-spacing: -3px; margin: 0; }
-        .yellow { color: #facc15; }
-        .white { color: #fff; }
-        .subtitle { color: #888; font-weight: bold; margin-top: 10px; }
+        .lang-switcher { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 30px; direction: ltr; }
+        .lang-switcher button { background: #111; color: #fff; border: 1px solid #222; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .lang-switcher button.active { background: #facc15; color: #000; border-color: #facc15; }
 
-        .vin-form { max-width: 500px; margin: 40px auto; }
+        .header { margin-bottom: 30px; }
+        .header h1 { font-size: clamp(2.5rem, 10vw, 4rem); font-weight: 900; margin: 0; letter-spacing: -3px; line-height: 1; direction: ltr; }
+        .header .yellow { color: #facc15; }
+        .header .white { color: #fff; }
+        .subtitle { color: #888; font-size: 1rem; font-weight: bold; margin-top: 10px; }
+
+        /* Дизайн форми з попередньої версії */
+        .vin-form { max-width: 500px; margin: 0 auto 30px; }
         .input-group { display: flex; flex-direction: column; gap: 10px; }
-        .input-group input { padding: 18px; font-size: 18px; border: 1px solid #333; border-radius: 12px; background: #0a0a0a; color: #fff; text-align: center; outline: none; }
-        .input-group button { padding: 18px; font-size: 18px; background: #facc15; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .input-group input { 
+          padding: 18px; font-size: 18px; border: 1px solid #333; border-radius: 12px; 
+          background: #0a0a0a; color: #fff; text-align: center; outline: none; width: 100%; box-sizing: border-box;
+        }
+        .input-group button { 
+          padding: 18px; font-size: 18px; background: #facc15; border: none; border-radius: 12px; 
+          font-weight: bold; color: #000; cursor: pointer; width: 100%;
+        }
 
-        .history-section { margin-top: 20px; }
-        .history-section p { color: #444; font-size: 12px; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
-        .history-chips { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .chip { background: #111; border: 1px solid #222; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; color: #aaa; transition: 0.2s; }
+        /* Історія */
+        .history-section { margin-bottom: 40px; }
+        .history-section p { color: #444; font-size: 11px; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; font-weight: bold; }
+        .history-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .chip { background: #0a0a0a; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; color: #888; transition: 0.2s; }
         .chip:hover { border-color: #facc15; color: #facc15; }
 
-        .ad-block { max-width: 728px; height: 90px; background: #0a0a0a; border: 1px dashed #222; margin: 60px auto; display: flex; align-items: center; justify-content: center; color: #333; font-size: 10px; letter-spacing: 2px; }
-        .footer { margin-top: 80px; color: #222; font-size: 11px; }
+        .ad-placeholder { background-color: #0a0a0a; border: 1px dashed #333; display: flex; align-items: center; justify-content: center; color: #333; font-size: 10px; letter-spacing: 2px; border-radius: 8px; margin: 40px auto; overflow: hidden; direction: ltr !important; }
+        .top-ad { max-width: 728px; height: 90px; }
 
+        .footer { text-align: center; margin-top: 60px; color: #222; font-size: 11px; direction: ltr; }
+
+        /* Десктопна версія з дзеркальними кутами */
         @media (min-width: 600px) {
-          .input-group { flex-direction: row; }
-          .input-group input { border-radius: 12px 0 0 12px; flex: 1; }
-          .input-group button { border-radius: 0 12px 12px 0; padding: 0 30px; }
+          .input-group { flex-direction: row; gap: 0; }
+          
+          [dir='ltr'] .input-group input { border-radius: 12px 0 0 12px; border-right: none; }
+          [dir='ltr'] .input-group button { border-radius: 0 12px 12px 0; width: auto; padding: 0 40px; }
+          
+          [dir='rtl'] .input-group input { border-radius: 0 12px 12px 0; border-left: none; }
+          [dir='rtl'] .input-group button { border-radius: 12px 0 0 12px; width: auto; padding: 0 40px; }
         }
       `}</style>
     </div>
