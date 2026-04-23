@@ -15,13 +15,27 @@ export default function VinDecoder() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // МАГІЯ АВТОВИЗНАЧЕННЯ МОВИ
+  // ЛОГІКА ПАМ'ЯТІ ТА АВТОВИЗНАЧЕННЯ
   useEffect(() => {
-    const browserLang = navigator.language.split('-')[0]; // Отримуємо 'uk', 'en', 'de' і т.д.
-    if (translations[browserLang]) {
-      setLang(browserLang);
+    // 1. Спочатку перевіряємо, чи є збережена мова в пам'яті браузера
+    const savedLang = localStorage.getItem('userLanguage');
+    
+    if (savedLang && translations[savedLang]) {
+      setLang(savedLang);
+    } else {
+      // 2. Якщо немає збереженої, дивимось на мову браузера
+      const browserLang = navigator.language.split('-')[0];
+      if (translations[browserLang]) {
+        setLang(browserLang);
+      }
     }
   }, []);
+
+  // Функція для зміни мови зі збереженням
+  const changeLanguage = (newLang) => {
+    setLang(newLang);
+    localStorage.setItem('userLanguage', newLang); // Записуємо вибір у пам'ять
+  };
 
   const t = translations[lang];
 
@@ -43,7 +57,7 @@ export default function VinDecoder() {
       {/* КНОПКИ МОВ */}
       <div style={{marginBottom: '30px', display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap'}}>
         {Object.keys(translations).map(l => (
-          <button key={l} onClick={() => setLang(l)} style={{
+          <button key={l} onClick={() => changeLanguage(l)} style={{
             backgroundColor: lang === l ? '#facc15' : '#111', 
             color: lang === l ? '#000' : '#fff', 
             border: '1px solid #333', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold'
@@ -77,11 +91,11 @@ export default function VinDecoder() {
       {data && data.Make ? (
         <div style={{maxWidth: '600px', margin: '0 auto', backgroundColor: '#0a0a0a', padding: '30px', borderRadius: '16px', border: '1px solid #1a1a1a'}}>
           <h2 style={{color: '#facc15', marginBottom: '20px', textAlign: 'center'}}>{data.ModelYear} {data.Make} {data.Model}</h2>
-          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
-            <div style={{textAlign: t.dir === 'rtl' ? 'right' : 'left'}}><span style={{color: '#444', fontSize: '10px'}}>{t.make.toUpperCase()}</span><br/><b>{data.Make}</b></div>
-            <div style={{textAlign: t.dir === 'rtl' ? 'right' : 'left'}}><span style={{color: '#444', fontSize: '10px'}}>{t.model.toUpperCase()}</span><br/><b>{data.Model}</b></div>
-            <div style={{textAlign: t.dir === 'rtl' ? 'right' : 'left'}}><span style={{color: '#444', fontSize: '10px'}}>{t.engine.toUpperCase()}</span><br/><b>{data.DisplacementL}L {data.EngineConfiguration}</b></div>
-            <div style={{textAlign: t.dir === 'rtl' ? 'right' : 'left'}}><span style={{color: '#444', fontSize: '10px'}}>{t.country.toUpperCase()}</span><br/><b>{data.PlantCountry}</b></div>
+          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', textAlign: t.dir === 'rtl' ? 'right' : 'left'}}>
+            <div><span style={{color: '#444', fontSize: '10px'}}>{t.make.toUpperCase()}</span><br/><b>{data.Make}</b></div>
+            <div><span style={{color: '#444', fontSize: '10px'}}>{t.model.toUpperCase()}</span><br/><b>{data.Model}</b></div>
+            <div><span style={{color: '#444', fontSize: '10px'}}>{t.engine.toUpperCase()}</span><br/><b>{data.DisplacementL}L {data.EngineConfiguration}</b></div>
+            <div><span style={{color: '#444', fontSize: '10px'}}>{t.country.toUpperCase()}</span><br/><b>{data.PlantCountry}</b></div>
           </div>
         </div>
       ) : null}
