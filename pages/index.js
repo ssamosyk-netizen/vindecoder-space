@@ -3,96 +3,90 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
-  en: { dir: 'ltr', subtitle: "Free vehicle specification check", placeholder: "Enter VIN...", button: "CHECK", history: "Recent Searches", ad: "ADVERTISEMENT" },
-  uk: { dir: 'ltr', subtitle: "Безкоштовна розшифровка специфікацій", placeholder: "Введіть VIN...", button: "ПЕРЕВІРИТИ", history: "Останні перевірки", ad: "РЕКЛАМА" },
-  es: { dir: 'ltr', subtitle: "Comprobación gratuita de especificaciones", placeholder: "Ingrese VIN...", button: "VERIFICAR", history: "Búsquedas recientes", ad: "ANUNCIO" },
-  de: { dir: 'ltr', subtitle: "Kostenlose Fahrzeug-Prüfung", placeholder: "VIN eingeben...", button: "PRÜFEN", history: "Letzte Suchen", ad: "ANZEIGE" },
-  zh: { dir: 'ltr', subtitle: "免费车辆规格查询", placeholder: "输入17位VIN码...", button: "查询", history: "最近查询", ad: "广告" },
-  ar: { dir: 'rtl', subtitle: "فحص مواصفات السيارة مجاناً", placeholder: "أدخل رمز VIN...", button: "تحقق", history: "عمليات البحث الأخيرة", ad: "إعلان" }
+  en: { dir: 'ltr', subtitle: "Vehicle Specification Report", back: "Back to Search", country: "Country", engine: "Engine", model: "Model", make: "Make", ad: "ADVERTISEMENT" },
+  uk: { dir: 'ltr', subtitle: "Звіт про специфікації автомобіля", back: "Назад до пошуку", country: "Країна", engine: "Двигун", model: "Модель", make: "Марка", ad: "РЕКЛАМА" },
+  es: { dir: 'ltr', subtitle: "Informe de especificaciones", back: "Volver", country: "País", engine: "Motor", model: "Modelo", make: "Marca", ad: "ANUNCIO" },
+  de: { dir: 'ltr', subtitle: "Fahrzeugspezifikationsbericht", back: "Zurück", country: "Land", engine: "Motor", model: "Modell", make: "Marke", ad: "ANZEIGE" },
+  zh: { dir: 'ltr', subtitle: "车辆规格报告", back: "返回", country: "生产国", engine: "发动机", model: "型号", make: "品牌", ad: "广告" },
+  ar: { dir: 'rtl', subtitle: "تقرير مواصفات السيارة", back: "العودة", country: "البلد", engine: "المحرك", model: "الموديل", make: "العلامة التجارية", ad: "إعلان" }
 };
 
-const popularVins = ["1FA6P8CF5G", "1C4PJMDS7FW", "3VW637AJ7H"];
-
-export default function Home() {
+export default function VinResult() {
   const router = useRouter();
+  const { id } = router.query;
   const [lang, setLang] = useState('en');
-  const [vin, setVin] = useState('');
-  const [history, setHistory] = useState([]);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     document.body.style.margin = "0";
     document.body.style.padding = "0";
     document.body.style.backgroundColor = "#000";
 
-    const savedLang = localStorage.getItem('userLanguage');
-    if (savedLang) setLang(savedLang);
+    const savedLang = localStorage.getItem('userLanguage') || 'en';
+    setLang(savedLang);
+    if (id) fetchVinData(id);
+  }, [id]);
 
-    const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || "[]");
-    setHistory(savedHistory.length > 0 ? savedHistory : popularVins);
-  }, []);
+  const fetchVinData = async (vinCode) => {
+    try {
+      const res = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvaluesextended/${vinCode}?format=json`);
+      const result = await res.json();
+      setData(result.Results[0]);
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  };
+
+  if (loading) return <div style={{backgroundColor: '#000', color: '#fff', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>...</div>;
 
   const t = translations[lang] || translations.en;
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (vin.length === 17) {
-      const newHistory = [vin.toUpperCase(), ...history.filter(h => h !== vin.toUpperCase())].slice(0, 5);
-      localStorage.setItem('vinHistory', JSON.stringify(newHistory));
-      router.push(`/vin/${vin.toUpperCase()}`);
-    } else {
-      alert(lang === 'uk' ? "Потрібно 17 символів" : "17 symbols required");
-    }
-  };
 
   return (
     <div dir={t.dir} className="container">
       <Head>
-        <title>VIN DECODER - {t.subtitle}</title>
+        <title>{id} - {data?.Make} {data?.Model} | VIN DECODER</title>
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
 
-      <div className="lang-switcher">
-        {Object.keys(translations).map(l => (
-          <button key={l} onClick={() => { setLang(l); localStorage.setItem('userLanguage', l); }} className={lang === l ? 'active' : ''}>
-            {l.toUpperCase()}
-          </button>
-        ))}
-      </div>
-
       <div className="header">
-        <h1>
+        <h1 onClick={() => router.push('/')}>
           <span className="yellow">VIN</span><span className="white">DECODER</span>
         </h1>
-        <p className="subtitle">{t.subtitle}</p>
-      </div>
-      
-      <form onSubmit={handleSearch} className="vin-form">
-        <div className="input-group">
-          <input 
-            type="text" 
-            maxLength="17" 
-            value={vin} 
-            onChange={(e) => setVin(e.target.value.toUpperCase())}
-            placeholder={t.placeholder}
-          />
-          <button type="submit">{t.button}</button>
-        </div>
-      </form>
-
-      <div className="history-section">
-        <p>{t.history}</p>
-        <div className="history-chips">
-          {history.map((h, i) => (
-            <span key={i} onClick={() => router.push(`/vin/${h}`)} className="chip">
-              {h}
-            </span>
-          ))}
-        </div>
+        <p className="subtitle">{t.subtitle} for <b>{id}</b></p>
       </div>
 
-      <div className="ad-placeholder top-ad">
-        <span>{t.ad}</span>
-      </div>
+      {data && (
+        <div className="results-wrapper">
+          {/* ОСНОВНА ЧАСТИНА */}
+          <main className="main-content">
+            <div className="results-card">
+              <h2 className="vehicle-name">{data.ModelYear} {data.Make} {data.Model}</h2>
+              <div className="data-grid">
+                <div className="data-item"><span>{t.make}</span><b>{data.Make || '—'}</b></div>
+                <div className="data-item"><span>{t.model}</span><b>{data.Model || '—'}</b></div>
+                <div className="data-item"><span>{t.engine}</span><b>{data.DisplacementL ? `${data.DisplacementL}L` : ''} {data.EngineConfiguration || '—'}</b></div>
+                <div className="data-item"><span>{t.country}</span><b>{data.PlantCountry || '—'}</b></div>
+              </div>
+              
+              {/* Реклама всередині картки */}
+              <div className="ad-placeholder native-ad">
+                <span>{t.ad}</span>
+              </div>
+            </div>
+            
+            <button className="back-btn" onClick={() => router.push('/')}>
+              ← {t.back}
+            </button>
+          </main>
+
+          {/* БІЧНА ПАНЕЛЬ З РЕКЛАМОЮ */}
+          <aside className="sidebar">
+            <div className="ad-placeholder sidebar-ad">
+              <span>{t.ad}</span>
+            </div>
+          </aside>
+        </div>
+      )}
 
       <footer className="footer">
         <p>© 2026 VIN DECODER</p>
@@ -100,51 +94,46 @@ export default function Home() {
 
       <style jsx global>{`
         body { background-color: #000; margin: 0; padding: 0; line-height: 1.5; }
-        .container { min-height: 100vh; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; box-sizing: border-box; color: #fff; text-align: center; }
+        .container { min-height: 100vh; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; box-sizing: border-box; color: #fff; }
         
-        .lang-switcher { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 30px; direction: ltr; }
-        .lang-switcher button { background: #111; color: #fff; border: 1px solid #222; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .lang-switcher button.active { background: #facc15; color: #000; border-color: #facc15; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { cursor: pointer; font-size: 2.5rem; font-weight: 900; letter-spacing: -2px; margin: 0; direction: ltr; }
+        .yellow { color: #facc15; }
+        .white { color: #fff; }
+        .subtitle { color: #888; margin-top: 10px; font-weight: bold; }
 
-        .header { margin-bottom: 30px; }
-        .header h1 { font-size: clamp(2.5rem, 10vw, 4rem); font-weight: 900; margin: 0; letter-spacing: -3px; line-height: 1; direction: ltr; }
-        .header .yellow { color: #facc15; }
-        .header .white { color: #fff; }
-        .subtitle { color: #888; font-size: 1rem; font-weight: bold; margin-top: 10px; }
+        /* Структура контенту */
+        .results-wrapper { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .main-content { flex: 1; min-width: 0; }
+        
+        .results-card { background-color: #0a0a0a; padding: 30px; border-radius: 20px; border: 1px solid #1a1a1a; }
+        .vehicle-name { color: #facc15; text-align: center; margin: 0 0 30px 0; font-size: 1.8rem; }
+        
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .data-item span { color: #aaa; font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
+        .data-item b { color: #fff; font-size: 1.2rem; display: block; margin-top: 5px; }
 
-        /* Дизайн форми з попередньої версії */
-        .vin-form { max-width: 500px; margin: 0 auto 30px; }
-        .input-group { display: flex; flex-direction: column; gap: 10px; }
-        .input-group input { 
-          padding: 18px; font-size: 18px; border: 1px solid #333; border-radius: 12px; 
-          background: #0a0a0a; color: #fff; text-align: center; outline: none; width: 100%; box-sizing: border-box;
+        /* Рекламні блоки */
+        .ad-placeholder { background-color: #0a0a0a; border: 1px dashed #222; display: flex; align-items: center; justify-content: center; color: #333; font-size: 10px; letter-spacing: 2px; border-radius: 12px; }
+        .native-ad { height: 120px; margin-top: 30px; border-color: #facc1511; }
+        .sidebar-ad { width: 300px; min-height: 600px; }
+        .sidebar { display: none; }
+
+        .back-btn { margin-top: 25px; background: none; border: none; color: #facc15; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.2s; }
+        .back-btn:hover { opacity: 0.7; }
+        
+        .footer { text-align: center; margin-top: 80px; color: #222; font-size: 11px; }
+
+        /* Десктопна версія */
+        @media (min-width: 900px) {
+          .results-wrapper { flex-direction: row; align-items: flex-start; }
+          .sidebar { display: block; }
+          .main-content { max-width: calc(100% - 320px); }
         }
-        .input-group button { 
-          padding: 18px; font-size: 18px; background: #facc15; border: none; border-radius: 12px; 
-          font-weight: bold; color: #000; cursor: pointer; width: 100%;
-        }
 
-        /* Історія */
-        .history-section { margin-bottom: 40px; }
-        .history-section p { color: #444; font-size: 11px; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; font-weight: bold; }
-        .history-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        .chip { background: #0a0a0a; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; color: #888; transition: 0.2s; }
-        .chip:hover { border-color: #facc15; color: #facc15; }
-
-        .ad-placeholder { background-color: #0a0a0a; border: 1px dashed #333; display: flex; align-items: center; justify-content: center; color: #333; font-size: 10px; letter-spacing: 2px; border-radius: 8px; margin: 40px auto; overflow: hidden; direction: ltr !important; }
-        .top-ad { max-width: 728px; height: 90px; }
-
-        .footer { text-align: center; margin-top: 60px; color: #222; font-size: 11px; direction: ltr; }
-
-        /* Десктопна версія з дзеркальними кутами */
-        @media (min-width: 600px) {
-          .input-group { flex-direction: row; gap: 0; }
-          
-          [dir='ltr'] .input-group input { border-radius: 12px 0 0 12px; border-right: none; }
-          [dir='ltr'] .input-group button { border-radius: 0 12px 12px 0; width: auto; padding: 0 40px; }
-          
-          [dir='rtl'] .input-group input { border-radius: 0 12px 12px 0; border-left: none; }
-          [dir='rtl'] .input-group button { border-radius: 12px 0 0 12px; width: auto; padding: 0 40px; }
+        @media (max-width: 600px) {
+          .data-grid { grid-template-columns: 1fr; }
+          .vehicle-name { font-size: 1.5rem; }
         }
       `}</style>
     </div>
