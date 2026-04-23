@@ -16,6 +16,11 @@ export default function VinDecoder() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Прибираємо білу обводку (відступи браузера)
+    document.body.style.margin = "0";
+    document.body.style.padding = "0";
+    document.body.style.backgroundColor = "#000";
+
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang && translations[savedLang]) {
       setLang(savedLang);
@@ -47,61 +52,147 @@ export default function VinDecoder() {
   };
 
   return (
-    <div dir={t.dir} style={{minHeight: '100vh', backgroundColor: '#000', color: '#fff', padding: '20px', fontFamily: 'sans-serif'}}>
+    <div dir={t.dir} style={{
+      minHeight: '100vh', 
+      backgroundColor: '#000', 
+      color: '#fff', 
+      padding: '20px', 
+      fontFamily: 'sans-serif',
+      boxSizing: 'border-box'
+    }}>
       
       {/* ПЕРЕМИКАЧ МОВ */}
-      <div style={{marginBottom: '30px', display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap'}}>
+      <div style={{marginBottom: '30px', display: 'flex', justifyContent: 'center', gap: '5px', flexWrap: 'wrap'}}>
         {Object.keys(translations).map(l => (
           <button key={l} onClick={() => changeLanguage(l)} style={{
             backgroundColor: lang === l ? '#facc15' : '#111', 
             color: lang === l ? '#000' : '#fff', 
-            border: '1px solid #333', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold'
+            border: '1px solid #333', 
+            padding: '10px 14px', 
+            borderRadius: '6px', 
+            cursor: 'pointer', 
+            fontSize: '12px', 
+            fontWeight: 'bold'
           }}>
             {l.toUpperCase()}
           </button>
         ))}
       </div>
 
-      {/* НОВИЙ СТАТИЧНИЙ ЛОГОТИП */}
-      <div style={{textAlign: 'center', marginBottom: '40px'}}>
-        <h1 style={{fontSize: '3.5rem', fontWeight: '900', margin: '0', letterSpacing: '-3px'}}>
+      {/* ЛОГОТИП (Адаптивний розмір) */}
+      <div style={{textAlign: 'center', marginBottom: '30px'}}>
+        <h1 style={{
+          fontSize: 'clamp(2.5rem, 8vw, 4rem)', // Гнучкий розмір
+          fontWeight: '900', 
+          margin: '0', 
+          letterSpacing: '-2px',
+          lineHeight: '1'
+        }}>
           <span style={{color: '#facc15'}}>VIN</span>
           <span style={{color: '#fff'}}>DECODER</span>
         </h1>
-        <p style={{color: '#444', marginTop: '5px', fontWeight: 'bold'}}>{t.subtitle}</p>
+        <p style={{color: '#444', marginTop: '10px', fontSize: '0.9rem', fontWeight: 'bold'}}>{t.subtitle}</p>
       </div>
       
-      <form onSubmit={decodeVin} style={{margin: '40px 0', textAlign: 'center'}}>
-        <div style={{display: 'inline-flex', borderRadius: '12px', overflow: 'hidden', border: '1px solid #333', flexDirection: t.dir === 'rtl' ? 'row-reverse' : 'row'}}>
+      {/* ФОРМА (Адаптивна) */}
+      <form onSubmit={decodeVin} style={{
+        maxWidth: '500px', 
+        margin: '30px auto', 
+        textAlign: 'center'
+      }}>
+        <div style={{
+          display: 'flex', 
+          flexDirection: 'column', // На мобілках в стовпчик
+          gap: '10px',
+          borderRadius: '12px', 
+          overflow: 'hidden'
+        }}>
           <input 
             type="text" 
             maxLength="17" 
             value={vin} 
             onChange={(e) => setVin(e.target.value.toUpperCase())}
             placeholder={t.placeholder}
-            style={{padding: '20px', fontSize: '18px', border: 'none', backgroundColor: '#0a0a0a', color: 'white', width: '300px', outline: 'none', textAlign: t.dir === 'rtl' ? 'right' : 'left'}}
+            style={{
+              padding: '18px', 
+              fontSize: '18px', 
+              border: '2px solid #333', 
+              borderRadius: '12px',
+              backgroundColor: '#0a0a0a', 
+              color: 'white', 
+              outline: 'none',
+              textAlign: 'center'
+            }}
           />
-          <button type="submit" style={{padding: '20px 40px', fontSize: '18px', backgroundColor: '#facc15', border: 'none', fontWeight: 'bold', cursor: 'pointer', color: '#000'}}>
+          <button type="submit" style={{
+            padding: '18px', 
+            fontSize: '18px', 
+            backgroundColor: '#facc15', 
+            border: 'none', 
+            borderRadius: '12px',
+            fontWeight: 'bold', 
+            cursor: 'pointer', 
+            color: '#000',
+            transition: 'transform 0.2s'
+          }}>
             {loading ? '...' : t.button}
           </button>
         </div>
       </form>
 
+      {/* РЕЗУЛЬТАТИ (Адаптивні) */}
       {data && data.Make ? (
-        <div style={{maxWidth: '600px', margin: '0 auto', backgroundColor: '#0a0a0a', padding: '30px', borderRadius: '16px', border: '1px solid #1a1a1a'}}>
-          <h2 style={{color: '#facc15', marginBottom: '25px', textAlign: 'center', fontSize: '1.8rem'}}>{data.ModelYear} {data.Make} {data.Model}</h2>
-          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px', textAlign: t.dir === 'rtl' ? 'right' : 'left'}}>
-            <div><span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.make}</span><br/><b style={{fontSize: '1.2rem'}}>{data.Make}</b></div>
-            <div><span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.model}</span><br/><b style={{fontSize: '1.2rem'}}>{data.Model}</b></div>
-            <div><span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.engine}</span><br/><b style={{fontSize: '1.2rem'}}>{data.DisplacementL}L {data.EngineConfiguration}</b></div>
-            <div><span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.country}</span><br/><b style={{fontSize: '1.2rem'}}>{data.PlantCountry}</b></div>
+        <div style={{
+          maxWidth: '600px', 
+          margin: '0 auto', 
+          backgroundColor: '#0a0a0a', 
+          padding: '25px', 
+          borderRadius: '20px', 
+          border: '1px solid #1a1a1a',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.5)'
+        }}>
+          <h2 style={{color: '#facc15', marginBottom: '25px', textAlign: 'center', fontSize: '1.5rem'}}>
+            {data.ModelYear} {data.Make} {data.Model}
+          </h2>
+          <div style={{
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', // Авто-сітка
+            gap: '20px', 
+            textAlign: t.dir === 'rtl' ? 'right' : 'left'
+          }}>
+            <div style={{borderBottom: '1px solid #111', paddingBottom: '10px'}}>
+                <span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.make}</span><br/>
+                <b style={{fontSize: '1.1rem'}}>{data.Make}</b>
+            </div>
+            <div style={{borderBottom: '1px solid #111', paddingBottom: '10px'}}>
+                <span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.model}</span><br/>
+                <b style={{fontSize: '1.1rem'}}>{data.Model}</b>
+            </div>
+            <div style={{borderBottom: '1px solid #111', paddingBottom: '10px'}}>
+                <span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.engine}</span><br/>
+                <b style={{fontSize: '1.1rem'}}>{data.DisplacementL}L {data.EngineConfiguration}</b>
+            </div>
+            <div style={{borderBottom: '1px solid #111', paddingBottom: '10px'}}>
+                <span style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>{t.country}</span><br/>
+                <b style={{fontSize: '1.1rem'}}>{data.PlantCountry}</b>
+            </div>
           </div>
         </div>
       ) : null}
 
-      <div style={{marginTop: '100px', padding: '20px', color: '#222', fontSize: '10px', textAlign: 'center'}}>
+      <div style={{marginTop: '60px', padding: '20px', color: '#222', fontSize: '10px', textAlign: 'center'}}>
          <p>© 2026 VIN DECODER</p>
       </div>
+
+      {/* Вбудований стиль для медіа-запитів */}
+      <style jsx global>{`
+        body { background-color: #000; margin: 0; padding: 0; }
+        @media (min-width: 600px) {
+          form div { flex-direction: row !important; }
+          input { border-radius: 12px 0 0 12px !important; flex: 1; }
+          button { border-radius: 0 12px 12px 0 !important; }
+        }
+      `}</style>
     </div>
   );
 }
