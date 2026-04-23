@@ -56,10 +56,9 @@ export default function Home() {
 
   const t = translations[lang] || translations.en;
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    
-    const cleanVin = vin.replace(/\s+/g, '').toUpperCase();
+  const handleSearch = () => {
+    // Жорстко залишаємо ТІЛЬКИ букви і цифри (видаляємо дефіси, пробіли тощо)
+    const cleanVin = vin.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     
     if (cleanVin.length === 17) {
       try {
@@ -68,10 +67,17 @@ export default function Home() {
         localStorage.setItem('vinHistory', JSON.stringify(newHistory));
       } catch (err) {}
       
-      // ЖОРСТКА НАВІГАЦІЯ: Змушуємо браузер перейти за посиланням
+      // Переходимо за адресою
       window.location.href = `/vin/${cleanVin}?region=${region}`;
     } else {
-      alert(lang === 'uk' ? `Потрібно 17 символів! Ви ввели: ${cleanVin.length}` : `17 symbols required! You entered: ${cleanVin.length}`);
+      alert(`Увага! VIN має містити рівно 17 символів.\nЗараз їх: ${cleanVin.length}\nВаш код: ${cleanVin}`);
+    }
+  };
+
+  // Щоб працював Enter
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
     }
   };
 
@@ -97,7 +103,8 @@ export default function Home() {
         <p className="subtitle">{t.subtitle}</p>
       </div>
       
-      <form onSubmit={handleSearch} className="vin-form">
+      {/* Замінили form на div, щоб браузер не втручався */}
+      <div className="vin-form">
         <div className="region-selector">
           <button type="button" className={`region-btn ${region === 'us' ? 'active' : ''}`} onClick={() => setRegion('us')}>
             {t.regions.us}
@@ -113,14 +120,14 @@ export default function Home() {
         <div className="input-group">
           <input 
             type="text" 
-            maxLength="20"
             value={vin} 
             onChange={(e) => setVin(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder={t.placeholder}
           />
-          <button type="submit">{t.button}</button>
+          <button type="button" onClick={handleSearch}>{t.button}</button>
         </div>
-      </form>
+      </div>
 
       <div className="history-section">
         <p>{t.history}</p>
