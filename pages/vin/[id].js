@@ -8,17 +8,22 @@ const translations = {
   es: { dir: 'ltr', subtitle: "Informe de especificaciones", back: "Volver", country: "País", engine: "Motor", model: "Modelo", make: "Marca", ad: "ANUNCIO" },
   de: { dir: 'ltr', subtitle: "Fahrzeugspezifikationsbericht", back: "Zurück", country: "Land", engine: "Motor", model: "Modell", make: "Marke", ad: "ANZEIGE" },
   zh: { dir: 'ltr', subtitle: "车辆规格报告", back: "返回", country: "生产国", engine: "发动机", model: "型号", make: "品牌", ad: "广告" },
-  ar: { dir: 'rtl', subtitle: "تقرير مواصفات السيارة", back: "العودة до البحث", country: "البلد", engine: "المحرك", model: "الموديل", make: "العلامة التجارية", ad: "إعلان" }
+  ar: { dir: 'rtl', subtitle: "تقرير مواصفات السيارة", back: "العودة", country: "البلد", engine: "المحرك", model: "الموديل", make: "العلامة التجارية", ad: "إعلان" }
 };
 
 export default function VinResult() {
   const router = useRouter();
-  const { id } = router.query; // Отримуємо VIN з адреси сайту
+  const { id } = router.query;
   const [lang, setLang] = useState('en');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Прибираємо білу обводку
+    document.body.style.margin = "0";
+    document.body.style.padding = "0";
+    document.body.style.backgroundColor = "#000";
+
     const savedLang = localStorage.getItem('userLanguage') || 'en';
     setLang(savedLang);
     if (id) fetchVinData(id);
@@ -38,40 +43,64 @@ export default function VinResult() {
   const t = translations[lang] || translations.en;
 
   return (
-    <div dir={t.dir} style={{minHeight: '100vh', backgroundColor: '#000', color: '#fff', padding: '20px', fontFamily: 'sans-serif'}}>
+    <div dir={t.dir} className="container">
       <Head>
         <title>{id} - {data?.Make} {data?.Model} | VIN DECODER</title>
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
 
-      <div style={{textAlign: 'center', marginBottom: '30px'}}>
-        <h1 onClick={() => router.push('/')} style={{cursor: 'pointer', fontSize: '2.5rem', fontWeight: '900', letterSpacing: '-2px'}}>
-          <span style={{color: '#facc15'}}>VIN</span><span style={{color: '#fff'}}>DECODER</span>
+      <div className="header">
+        <h1 onClick={() => router.push('/')}>
+          <span className="yellow">VIN</span><span className="white">DECODER</span>
         </h1>
-        <p style={{color: '#888'}}>{t.subtitle} for <b>{id}</b></p>
+        <p className="subtitle">{t.subtitle} for <b>{id}</b></p>
       </div>
 
       {data && (
-        <div style={{maxWidth: '800px', margin: '0 auto'}}>
-          <div style={{backgroundColor: '#0a0a0a', padding: '30px', borderRadius: '20px', border: '1px solid #1a1a1a'}}>
-            <h2 style={{color: '#facc15', textAlign: 'center', marginBottom: '30px'}}>{data.ModelYear} {data.Make} {data.Model}</h2>
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
-              <div><span style={{color: '#aaa', fontSize: '11px'}}>{t.make}</span><br/><b style={{fontSize: '1.2rem'}}>{data.Make}</b></div>
-              <div><span style={{color: '#aaa', fontSize: '11px'}}>{t.model}</span><br/><b style={{fontSize: '1.2rem'}}>{data.Model}</b></div>
-              <div><span style={{color: '#aaa', fontSize: '11px'}}>{t.engine}</span><br/><b style={{fontSize: '1.2rem'}}>{data.DisplacementL}L {data.EngineConfiguration}</b></div>
-              <div><span style={{color: '#aaa', fontSize: '11px'}}>{t.country}</span><br/><b style={{fontSize: '1.2rem'}}>{data.PlantCountry}</b></div>
+        <div className="content-wrapper">
+          <div className="results-card">
+            <h2 className="vehicle-name">{data.ModelYear} {data.Make} {data.Model}</h2>
+            <div className="data-grid">
+              <div className="data-item"><span>{t.make}</span><b>{data.Make}</b></div>
+              <div className="data-item"><span>{t.model}</span><b>{data.Model}</b></div>
+              <div className="data-item"><span>{t.engine}</span><b>{data.DisplacementL}L {data.EngineConfiguration}</b></div>
+              <div className="data-item"><span>{t.country}</span><b>{data.PlantCountry}</b></div>
             </div>
             
-            <div style={{marginTop: '30px', backgroundColor: '#050505', height: '150px', border: '1px dashed #222', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333'}}>
-                {t.ad}
+            <div className="ad-placeholder">
+                <span>{t.ad}</span>
             </div>
           </div>
           
-          <button onClick={() => router.push('/')} style={{marginTop: '20px', background: 'none', border: 'none', color: '#facc15', cursor: 'pointer', fontWeight: 'bold'}}>
+          <button className="back-btn" onClick={() => router.push('/')}>
             ← {t.back}
           </button>
         </div>
       )}
+
+      <style jsx global>{`
+        body { background-color: #000; margin: 0; padding: 0; }
+        .container { min-height: 100vh; background-color: #000; color: #fff; padding: 20px; font-family: sans-serif; box-sizing: border-box; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { cursor: pointer; font-size: 2.5rem; fontWeight: 900; letter-spacing: -2px; margin: 0; }
+        .yellow { color: #facc15; }
+        .white { color: #fff; }
+        .subtitle { color: #888; margin-top: 10px; }
+        .content-wrapper { maxWidth: 800px; margin: 0 auto; }
+        .results-card { background-color: #0a0a0a; padding: 30px; border-radius: 20px; border: 1px solid #1a1a1a; }
+        .vehicle-name { color: #facc15; text-align: center; margin-bottom: 30px; font-size: 1.8rem; }
+        .data-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 25px; }
+        .data-item span { color: #aaa; font-size: 11px; text-transform: uppercase; font-weight: bold; }
+        .data-item b { color: #fff; font-size: 1.2rem; display: block; margin-top: 5px; }
+        .ad-placeholder { margin-top: 30px; background-color: #050505; height: 150px; border: 1px dashed #222; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #333; font-size: 10px; letter-spacing: 2px; }
+        .back-btn { margin-top: 20px; background: none; border: none; color: #facc15; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        
+        [dir='rtl'] .header h1 { direction: ltr; }
+        @media (max-width: 600px) {
+          .header h1 { font-size: 2rem; }
+          .data-grid { grid-template-columns: 1fr 1fr; }
+        }
+      `}</style>
     </div>
   );
 }
