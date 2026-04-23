@@ -1,39 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
-  en: { 
-    dir: 'ltr', subtitle: "Free vehicle specification check", placeholder: "Enter 17-digit VIN...", button: "CHECK", history: "Recent Searches", ad: "ADVERTISEMENT",
-    regions: { us: "US / Canada", eu: "Europe", asia: "Asia / Global" }
-  },
-  uk: { 
-    dir: 'ltr', subtitle: "Безкоштовна розшифровка специфікацій", placeholder: "Введіть 17 символів VIN...", button: "ПЕРЕВІРИТИ", history: "Останні перевірки", ad: "РЕКЛАМА",
-    regions: { us: "США / Канада", eu: "Європа", asia: "Азія / Інші" }
-  },
-  es: { 
-    dir: 'ltr', subtitle: "Comprobación gratuita de especificaciones", placeholder: "Ingrese el VIN...", button: "VERIFICAR", history: "Búsquedas recientes", ad: "ANUNCIO",
-    regions: { us: "EE.UU. / Canadá", eu: "Europa", asia: "Asia / Global" }
-  },
-  de: { 
-    dir: 'ltr', subtitle: "Kostenlose Fahrzeug-Prüfung", placeholder: "VIN eingeben...", button: "PRÜFEN", history: "Letzte Suchen", ad: "ANZEIGE",
-    regions: { us: "USA / Kanada", eu: "Europa", asia: "Asien / Global" }
-  },
-  zh: { 
-    dir: 'ltr', subtitle: "免费车辆规格查询", placeholder: "输入17位VIN码...", button: "查询", history: "最近查询", ad: "广告",
-    regions: { us: "美国 / 加拿大", eu: "欧洲", asia: "亚洲 / 全球" }
-  },
-  ar: { 
-    dir: 'rtl', subtitle: "فحص مواصفات السيارة مجاناً", placeholder: "أدخل رمز VIN...", button: "تحقق", history: "عمليات البحث الأخيرة", ad: "إعلان",
-    regions: { us: "أمريكا / كندا", eu: "أوروبا", asia: "آسيا / عالمي" }
-  }
+  en: { dir: 'ltr', subtitle: "Free vehicle specification check", placeholder: "Enter 17-digit VIN...", button: "CHECK", history: "Recent Searches", ad: "ADVERTISEMENT" },
+  uk: { dir: 'ltr', subtitle: "Безкоштовна розшифровка специфікацій", placeholder: "Введіть 17 символів VIN...", button: "ПЕРЕВІРИТИ", history: "Останні перевірки", ad: "РЕКЛАМА" },
+  es: { dir: 'ltr', subtitle: "Comprobación gratuita de especificaciones", placeholder: "Ingrese el VIN...", button: "VERIFICAR", history: "Búsquedas recientes", ad: "ANUNCIO" },
+  de: { dir: 'ltr', subtitle: "Kostenlose Fahrzeug-Prüfung", placeholder: "VIN eingeben...", button: "PRÜFEN", history: "Letzte Suchen", ad: "ANZEIGE" },
+  zh: { dir: 'ltr', subtitle: "免费车辆规格查询", placeholder: "输入17位VIN码...", button: "查询", history: "最近查询", ad: "广告" },
+  ar: { dir: 'rtl', subtitle: "فحص مواصفات السيارة مجاناً", placeholder: "أدخل رمز VIN...", button: "تحقق", history: "عمليات البحث الأخيرة", ad: "إعلان" }
 };
 
 const popularVins = ["1FA6P8CF5G", "1C4PJMDS7FW", "3VW637AJ7H"];
 
 export default function Home() {
+  const router = useRouter();
   const [lang, setLang] = useState('en');
   const [vin, setVin] = useState('');
-  const [region, setRegion] = useState('us');
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
@@ -56,8 +39,10 @@ export default function Home() {
 
   const t = translations[lang] || translations.en;
 
-  const handleSearch = () => {
-    // Жорстко залишаємо ТІЛЬКИ букви і цифри (видаляємо дефіси, пробіли тощо)
+  const handleSearch = (e) => {
+    e.preventDefault();
+    
+    // Залишаємо ТІЛЬКИ букви і цифри, видаляємо всі пробіли
     const cleanVin = vin.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     
     if (cleanVin.length === 17) {
@@ -67,17 +52,10 @@ export default function Home() {
         localStorage.setItem('vinHistory', JSON.stringify(newHistory));
       } catch (err) {}
       
-      // Переходимо за адресою
-      window.location.href = `/vin/${cleanVin}?region=${region}`;
+      // Стандартний перехід Next.js на сторінку результатів
+      router.push(`/vin/${cleanVin}`);
     } else {
-      alert(`Увага! VIN має містити рівно 17 символів.\nЗараз їх: ${cleanVin.length}\nВаш код: ${cleanVin}`);
-    }
-  };
-
-  // Щоб працював Enter
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
+      alert(lang === 'uk' ? `Потрібно рівно 17 символів! Ви ввели: ${cleanVin.length}` : `17 symbols required! You entered: ${cleanVin.length}`);
     }
   };
 
@@ -103,37 +81,23 @@ export default function Home() {
         <p className="subtitle">{t.subtitle}</p>
       </div>
       
-      {/* Замінили form на div, щоб браузер не втручався */}
-      <div className="vin-form">
-        <div className="region-selector">
-          <button type="button" className={`region-btn ${region === 'us' ? 'active' : ''}`} onClick={() => setRegion('us')}>
-            {t.regions.us}
-          </button>
-          <button type="button" className={`region-btn ${region === 'eu' ? 'active' : ''}`} onClick={() => setRegion('eu')}>
-            {t.regions.eu}
-          </button>
-          <button type="button" className={`region-btn ${region === 'asia' ? 'active' : ''}`} onClick={() => setRegion('asia')}>
-            {t.regions.asia}
-          </button>
-        </div>
-
+      <form onSubmit={handleSearch} className="vin-form">
         <div className="input-group">
           <input 
             type="text" 
             value={vin} 
             onChange={(e) => setVin(e.target.value)}
-            onKeyDown={handleKeyDown}
             placeholder={t.placeholder}
           />
-          <button type="button" onClick={handleSearch}>{t.button}</button>
+          <button type="submit">{t.button}</button>
         </div>
-      </div>
+      </form>
 
       <div className="history-section">
         <p>{t.history}</p>
         <div className="history-chips">
           {history.map((h, i) => (
-            <span key={i} onClick={() => { window.location.href = `/vin/${h}?region=${region}`; }} className="chip">
+            <span key={i} onClick={() => router.push(`/vin/${h}`)} className="chip">
               {h}
             </span>
           ))}
@@ -164,11 +128,6 @@ export default function Home() {
 
         .vin-form { max-width: 600px; margin: 0 auto 30px; }
         
-        .region-selector { display: flex; background: #0a0a0a; border: 1px solid #333; border-radius: 12px; padding: 5px; margin-bottom: 15px; }
-        .region-btn { flex: 1; background: transparent; color: #888; border: none; padding: 12px; font-size: 0.9rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-        .region-btn:hover { color: #fff; }
-        .region-btn.active { background: #333; color: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-
         .input-group { display: flex; flex-direction: column; gap: 10px; }
         .input-group input { 
           padding: 18px; font-size: 18px; border: 1px solid #333; border-radius: 12px; 
