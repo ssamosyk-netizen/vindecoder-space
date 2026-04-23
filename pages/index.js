@@ -118,45 +118,61 @@ export default function VinDecoder() {
       </footer>
 
       <style jsx global>{`
-        body { background-color: #000; margin: 0; padding: 0; }
-        .container { min-height: 100vh; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; box-sizing: border-box; color: #fff; }
+        body { background-color: #000; margin: 0; padding: 0; line-height: 1.5; }
+        .container { min-height: 100vh; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; box-sizing: border-box; color: #fff; }
         
-        .ad-placeholder { background-color: #0a0a0a; border: 1px dashed #333; display: flex; align-items: center; justify-content: center; color: #555; font-size: 10px; letter-spacing: 2px; border-radius: 8px; margin: 20px auto; overflow: hidden; }
+        /* Рекламні блоки - текст завжди по центру */
+        .ad-placeholder { background-color: #0a0a0a; border: 1px dashed #333; display: flex; align-items: center; justify-content: center; color: #555; font-size: 10px; letter-spacing: 2px; border-radius: 8px; margin: 20px auto; overflow: hidden; text-align: center; direction: ltr !important; }
         .top-ad { max-width: 728px; height: 90px; }
         .native-ad { width: 100%; height: 120px; margin-top: 25px; border-color: #facc1533; }
         .sidebar-ad { width: 300px; height: 600px; margin: 0; }
 
-        .lang-switcher { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 30px; }
+        .lang-switcher { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 30px; direction: ltr; }
         .lang-switcher button { background: #111; color: #fff; border: 1px solid #222; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .lang-switcher button.active { background: #facc15; color: #000; border-color: #facc15; }
 
         .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { font-size: clamp(2.5rem, 10vw, 4rem); font-weight: 900; margin: 0; letter-spacing: -3px; line-height: 1; }
+        .header h1 { font-size: clamp(2.5rem, 10vw, 4rem); font-weight: 900; margin: 0; letter-spacing: -3px; line-height: 1; direction: ltr; }
         .header .yellow { color: #facc15; }
         .header .white { color: #fff; }
-        .subtitle { color: #888; font-size: 0.9rem; font-weight: bold; margin-top: 10px; }
+        .subtitle { color: #888; font-size: 1rem; font-weight: bold; margin-top: 10px; }
 
         .vin-form { max-width: 500px; margin: 0 auto 40px; }
         .input-group { display: flex; flex-direction: column; gap: 10px; }
-        .input-group input { padding: 18px; font-size: 18px; border: 1px solid #333; border-radius: 12px; background: #0a0a0a; color: #fff; text-align: center; outline: none; }
-        .input-group button { padding: 18px; font-size: 18px; background: #facc15; border: none; border-radius: 12px; font-weight: bold; color: #000; cursor: pointer; }
+        
+        .input-group input { 
+          padding: 18px; font-size: 18px; border: 1px solid #333; border-radius: 12px; 
+          background: #0a0a0a; color: #fff; text-align: center; outline: none; width: 100%; box-sizing: border-box;
+        }
+        .input-group button { 
+          padding: 18px; font-size: 18px; background: #facc15; border: none; border-radius: 12px; 
+          font-weight: bold; color: #000; cursor: pointer; width: 100%;
+        }
 
         .results-wrapper { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
         .results-card { background: #0a0a0a; padding: 30px; border-radius: 20px; border: 1px solid #1a1a1a; flex: 1; }
-        .vehicle-name { color: #facc15; margin-top: 0; text-align: center; font-size: 1.8rem; margin-bottom: 25px; }
+        .vehicle-name { color: #facc15; margin-top: 0; text-align: center; font-size: 1.8rem; margin-bottom: 25px; direction: ltr; }
         
-        /* Виправлення читабельності тексту */
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .data-item { text-align: inherit; }
         .data-item span { color: #aaa; font-size: 11px; text-transform: uppercase; display: block; margin-bottom: 5px; font-weight: 600; }
         .data-item b { color: #fff; font-size: 1.2rem; display: block; }
         
         .sidebar { display: flex; justify-content: center; }
-        .footer { text-align: center; margin-top: 60px; color: #555; font-size: 11px; }
+        .footer { text-align: center; margin-top: 60px; color: #555; font-size: 11px; direction: ltr; }
 
+        /* Десктопна версія - логіка RTL */
         @media (min-width: 900px) {
-          .input-group { flex-direction: row; }
-          .input-group input { border-radius: 12px 0 0 12px; flex: 1; border-right: none; }
-          .input-group button { border-radius: 0 12px 12px 0; padding: 0 40px; }
+          .input-group { flex-direction: row; gap: 0; }
+          
+          /* Для LTR (англійська, українська і т.д.) */
+          [dir='ltr'] .input-group input { border-radius: 12px 0 0 12px; border-right: none; }
+          [dir='ltr'] .input-group button { border-radius: 0 12px 12px 0; width: auto; padding: 0 40px; }
+          
+          /* Для RTL (арабська) */
+          [dir='rtl'] .input-group input { border-radius: 0 12px 12px 0; border-left: none; }
+          [dir='rtl'] .input-group button { border-radius: 12px 0 0 12px; width: auto; padding: 0 40px; }
+
           .results-wrapper { flex-direction: row; align-items: flex-start; }
           .sidebar-ad { display: flex; }
         }
