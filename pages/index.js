@@ -7,27 +7,27 @@ const translations = {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Free Vehicle Specifications Report",
     metaDesc: "Free online VIN decoder. Check any vehicle specifications, engine data, and manufacturing details instantly.",
-    title: "FREE VIN DECODER",
+    title: "FREE VIN-DECODER",
     subtitle: "Get full vehicle specifications and manufacturing details instantly.",
     placeholder: "Enter 17-character VIN...",
     button: "DECODE",
     popular: "Popular Brands",
     history: "Recent Searches",
-    footer: "© 2026 VIN DECODER | PROFESSIONAL DATA",
+    footer: "© 2026 VIN-DECODER | PROFESSIONAL DATA",
     alert: "Please enter a valid VIN code"
   },
   uk: {
     dir: 'ltr',
-    metaTitle: "VIN ДЕКОДЕР | Безкоштовний звіт про технічні характеристики",
-    metaDesc: "Безкоштовний онлайн VIN декодер. Миттєво перевіряйте характеристики авто, дані двигуна та деталі виробництва.",
-    title: "БЕЗКОШТОВНИЙ VIN ДЕКОДЕР",
-    subtitle: "Отримайте повні технічні характеристики та дані про виробництво миттєво.",
+    metaTitle: "Розшифровка VIN-коду онлайн | Безкоштовний VIN-декодер",
+    metaDesc: "Безкоштовний VIN-декодер для всіх марок авто. Миттєва розшифровка технічних характеристик та даних виробництва.",
+    title: "РОЗШИФРОВКА VIN-КОДУ",
+    subtitle: "Дізнайтесь повні технічні характеристики та дані про заводське складання автомобіля.",
     placeholder: "Введіть 17-значний VIN...",
     button: "ПЕРЕВІРИТИ",
     popular: "Популярні марки",
     history: "Останні пошуки",
-    footer: "© 2026 VIN DECODER | ПРОФЕСІЙНІ ДАНІ",
-    alert: "Будь ласка, введіть коректний VIN код"
+    footer: "© 2026 VIN-DECODER | ПРОФЕСІЙНІ ДАНІ",
+    alert: "Будь ласка, введіть коректний VIN-код"
   },
   es: {
     dir: 'ltr',
@@ -39,20 +39,20 @@ const translations = {
     button: "DECODIFICAR",
     popular: "Marcas populares",
     history: "Búsquedas recientes",
-    footer: "© 2026 VIN DECODER | DATOS PROFESIONALES",
+    footer: "© 2026 VIN-DECODER | DATOS PROFESIONALES",
     alert: "Ingrese un VIN válido"
   },
   de: {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Kostenloser Fahrzeugbericht",
     metaDesc: "Kostenloser Online-VIN-Decoder. Prüfen Sie sofort Fahrzeugspezifikationen.",
-    title: "KOSTENLOSER VIN DECODER",
+    title: "KOSTENLOSER VIN-DECODER",
     subtitle: "Erhalten Sie sofort vollständige Fahrzeugspezifikationen und Details.",
     placeholder: "17-stellige VIN eingeben...",
     button: "DEKODIEREN",
     popular: "Beliebte Marken",
     history: "Letzte Suchen",
-    footer: "© 2026 VIN DECODER | PROFESSIONELLE DATEN",
+    footer: "© 2026 VIN-DECODER | PROFESSIONELLE DATEN",
     alert: "Bitte geben Sie eine gültige VIN ein"
   },
   zh: {
@@ -65,7 +65,7 @@ const translations = {
     button: "解码",
     popular: "热门品牌",
     history: "最近搜索",
-    footer: "© 2026 VIN DECODER | 专业数据",
+    footer: "© 2026 VIN-DECODER | 专业数据",
     alert: "请输入有效的车架号"
   },
   ar: {
@@ -78,7 +78,7 @@ const translations = {
     button: "فك التشفير",
     popular: "ماركات شعبية",
     history: "عمليات البحث الأخيرة",
-    footer: "© 2026 VIN DECODER | بيانات احترافية",
+    footer: "© 2026 VIN-DECODER | بيانات احترافية",
     alert: "يرجى إدخال رقم شاسيه صحيح"
   }
 };
@@ -101,14 +101,8 @@ export default function Home() {
   useEffect(() => {
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang && translations[savedLang]) setLang(savedLang);
-    
-    // Перевіряємо історію в браузері. Якщо її немає - показуємо дефолтні красиві VIN-коди.
-    const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || 'null');
-    if (savedHistory && savedHistory.length > 0) {
-      setHistory(savedHistory);
-    } else {
-      setHistory(['W0L0TGF7552063190', '5YJ3E1EA5LF424312', '1HGCM82633A00435']);
-    }
+    const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || '[]');
+    setHistory(savedHistory);
   }, []);
 
   const t = translations[lang] || translations.en;
@@ -121,7 +115,6 @@ export default function Home() {
   const handleSearch = (searchVin = vin) => {
     const finalVin = searchVin.toUpperCase().trim();
     if (finalVin.length >= 8) {
-      // Оновлюємо історію реальними пошуками
       const newHistory = [finalVin, ...history.filter(h => h !== finalVin)].slice(0, 5);
       setHistory(newHistory);
       localStorage.setItem('vinHistory', JSON.stringify(newHistory));
@@ -137,24 +130,13 @@ export default function Home() {
         <title>{t.metaTitle}</title>
         <meta name="description" content={t.metaDesc} />
         <link rel="icon" href="/favicon.png" />
-        
-        <meta property="og:title" content={t.metaTitle} />
-        <meta property="og:description" content={t.metaDesc} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://vindecoder.space/" />
       </Head>
 
       <header className="header">
-        <div className="logo" onClick={() => router.push('/')} style={{cursor: 'pointer'}}>
-          <span className="yellow">VIN</span>DECODER
-        </div>
+        <div className="logo"><span className="yellow">VIN</span>-DECODER</div>
         <div className="lang-bar">
           {Object.keys(translations).map((l) => (
-            <span 
-              key={l} 
-              className={lang === l ? 'active' : ''} 
-              onClick={() => handleLangChange(l)}
-            >
+            <span key={l} className={lang === l ? 'active' : ''} onClick={() => handleLangChange(l)}>
               {l.toUpperCase()}
             </span>
           ))}
@@ -181,7 +163,7 @@ export default function Home() {
           <div className="makes-grid">
             {popularMakes.map((make) => (
               <div key={make.slug} className="make-item" onClick={() => router.push(`/make/${make.slug}`)}>
-                {make.name === 'BMW' ? 'BMW' : make.name}
+                {make.name}
               </div>
             ))}
           </div>
@@ -210,31 +192,17 @@ export default function Home() {
         .header { display: flex; justify-content: space-between; align-items: center; padding: 30px 0; }
         .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; }
         .yellow { color: #facc15; }
-        
         .lang-bar { display: flex; gap: 8px; font-size: 10px; font-weight: bold; }
-        .lang-bar span { 
-          cursor: pointer; 
-          padding: 6px 10px; 
-          border: 1px solid transparent; 
-          border-radius: 8px; 
-          transition: all 0.2s; 
-          color: #444;
-        }
-        .lang-bar span.active { 
-          color: #facc15; 
-          border-color: #facc15; 
-          background: rgba(250, 204, 21, 0.05); 
-        }
-        .lang-bar span:hover:not(.active) { color: #aaa; border-color: #222; }
+        .lang-bar span { cursor: pointer; padding: 6px 10px; border: 1px solid transparent; border-radius: 8px; color: #444; }
+        .lang-bar span.active { color: #facc15; border-color: #facc15; }
 
         .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; text-align: center; }
         .title { font-size: clamp(2.2rem, 10vw, 5rem); font-weight: 900; margin: 0; line-height: 0.9; letter-spacing: -3px; }
         .subtitle { color: #555; margin: 20px 0 40px; font-size: clamp(0.9rem, 2vw, 1.1rem); max-width: 600px; }
 
         .search-box { width: 100%; max-width: 700px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 25px; border: 1px solid #222; margin-bottom: 80px; }
-        input { flex: 1; background: transparent; border: none; padding: 15px 25px; color: #fff; font-size: 1.1rem; outline: none; }
-        button { background: #facc15; color: #000; border: none; padding: 0 40px; border-radius: 18px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: transform 0.2s; }
-        button:active { transform: scale(0.95); }
+        input { flex: 1; background: transparent; border: none; padding: 15px; color: #fff; font-size: 1.1rem; outline: none; }
+        button { background: #facc15; color: #000; border: none; padding: 0 40px; border-radius: 18px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
 
         .makes-section { width: 100%; max-width: 900px; margin-bottom: 60px; }
         .makes-section h3 { color: #222; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
@@ -261,4 +229,3 @@ export default function Home() {
     </div>
   );
 }
-// --- КІНЕЦЬ ФАЙЛУ ---
