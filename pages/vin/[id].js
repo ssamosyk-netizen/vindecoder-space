@@ -81,7 +81,9 @@ export default function VinResult() {
         <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}><span className="yellow">VIN</span><span className="white">DECODER</span></h1>
         {data && (
           <div className="hero">
-            <h2>{val(data.ModelYear)} {val(data.Make)} {val(data.Model)}</h2>
+            <h2>
+              {val(data.ModelYear)} <span className="yellow">{val(data.Make)}</span> {val(data.Model)} {data.DisplacementL && `${data.DisplacementL}L`}
+            </h2>
             <p className="subtitle">{t.subtitle} <b>{id}</b></p>
           </div>
         )}
@@ -187,7 +189,7 @@ export default function VinResult() {
         .container { padding: 20px; min-height: 100vh; text-align: center; }
         .header h1 { font-size: 2rem; font-weight: 900; margin-bottom: 20px; letter-spacing: -2px; }
         .yellow { color: #facc15; } .white { color: #fff; }
-        .hero h2 { font-size: clamp(1.5rem, 5vw, 2.5rem); text-transform: uppercase; margin: 0; font-weight: 900; }
+        .hero h2 { font-size: clamp(1.5rem, 5vw, 2.8rem); text-transform: uppercase; margin: 0; font-weight: 900; line-height: 1.1; }
         .subtitle { color: #666; margin: 10px 0 30px; font-size: 14px; }
         .wrapper { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
         .main { flex: 1; min-width: 0; }
