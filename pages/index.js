@@ -7,27 +7,27 @@ const translations = {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Free Vehicle Specifications Report",
     metaDesc: "Free online VIN decoder. Check any vehicle specifications, engine data, and manufacturing details instantly.",
-    title: "FREE VIN-DECODER",
+    title: "FREE VIN DECODER",
     subtitle: "Get full vehicle specifications and manufacturing details instantly.",
     placeholder: "Enter 17-character VIN...",
     button: "DECODE",
     popular: "Popular Brands",
     history: "Recent Searches",
-    footer: "© 2026 VIN-DECODER | PROFESSIONAL DATA",
+    footer: "© 2026 VIN DECODER | PROFESSIONAL DATA",
     alert: "Please enter a valid VIN code"
   },
   uk: {
     dir: 'ltr',
-    metaTitle: "Розшифровка VIN-коду онлайн | Безкоштовний VIN-декодер",
-    metaDesc: "Безкоштовний VIN-декодер для всіх марок авто. Миттєва розшифровка технічних характеристик та даних виробництва.",
-    title: "РОЗШИФРОВКА VIN-КОДУ",
-    subtitle: "Дізнайтесь повні технічні характеристики та дані про заводське складання автомобіля.",
+    metaTitle: "VIN ДЕКОДЕР | Безкоштовний звіт про технічні характеристики",
+    metaDesc: "Безкоштовний онлайн VIN декодер. Миттєво перевіряйте характеристики авто, дані двигуна та деталі виробництва.",
+    title: "БЕЗКОШТОВНИЙ VIN ДЕКОДЕР",
+    subtitle: "Отримайте повні технічні характеристики та дані про виробництво миттєво.",
     placeholder: "Введіть 17-значний VIN...",
     button: "ПЕРЕВІРИТИ",
     popular: "Популярні марки",
     history: "Останні пошуки",
-    footer: "© 2026 VIN-DECODER | ПРОФЕСІЙНІ ДАНІ",
-    alert: "Будь ласка, введіть коректний VIN-код"
+    footer: "© 2026 VIN DECODER | ПРОФЕСІЙНІ ДАНІ",
+    alert: "Будь ласка, введіть коректний VIN код"
   },
   es: {
     dir: 'ltr',
@@ -39,20 +39,20 @@ const translations = {
     button: "DECODIFICAR",
     popular: "Marcas populares",
     history: "Búsquedas recientes",
-    footer: "© 2026 VIN-DECODER | DATOS PROFESIONALES",
+    footer: "© 2026 VIN DECODER | DATOS PROFESIONALES",
     alert: "Ingrese un VIN válido"
   },
   de: {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Kostenloser Fahrzeugbericht",
     metaDesc: "Kostenloser Online-VIN-Decoder. Prüfen Sie sofort Fahrzeugspezifikationen.",
-    title: "KOSTENLOSER VIN-DECODER",
+    title: "KOSTENLOSER VIN DECODER",
     subtitle: "Erhalten Sie sofort vollständige Fahrzeugspezifikationen und Details.",
     placeholder: "17-stellige VIN eingeben...",
     button: "DEKODIEREN",
     popular: "Beliebte Marken",
     history: "Letzte Suchen",
-    footer: "© 2026 VIN-DECODER | PROFESSIONELLE DATEN",
+    footer: "© 2026 VIN DECODER | PROFESSIONELLE DATEN",
     alert: "Bitte geben Sie eine gültige VIN ein"
   },
   zh: {
@@ -65,7 +65,7 @@ const translations = {
     button: "解码",
     popular: "热门品牌",
     history: "最近搜索",
-    footer: "© 2026 VIN-DECODER | 专业数据",
+    footer: "© 2026 VIN DECODER | 专业数据",
     alert: "请输入有效的车架号"
   },
   ar: {
@@ -78,7 +78,7 @@ const translations = {
     button: "فك التشفير",
     popular: "ماركات شعبية",
     history: "عمليات البحث الأخيرة",
-    footer: "© 2026 VIN-DECODER | بيانات احترافية",
+    footer: "© 2026 VIN DECODER | بيانات احترافية",
     alert: "يرجى إدخال رقم شاسيه صحيح"
   }
 };
@@ -139,7 +139,7 @@ export default function Home() {
 
       <header className="header">
         <div className="logo" onClick={() => router.push('/')} style={{cursor: 'pointer'}}>
-          <span className="yellow">VIN</span>-DECODER
+          <span className="yellow">VIN</span>DECODER
         </div>
         <div className="lang-bar">
           {Object.keys(translations).map((l) => (
@@ -174,7 +174,7 @@ export default function Home() {
           <div className="makes-grid">
             {popularMakes.map((make) => (
               <div key={make.slug} className="make-item" onClick={() => router.push(`/make/${make.slug}`)}>
-                {make.name}
+                {make.name === 'BMW' ? 'BMW' : make.name}
               </div>
             ))}
           </div>
@@ -195,13 +195,7 @@ export default function Home() {
       <footer className="footer">{t.footer}</footer>
 
       <style jsx global>{`
-        body { 
-          background-color: #000; 
-          color: #fff; 
-          margin: 0; 
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-          overflow-x: hidden; 
-        }
+        body { background-color: #000; color: #fff; margin: 0; font-family: -apple-system, sans-serif; overflow-x: hidden; }
       `}</style>
 
       <style jsx>{`
@@ -239,7 +233,7 @@ export default function Home() {
         .makes-section h3 { color: #222; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
         .makes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
         .make-item { background: #0a0a0a; border: 1px solid #111; padding: 15px; border-radius: 12px; font-size: 13px; font-weight: bold; color: #777; cursor: pointer; transition: 0.2s; }
-        .make-item:hover { border-color: #facc15; color: #fff; background: #111; }
+        .make-item:hover { border-color: #facc15; color: #fff; }
 
         .history-section { display: flex; flex-direction: column; align-items: center; gap: 15px; padding-bottom: 40px; }
         .section-label { font-size: 10px; color: #222; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
@@ -260,3 +254,4 @@ export default function Home() {
     </div>
   );
 }
+// --- КІНЕЦЬ ФАЙЛУ ---
