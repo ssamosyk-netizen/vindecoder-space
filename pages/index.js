@@ -101,8 +101,14 @@ export default function Home() {
   useEffect(() => {
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang && translations[savedLang]) setLang(savedLang);
-    const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || '[]');
-    setHistory(savedHistory);
+    
+    // Перевіряємо історію в браузері. Якщо її немає - показуємо дефолтні красиві VIN-коди.
+    const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || 'null');
+    if (savedHistory && savedHistory.length > 0) {
+      setHistory(savedHistory);
+    } else {
+      setHistory(['W0L0TGF7552063190', '5YJ3E1EA5LF424312', '1HGCM82633A00435']);
+    }
   }, []);
 
   const t = translations[lang] || translations.en;
@@ -115,6 +121,7 @@ export default function Home() {
   const handleSearch = (searchVin = vin) => {
     const finalVin = searchVin.toUpperCase().trim();
     if (finalVin.length >= 8) {
+      // Оновлюємо історію реальними пошуками
       const newHistory = [finalVin, ...history.filter(h => h !== finalVin)].slice(0, 5);
       setHistory(newHistory);
       localStorage.setItem('vinHistory', JSON.stringify(newHistory));
@@ -130,6 +137,7 @@ export default function Home() {
         <title>{t.metaTitle}</title>
         <meta name="description" content={t.metaDesc} />
         <link rel="icon" href="/favicon.png" />
+        
         <meta property="og:title" content={t.metaTitle} />
         <meta property="og:description" content={t.metaDesc} />
         <meta property="og:type" content="website" />
@@ -253,3 +261,4 @@ export default function Home() {
     </div>
   );
 }
+// --- КІНЕЦЬ ФАЙЛУ ---
