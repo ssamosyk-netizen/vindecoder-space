@@ -57,9 +57,9 @@ const translations = {
   },
   zh: {
     dir: 'ltr',
-    title: "免费车架号 (VIN) 解码器",
     metaTitle: "车架号解码器 | 免费车辆规格报告",
     metaDesc: "免费在线车架号 (VIN) 解码器。立即查询车辆规格和制造详情。",
+    title: "免费车架号 (VIN) 解码器",
     subtitle: "立即获取完整的车辆规格和制造详情。",
     placeholder: "输入17位车架号...",
     button: "解码",
@@ -130,6 +130,7 @@ export default function Home() {
         <title>{t.metaTitle}</title>
         <meta name="description" content={t.metaDesc} />
         <link rel="icon" href="/favicon.png" />
+        
         <meta property="og:title" content={t.metaTitle} />
         <meta property="og:description" content={t.metaDesc} />
         <meta property="og:type" content="website" />
@@ -173,7 +174,7 @@ export default function Home() {
           <div className="makes-grid">
             {popularMakes.map((make) => (
               <div key={make.slug} className="make-item" onClick={() => router.push(`/make/${make.slug}`)}>
-                {make.name === 'BMW' ? 'BMW' : make.name}
+                {make.name}
               </div>
             ))}
           </div>
@@ -194,7 +195,13 @@ export default function Home() {
       <footer className="footer">{t.footer}</footer>
 
       <style jsx global>{`
-        body { background-color: #000; color: #fff; margin: 0; font-family: -apple-system, sans-serif; overflow-x: hidden; }
+        body { 
+          background-color: #000; 
+          color: #fff; 
+          margin: 0; 
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+          overflow-x: hidden; 
+        }
       `}</style>
 
       <style jsx>{`
@@ -215,21 +222,24 @@ export default function Home() {
         .lang-bar span.active { 
           color: #facc15; 
           border-color: #facc15; 
+          background: rgba(250, 204, 21, 0.05); 
         }
+        .lang-bar span:hover:not(.active) { color: #aaa; border-color: #222; }
 
         .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; text-align: center; }
         .title { font-size: clamp(2.2rem, 10vw, 5rem); font-weight: 900; margin: 0; line-height: 0.9; letter-spacing: -3px; }
         .subtitle { color: #555; margin: 20px 0 40px; font-size: clamp(0.9rem, 2vw, 1.1rem); max-width: 600px; }
 
         .search-box { width: 100%; max-width: 700px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 25px; border: 1px solid #222; margin-bottom: 80px; }
-        input { flex: 1; background: transparent; border: none; padding: 15px; color: #fff; font-size: 1.1rem; outline: none; }
-        button { background: #facc15; color: #000; border: none; padding: 0 40px; border-radius: 18px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        input { flex: 1; background: transparent; border: none; padding: 15px 25px; color: #fff; font-size: 1.1rem; outline: none; }
+        button { background: #facc15; color: #000; border: none; padding: 0 40px; border-radius: 18px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: transform 0.2s; }
+        button:active { transform: scale(0.95); }
 
         .makes-section { width: 100%; max-width: 900px; margin-bottom: 60px; }
         .makes-section h3 { color: #222; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
         .makes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
         .make-item { background: #0a0a0a; border: 1px solid #111; padding: 15px; border-radius: 12px; font-size: 13px; font-weight: bold; color: #777; cursor: pointer; transition: 0.2s; }
-        .make-item:hover { border-color: #facc15; color: #fff; }
+        .make-item:hover { border-color: #facc15; color: #fff; background: #111; }
 
         .history-section { display: flex; flex-direction: column; align-items: center; gap: 15px; padding-bottom: 40px; }
         .section-label { font-size: 10px; color: #222; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
