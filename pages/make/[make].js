@@ -131,7 +131,7 @@ export default function MakeLanding() {
   return (
     <div className="container" dir={t.dir}>
       <Head>
-        <title>{capitalizedMake} VIN Decoder | {lang === 'uk' ? 'Безкоштовна перевірка' : 'Free Specifications'}</title>
+        <title>{capitalizedMake} VIN Decoder | {lang === 'uk' ? 'Перевірка за VIN' : 'VIN Check'}</title>
         <meta name="description" content={t.heroSub.replace('{make}', capitalizedMake)} />
         <link rel="canonical" href={`https://vindecoder.space/make/${make}`} />
         <link rel="icon" type="image/png" href="/favicon.png" />
@@ -182,14 +182,18 @@ export default function MakeLanding() {
         <div className="info-section">
           <h3>{t.whyTitle.replace('{make}', capitalizedMake)}</h3>
           <p>{t.whyText.replace('{make}', capitalizedMake)}</p>
-          <ul>
-            <li>{t.bullet1}</li>
-            <li>{t.bullet2}</li>
-            <li>{t.bullet3}</li>
-            <li>{t.bullet4}</li>
-          </ul>
+          <div className="list-container">
+            <ul>
+              <li>{t.bullet1}</li>
+              <li>{t.bullet2}</li>
+              <li>{t.bullet3}</li>
+              <li>{t.bullet4}</li>
+            </ul>
+          </div>
         </div>
       </div>
+
+      <footer className="footer"><p>© 2026 VIN DECODER</p></footer>
 
       <style jsx global>{`
         html, body {
@@ -197,7 +201,8 @@ export default function MakeLanding() {
           padding: 0;
           background-color: #000;
           color: #fff;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          overflow-x: hidden;
         }
       `}</style>
 
@@ -232,21 +237,40 @@ export default function MakeLanding() {
         .info-section { 
           max-width: 800px; 
           margin: 0 auto; 
-          text-align: inherit; 
           background: #0a0a0a; 
           padding: 40px; 
           border-radius: 30px; 
           border: 1px solid #1a1a1a; 
         }
         .info-section h3 { color: #facc15; margin-bottom: 20px; font-size: 1.4rem; }
-        .info-section p { color: #aaa; line-height: 1.6; }
-        .info-section ul { color: #777; line-height: 2; margin-top: 20px; padding-left: 20px; padding-right: 20px; }
+        .info-section p { color: #aaa; line-height: 1.6; margin-bottom: 30px; }
+        
+        /* Вирівнювання списку: кружечки зліва, текст не по центру */
+        .list-container {
+          display: inline-block;
+          text-align: start;
+        }
+        .info-section ul { 
+          color: #777; 
+          line-height: 1.8; 
+          margin: 0; 
+          padding: 0;
+          list-style-position: outside;
+          padding-inline-start: 25px;
+        }
+        .info-section li {
+          margin-bottom: 12px;
+          font-size: 1.05rem;
+        }
+
+        .footer { padding: 60px 0 20px; color: #222; font-size: 10px; text-transform: uppercase; font-weight: bold; }
         
         @media (max-width: 768px) {
           .header { flex-direction: column; gap: 20px; padding-bottom: 40px; }
           .search-box { flex-direction: column; background: transparent; border: none; padding: 0; }
           input { background: #111; border: 1px solid #222; margin-bottom: 10px; border-radius: 15px; }
           button { padding: 18px; border-radius: 15px; }
+          .info-section { padding: 30px 20px; }
         }
       `}</style>
     </div>
