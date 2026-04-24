@@ -3,30 +3,8 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
-  en: { 
-    dir: 'ltr', subtitle: "Vehicle Specification Report", back: "Back to Search", privacy: "Privacy Policy", ad: "ADVERTISEMENT",
-    partnerTitle: "Full Report Available", partnerDesc: "Get hidden damages and mileage history.", partnerBtn: "GET FULL REPORT",
-    lockedTitle: "🔒 Technical Data Protected", lockedDesc: "European manufacturers restrict detailed specs in free databases. Unlock for full history.", unlockBtn: "UNLOCK REPORT",
-    sections: { general: "General Information", engine: "Engine & Performance", mechanical: "Mechanical & Chassis", safety: "Safety & Interior", origin: "Manufacturing Details" },
-    fields: { 
-      make: "Make", model: "Model", year: "Year", trim: "Trim", series: "Series", type: "Vehicle Type", body: "Body Class", doors: "Doors",
-      engine: "Engine", cylinders: "Cylinders", hp: "Horsepower", fuel: "Fuel Type", injection: "Injection Type", drive: "Drive Type", transmission: "Transmission",
-      brakes: "Brake System", steering: "Steering", axles: "Axles", wheelbase: "Wheelbase", gvwr: "Gross Weight",
-      abs: "ABS", esc: "ESC", tpms: "TPMS", seatbelts: "Seat Belts", airbagF: "Front Airbags", airbagS: "Side Airbags", airbagK: "Knee Airbags", country: "Country", plantCity: "Plant City", manufacturer: "Manufacturer"
-    }
-  },
-  uk: { 
-    dir: 'ltr', subtitle: "Звіт про специфікації автомобіля", back: "Назад до пошуку", privacy: "Політика конфіденційності", ad: "РЕКЛАМА",
-    partnerTitle: "Доступний повний звіт", partnerDesc: "Перевірте скручений пробіг та історію ДТП.", partnerBtn: "ОТРИМАТИ ПОВНИЙ ЗВІТ",
-    lockedTitle: "🔒 Технічні дані захищені", lockedDesc: "Європейські виробники обмежують дані у безкоштовних базах. Розблокуйте повну історію.", unlockBtn: "РОЗБЛОКУВАТИ ЗВІТ",
-    sections: { general: "Загальна інформація", engine: "Двигун та трансмісія", mechanical: "Ходова та механіка", safety: "Безпека та інтер'єр", origin: "Дані виробництва" },
-    fields: { 
-      make: "Марка", model: "Модель", year: "Рік", trim: "Комплектація", series: "Серія", type: "Тип ТЗ", body: "Клас кузова", doors: "Двері",
-      engine: "Двигун", cylinders: "Циліндри", hp: "Кінські сили", fuel: "Паливо", injection: "Тип впорскування", drive: "Привід", transmission: "Трансмісія",
-      brakes: "Гальма", steering: "Кермо", axles: "Осі", wheelbase: "Колісна база", gvwr: "Повна маса",
-      abs: "ABS", esc: "ESC", tpms: "Тиск у шинах", seatbelts: "Ремені безпеки", airbagF: "Передні Airbag", airbagS: "Бокові Airbag", airbagK: "Колінні Airbag", country: "Країна", plantCity: "Місто заводу", manufacturer: "Виробник"
-    }
-  }
+  en: { dir: 'ltr', subtitle: "Vehicle Specification Report", back: "Back to Search", privacy: "Privacy Policy", ad: "ADVERTISEMENT", lockedTitle: "🔒 Technical Data Protected", lockedDesc: "European manufacturers restrict detailed specs in free databases. Unlock for full history.", unlockBtn: "UNLOCK REPORT", sections: { general: "General Information", engine: "Engine & Performance", mechanical: "Mechanical & Chassis", safety: "Safety & Interior", origin: "Manufacturing Details" }, fields: { make: "Make", model: "Model", year: "Year", trim: "Trim", series: "Series", type: "Vehicle Type", body: "Body Class", doors: "Doors", engine: "Engine", cylinders: "Cylinders", hp: "Horsepower", fuel: "Fuel Type", injection: "Injection Type", drive: "Drive Type", transmission: "Transmission", brakes: "Brake System", steering: "Steering", axles: "Axles", wheelbase: "Wheelbase", gvwr: "Gross Weight", abs: "ABS", esc: "ESC", tpms: "TPMS", airbagF: "Front Airbags", airbagS: "Side Airbags", country: "Country", plantCity: "Plant City", manufacturer: "Manufacturer" } },
+  uk: { dir: 'ltr', subtitle: "Звіт про специфікації автомобіля", back: "Назад до пошуку", privacy: "Політика конфіденційності", ad: "РЕКЛАМА", lockedTitle: "🔒 Технічні дані захищені", lockedDesc: "Європейські виробники обмежують дані у безкоштовних базах. Розблокуйте повну історію.", unlockBtn: "РОЗБЛОКУВАТИ ЗВІТ", sections: { general: "Загальна інформація", engine: "Двигун та трансмісія", mechanical: "Ходова та механіка", safety: "Безпека та інтер'єр", origin: "Дані виробництва" }, fields: { make: "Марка", model: "Модель", year: "Рік", trim: "Комплектація", series: "Серія", type: "Тип ТЗ", body: "Клас кузова", doors: "Двері", engine: "Двигун", cylinders: "Циліндри", hp: "Кінські сили", fuel: "Паливо", injection: "Тип впорскування", drive: "Привід", transmission: "Трансмісія", brakes: "Гальма", steering: "Кермо", axles: "Осі", wheelbase: "Колісна база", gvwr: "Повна маса", abs: "ABS", esc: "ESC", tpms: "Тиск у шинах", airbagF: "Передні Airbag", airbagS: "Бокові Airbag", country: "Країна", plantCity: "Місто заводу", manufacturer: "Виробник" } }
 };
 
 const fixEuroYear = (vin) => {
@@ -65,13 +43,12 @@ export default function VinResult({ serverData, vin }) {
   const t = translations[lang] || translations.en;
   const val = (v) => (!v || v === "" || v === "Not Applicable" || v === "null" || v === "None") ? "—" : v;
 
-  // ДАНІ ДЛЯ SEO ТА КАРТИНКИ
   const carYear = val(serverData?.ModelYear);
   const carMake = val(serverData?.Make);
   const carModel = val(serverData?.Model);
-  const carEngine = serverData?.DisplacementL ? `${serverData.DisplacementL}L` : '';
+  const carEngine = serverData?.DisplacementL ? `${serverData.DisplacementL}L` : '—';
 
-  const shareTitle = `${vin} | ${carYear} ${carMake} ${carModel} ${carEngine}`;
+  const shareTitle = `${vin} | ${carYear} ${carMake} ${carModel} ${carEngine !== '—' ? carEngine : ''}`;
   const ogImageUrl = `/api/og?vin=${vin}&make=${carMake}&model=${carModel}&year=${carYear}&engine=${carEngine}`;
 
   return (
@@ -90,7 +67,7 @@ export default function VinResult({ serverData, vin }) {
         <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}><span className="yellow">VIN</span><span className="white">DECODER</span></h1>
         {serverData && (
           <div className="hero">
-            <h2>{carYear} <span className="yellow">{carMake}</span> {carModel} {carEngine}</h2>
+            <h2>{carYear} <span className="yellow">{carMake}</span> {carModel} {carEngine !== '—' ? carEngine : ''}</h2>
             <p className="subtitle">{t.subtitle} <b>{vin}</b></p>
           </div>
         )}
@@ -113,14 +90,7 @@ export default function VinResult({ serverData, vin }) {
 
             <div className="ad-container horizontal"><span className="ad-tag">{t.ad}</span><div className="ad-placeholder-hor">728 x 90</div></div>
 
-            {isEuro ? (
-              <div className="premium-lock">
-                <div className="lock-icon">🔒</div>
-                <h3>{t.lockedTitle}</h3>
-                <p>{t.lockedDesc}</p>
-                <button className="partner-btn pulse" onClick={() => window.open('https://www.carvertical.com/', '_blank')}>{t.unlockBtn}</button>
-              </div>
-            ) : (
+            {!isEuro && (
               <>
                 <section className="section">
                   <h3>{t.sections.engine}</h3>
@@ -148,7 +118,6 @@ export default function VinResult({ serverData, vin }) {
               <div className="grid">
                 <div className="item"><span>{t.fields.manufacturer}</span><b>{val(serverData.Manufacturer)}</b></div>
                 <div className="item"><span>{t.fields.country}</span><b>{val(serverData.PlantCountry)}</b></div>
-                <div className="item"><span>{t.fields.plantCity}</span><b>{val(serverData.PlantCity)}</b></div>
               </div>
             </section>
 
