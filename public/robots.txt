@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Allow: /vin/*
+Disallow: /api/*
+
+Sitemap: https://vindecoder.space/sitemap.xml
