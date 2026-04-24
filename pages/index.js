@@ -7,7 +7,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Free Vehicle Specifications Report",
     metaDesc: "Free online VIN decoder. Check any vehicle specifications, engine data, and manufacturing details instantly.",
-    title: "FREE VEHICLE CHECK",
+    title: "FREE VIN DECODER",
     subtitle: "Get full vehicle specifications and manufacturing details instantly.",
     placeholder: "Enter 17-character VIN...",
     button: "DECODE",
@@ -20,10 +20,10 @@ const translations = {
   },
   uk: {
     dir: 'ltr',
-    metaTitle: "VIN ДЕКОДЕР | Безкоштовна перевірка комплектації авто",
+    metaTitle: "VIN ДЕКОДЕР | Безкоштовний звіт про технічні характеристики",
     metaDesc: "Безкоштовний онлайн VIN декодер. Миттєво перевіряйте характеристики авто, дані двигуна та деталі виробництва.",
-    title: "БЕЗКОШТОВНА ПЕРЕВІРКА АВТО",
-    subtitle: "Отримайте повні технічні характеристики та дані про заводське складання.",
+    title: "БЕЗКОШТОВНИЙ VIN ДЕКОДЕР",
+    subtitle: "Отримайте повні технічні характеристики та дані про заводське складання автомобіля.",
     placeholder: "Введіть 17-значний VIN...",
     button: "ПЕРЕВІРИТИ",
     popular: "Популярні марки",
@@ -37,7 +37,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "DECODIFICADOR VIN | Informe gratuito de especificaciones",
     metaDesc: "Decodificador VIN en línea gratuito. Verifique las especificaciones del vehículo al instante.",
-    title: "VERIFICACIÓN DE VEHÍCULOS",
+    title: "DECODIFICADOR VIN GRATUITO",
     subtitle: "Obtenga especificaciones completas del vehículo y detalles de fabricación.",
     placeholder: "Ingrese el VIN de 17 caracteres...",
     button: "DECODIFICAR",
@@ -52,7 +52,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Kostenloser Fahrzeugbericht",
     metaDesc: "Kostenloser Online-VIN-Decoder. Prüfen Sie sofort Fahrzeugspezifikationen.",
-    title: "KOSTENLOSE FAHRZEUGPRÜFUNG",
+    title: "KOSTENLOSER VIN DECODER",
     subtitle: "Erhalten Sie sofort vollständige Fahrzeugspezifikationen und Details.",
     placeholder: "17-stellige VIN eingeben...",
     button: "DEKODIEREN",
@@ -67,7 +67,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "车架号解码器 | 免费车辆规格报告",
     metaDesc: "免费在线车架号 (VIN) 解码器。立即查询车辆规格和制造详情。",
-    title: "免费车辆信息查询",
+    title: "免费车架号 (VIN) 解码器",
     subtitle: "立即获取完整的车辆规格和制造详情。",
     placeholder: "输入17位车架号...",
     button: "解码",
@@ -82,7 +82,7 @@ const translations = {
     dir: 'rtl',
     metaTitle: "فك تشفير رقم الشاسيه | تقرير مواصفات السيارة مجاناً",
     metaDesc: "أداة فك تشفير رقم الشاسيه مجانية عبر الإنترنت. تحقق من مواصفات السيارة وتفاصيل التصنيع فوراً.",
-    title: "فحص مجاني للسيارة",
+    title: "فك تشفير رقم الشاسيه مجاناً",
     subtitle: "احصل على مواصفات السيارة الكاملة وتفاصيل التصنيع على الفور.",
     placeholder: "أدخل رقم الشاسيه المكون من 17 حرفاً...",
     button: "فك التشفير",
@@ -172,7 +172,8 @@ export default function Home() {
       </header>
 
       <main className="main">
-        <h1 className="title">{t.title}</h1>
+        <h1 className="brand-title"><span className="yellow">VIN</span>DECODER</h1>
+        <h2 className="localized-title">{t.title}</h2>
         <p className="subtitle">{t.subtitle}</p>
 
         <div className="search-box">
@@ -233,10 +234,11 @@ export default function Home() {
         .lang-bar span.active { color: #facc15; border-color: #facc15; background: rgba(250, 204, 21, 0.05); }
         .lang-bar span:hover:not(.active) { color: #aaa; border-color: #222; }
 
-        .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; text-align: center; }
+        .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0 40px; text-align: center; }
         
-        .title { font-size: clamp(2.2rem, 8vw, 4.5rem); font-weight: 900; margin: 0; line-height: 1; letter-spacing: -2px; text-transform: uppercase; }
-        .subtitle { color: #555; margin: 20px 0 40px; font-size: clamp(0.9rem, 2vw, 1.1rem); max-width: 600px; }
+        .brand-title { font-size: clamp(3.5rem, 12vw, 6.5rem); font-weight: 900; margin: 0; line-height: 0.9; letter-spacing: -3px; }
+        .localized-title { font-size: clamp(1.3rem, 4vw, 1.8rem); font-weight: 700; color: #aaa; margin: 20px 0 10px; letter-spacing: 2px; text-transform: uppercase; }
+        .subtitle { color: #777; margin: 0 0 40px; font-size: clamp(1.1rem, 2.5vw, 1.3rem); max-width: 600px; line-height: 1.5; }
 
         .search-box { width: 100%; max-width: 700px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 25px; border: 1px solid #222; margin-bottom: 80px; }
         input { flex: 1; background: transparent; border: none; padding: 15px 25px; color: #fff; font-size: 1.1rem; outline: none; }
