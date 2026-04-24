@@ -70,9 +70,20 @@ export default function Home({ initialHistory }) {
   return (
     <div dir={t.dir} className="container">
       <Head>
-        <title>VIN DECODER - {t.subtitle}</title>
-        <link rel="icon" type="image/png" href="/favicon.png" />
-      </Head>
+  <title>VIN DECODER - {t.subtitle}</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  
+  {/* ЦІ РЯДКИ ДЛЯ КАРТИНКИ ПРИ ПЕРЕСИЛАННІ */}
+  <meta property="og:title" content="VIN DECODER - Free Vehicle Specification Report" />
+  <meta property="og:description" content="Instant access to detailed vehicle specifications, engine data, and manufacturing history." />
+  <meta property="og:image" content="https://vindecoder.space/og-image.jpg" />
+  <meta property="og:url" content="https://vindecoder.space" />
+  <meta property="og:type" content="website" />
+  
+  {/* ТЕГ ДЛЯ TWITTER */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://vindecoder.space/og-image.jpg" />
+    </Head>
 
       <div className="lang-switcher">
         {Object.keys(translations).map(l => (
