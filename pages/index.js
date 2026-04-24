@@ -7,7 +7,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Free Vehicle Specifications Report",
     metaDesc: "Free online VIN decoder. Check any vehicle specifications, engine data, and manufacturing details instantly.",
-    title: "FREE VIN DECODER",
+    title: "FREE VEHICLE CHECK",
     subtitle: "Get full vehicle specifications and manufacturing details instantly.",
     placeholder: "Enter 17-character VIN...",
     button: "DECODE",
@@ -20,9 +20,9 @@ const translations = {
   },
   uk: {
     dir: 'ltr',
-    metaTitle: "VIN ДЕКОДЕР | Безкоштовний звіт про технічні характеристики",
+    metaTitle: "VIN ДЕКОДЕР | Безкоштовна перевірка комплектації авто",
     metaDesc: "Безкоштовний онлайн VIN декодер. Миттєво перевіряйте характеристики авто, дані двигуна та деталі виробництва.",
-    title: "БЕЗКОШТОВНИЙ VIN ДЕКОДЕР",
+    title: "БЕЗКОШТОВНА ПЕРЕВІРКА АВТО",
     subtitle: "Отримайте повні технічні характеристики та дані про заводське складання.",
     placeholder: "Введіть 17-значний VIN...",
     button: "ПЕРЕВІРИТИ",
@@ -37,7 +37,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "DECODIFICADOR VIN | Informe gratuito de especificaciones",
     metaDesc: "Decodificador VIN en línea gratuito. Verifique las especificaciones del vehículo al instante.",
-    title: "DECODIFICADOR VIN GRATUITO",
+    title: "VERIFICACIÓN DE VEHÍCULOS",
     subtitle: "Obtenga especificaciones completas del vehículo y detalles de fabricación.",
     placeholder: "Ingrese el VIN de 17 caracteres...",
     button: "DECODIFICAR",
@@ -52,7 +52,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Kostenloser Fahrzeugbericht",
     metaDesc: "Kostenloser Online-VIN-Decoder. Prüfen Sie sofort Fahrzeugspezifikationen.",
-    title: "KOSTENLOSER VIN DECODER",
+    title: "KOSTENLOSE FAHRZEUGPRÜFUNG",
     subtitle: "Erhalten Sie sofort vollständige Fahrzeugspezifikationen und Details.",
     placeholder: "17-stellige VIN eingeben...",
     button: "DEKODIEREN",
@@ -67,7 +67,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "车架号解码器 | 免费车辆规格报告",
     metaDesc: "免费在线车架号 (VIN) 解码器。立即查询车辆规格和制造详情。",
-    title: "免费车架号 (VIN) 解码器",
+    title: "免费车辆信息查询",
     subtitle: "立即获取完整的车辆规格和制造详情。",
     placeholder: "输入17位车架号...",
     button: "解码",
@@ -82,7 +82,7 @@ const translations = {
     dir: 'rtl',
     metaTitle: "فك تشفير رقم الشاسيه | تقرير مواصفات السيارة مجاناً",
     metaDesc: "أداة فك تشفير رقم الشاسيه مجانية عبر الإنترنت. تحقق من مواصفات السيارة وتفاصيل التصنيع فوراً.",
-    title: "فك تشفير رقم الشاسيه مجاناً",
+    title: "فحص مجاني للسيارة",
     subtitle: "احصل على مواصفات السيارة الكاملة وتفاصيل التصنيع على الفور.",
     placeholder: "أدخل رقم الشاسيه المكون من 17 حرفاً...",
     button: "فك التشفير",
@@ -148,10 +148,20 @@ export default function Home() {
         <meta name="description" content={t.metaDesc} />
         <link rel="icon" href="/favicon.png" />
         
+        {/* МЕТА-ТЕГИ ДЛЯ МЕСЕНДЖЕРІВ (TELEGRAM, VIBER, FACEBOOK) */}
         <meta property="og:title" content={t.metaTitle} />
         <meta property="og:description" content={t.metaDesc} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://vindecoder.space/" />
+        <meta property="og:image" content="https://vindecoder.space/og-image.png" />
+        <meta property="og:image:secure_url" content="https://vindecoder.space/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={t.metaTitle} />
+        <meta name="twitter:description" content={t.metaDesc} />
+        <meta name="twitter:image" content="https://vindecoder.space/og-image.png" />
       </Head>
 
       <header className="header">
@@ -172,6 +182,7 @@ export default function Home() {
       </header>
 
       <main className="main">
+        {/* ГОЛОВНИЙ ЗАГОЛОВОК, АКУРАТНИЙ */}
         <h1 className="title">{t.title}</h1>
         <p className="subtitle">{t.subtitle}</p>
 
@@ -273,3 +284,4 @@ export default function Home() {
     </div>
   );
 }
+// --- КІНЕЦЬ ФАЙЛУ INDEX.JS ---
