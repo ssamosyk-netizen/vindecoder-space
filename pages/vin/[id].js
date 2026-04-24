@@ -72,8 +72,10 @@ export default function VinResult({ serverData, vin }) {
   const carModel = val(serverData?.Model);
   const carEngine = serverData?.DisplacementL ? `${serverData.DisplacementL}L` : '—';
 
-  // Формуємо безпечні дані для посилання (шифруємо спецсимволи та пробіли)
   const shareTitle = `${vin} | ${carYear} ${carMake} ${carModel} ${carEngine !== '—' ? carEngine : ''}`;
+  const shareDesc = `Full technical specification report for ${carYear} ${carMake} ${carModel}.`;
+  
+  // Формуємо повне посилання для API картинок
   const ogImageUrl = `https://vindecoder.space/api/og?vin=${vin}&make=${encodeURIComponent(carMake)}&model=${encodeURIComponent(carModel)}&year=${carYear}&engine=${encodeURIComponent(carEngine)}`;
 
   return (
@@ -82,21 +84,27 @@ export default function VinResult({ serverData, vin }) {
         <title>{shareTitle}</title>
         <link rel="icon" type="image/png" href="/favicon.png" />
         
-        {/* МЕТА-ТЕГИ ДЛЯ VIBER, TELEGRAM, FACEBOOK */}
+        {/* OPEN GRAPH ДЛЯ МЕСЕНДЖЕРІВ */}
         <meta property="og:title" content={shareTitle} />
-        <meta property="og:description" content={`Full technical specification report for ${carYear} ${carMake} ${carModel}.`} />
+        <meta property="og:description" content={shareDesc} />
         <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:secure_url" content={ogImageUrl} />
+        <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:type" content="article" />
         <meta property="og:url" content={`https://vindecoder.space/vin/${vin}`} />
+        <meta property="og:type" content="website" />
         
+        {/* TWITTER */}
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={shareTitle} />
         <meta name="twitter:image" content={ogImageUrl} />
       </Head>
 
       <div className="header">
-        <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}><span className="yellow">VIN</span><span className="white">DECODER</span></h1>
+        <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}>
+          <span className="yellow">VIN</span><span className="white">DECODER</span>
+        </h1>
         {serverData && (
           <div className="hero">
             <h2>{carYear} <span className="yellow">{carMake}</span> {carModel} {carEngine !== '—' ? carEngine : ''}</h2>
@@ -134,7 +142,6 @@ export default function VinResult({ serverData, vin }) {
               </div>
             ) : (
               <>
-                {/* 2. ДВИГУН ТА ТРАНСМІСІЯ */}
                 <section className="section">
                   <h3>{t.sections.engine}</h3>
                   <div className="grid">
@@ -148,7 +155,6 @@ export default function VinResult({ serverData, vin }) {
                   </div>
                 </section>
 
-                {/* 3. ХОДОВА ТА МЕХАНІКА */}
                 <section className="section">
                   <h3>{t.sections.mechanical}</h3>
                   <div className="grid">
@@ -160,7 +166,6 @@ export default function VinResult({ serverData, vin }) {
                   </div>
                 </section>
 
-                {/* 4. БЕЗПЕКА ТА AIRBAGS */}
                 <section className="section">
                   <h3>{t.sections.safety}</h3>
                   <div className="grid">
@@ -176,7 +181,6 @@ export default function VinResult({ serverData, vin }) {
               </>
             )}
 
-            {/* 5. ДАНІ ВИРОБНИЦТВА */}
             <section className="section">
               <h3>{t.sections.origin}</h3>
               <div className="grid">
