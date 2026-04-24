@@ -65,12 +65,14 @@ export default function VinResult({ serverData, vin }) {
   const t = translations[lang] || translations.en;
   const val = (v) => (!v || v === "" || v === "Not Applicable" || v === "null" || v === "None") ? "—" : v;
 
-  const carNameShort = serverData && serverData.Make ? `${serverData.Make} ${serverData.Model}` : 'Vehicle Report';
-  const shareTitle = serverData && serverData.Make 
-    ? `${vin} | ${serverData.ModelYear} ${serverData.Make} ${serverData.Model} ${serverData.DisplacementL ? serverData.DisplacementL + 'L' : ''}`
-    : `VIN Report: ${vin}`;
+  // ДАНІ ДЛЯ SEO ТА КАРТИНКИ
+  const carYear = val(serverData?.ModelYear);
+  const carMake = val(serverData?.Make);
+  const carModel = val(serverData?.Model);
+  const carEngine = serverData?.DisplacementL ? `${serverData.DisplacementL}L` : '';
 
-  const ogImageUrl = `/api/og?vin=${vin}&make=${val(serverData.Make)}&model=${val(serverData.Model)}&year=${val(serverData.ModelYear)}`;
+  const shareTitle = `${vin} | ${carYear} ${carMake} ${carModel} ${carEngine}`;
+  const ogImageUrl = `/api/og?vin=${vin}&make=${carMake}&model=${carModel}&year=${carYear}&engine=${carEngine}`;
 
   return (
     <div dir={t.dir} className="container">
@@ -78,6 +80,7 @@ export default function VinResult({ serverData, vin }) {
         <title>{shareTitle}</title>
         <link rel="icon" type="image/png" href="/favicon.png" />
         <meta property="og:title" content={shareTitle} />
+        <meta property="og:description" content={`Full technical report for ${carYear} ${carMake} ${carModel}.`} />
         <meta property="og:image" content={ogImageUrl} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={ogImageUrl} />
@@ -87,9 +90,7 @@ export default function VinResult({ serverData, vin }) {
         <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}><span className="yellow">VIN</span><span className="white">DECODER</span></h1>
         {serverData && (
           <div className="hero">
-            <h2>
-              {val(serverData.ModelYear)} <span className="yellow">{val(serverData.Make)}</span> {val(serverData.Model)} {serverData.DisplacementL && `${serverData.DisplacementL}L`}
-            </h2>
+            <h2>{carYear} <span className="yellow">{carMake}</span> {carModel} {carEngine}</h2>
             <p className="subtitle">{t.subtitle} <b>{vin}</b></p>
           </div>
         )}
@@ -107,7 +108,6 @@ export default function VinResult({ serverData, vin }) {
                 <div className="item"><span>{t.fields.trim}</span><b>{val(serverData.Trim)}</b></div>
                 <div className="item"><span>{t.fields.type}</span><b>{val(serverData.VehicleType)}</b></div>
                 <div className="item"><span>{t.fields.body}</span><b>{val(serverData.BodyClass)}</b></div>
-                <div className="item"><span>{t.fields.doors}</span><b>{val(serverData.Doors)}</b></div>
               </div>
             </section>
 
@@ -126,7 +126,6 @@ export default function VinResult({ serverData, vin }) {
                   <h3>{t.sections.engine}</h3>
                   <div className="grid">
                     <div className="item"><span>{t.fields.engine}</span><b>{val(serverData.DisplacementL)}L {val(serverData.EngineConfiguration)}</b></div>
-                    <div className="item"><span>{t.fields.cylinders}</span><b>{val(serverData.EngineNumberofCylinders)}</b></div>
                     <div className="item"><span>{t.fields.hp}</span><b>{val(serverData.EngineHP)} hp</b></div>
                     <div className="item"><span>{t.fields.fuel}</span><b>{val(serverData.FuelTypePrimary)}</b></div>
                     <div className="item"><span>{t.fields.drive}</span><b>{val(serverData.DriveType)}</b></div>
@@ -137,18 +136,8 @@ export default function VinResult({ serverData, vin }) {
                   <h3>{t.sections.mechanical}</h3>
                   <div className="grid">
                     <div className="item"><span>{t.fields.brakes}</span><b>{val(serverData.BrakeSystemType)}</b></div>
-                    <div className="item"><span>{t.fields.axles}</span><b>{val(serverData.Axles)}</b></div>
                     <div className="item"><span>{t.fields.wheelbase}</span><b>{val(serverData.WheelBaseLong)} in</b></div>
                     <div className="item"><span>{t.fields.gvwr}</span><b>{val(serverData.GVWR)}</b></div>
-                  </div>
-                </section>
-                <section className="section">
-                  <h3>{t.sections.safety}</h3>
-                  <div className="grid">
-                    <div className="item"><span>{t.fields.abs}</span><b>{val(serverData.ABS)}</b></div>
-                    <div className="item"><span>{t.fields.esc}</span><b>{val(serverData.ESC)}</b></div>
-                    <div className="item"><span>{t.fields.airbagF}</span><b>{val(serverData.AirBagLocFront)}</b></div>
-                    <div className="item"><span>{t.fields.airbagS}</span><b>{val(serverData.AirBagLocSide)}</b></div>
                   </div>
                 </section>
               </>
@@ -165,7 +154,6 @@ export default function VinResult({ serverData, vin }) {
 
             <button className="back-btn" onClick={() => router.push('/')}>← {t.back}</button>
           </main>
-
           <aside className="sidebar">
             <div className="ad-container vertical"><span className="ad-tag">{t.ad}</span><div className="ad-placeholder-vert">300 x 600</div></div>
           </aside>
@@ -182,7 +170,6 @@ export default function VinResult({ serverData, vin }) {
         .hero h2 { font-size: clamp(1.4rem, 5vw, 2.6rem); text-transform: uppercase; margin: 0; font-weight: 900; line-height: 1.1; }
         .subtitle { color: #666; margin: 10px 0 30px; font-size: 14px; }
         .wrapper { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-        .main { flex: 1; min-width: 0; }
         .section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 20px; text-align: left; margin-bottom: 25px; }
         .section h3 { color: #facc15; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 12px; margin-bottom: 20px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
@@ -190,8 +177,8 @@ export default function VinResult({ serverData, vin }) {
         .item b { display: block; font-size: 16px; margin-top: 6px; word-break: break-word; color: #eee; }
         .ad-container { margin: 25px 0; text-align: center; }
         .ad-tag { display: block; font-size: 9px; color: #333; margin-bottom: 5px; text-transform: uppercase; }
-        .ad-placeholder-hor { background: #080808; border: 1px solid #111; min-height: 90px; display: flex; border-radius: 10px; }
-        .ad-placeholder-vert { background: #080808; border: 1px solid #111; width: 300px; height: 600px; display: flex; border-radius: 15px; }
+        .ad-placeholder-hor { background: #080808; border: 1px solid #111; min-height: 90px; border-radius: 10px; }
+        .ad-placeholder-vert { background: #080808; border: 1px solid #111; width: 300px; height: 600px; border-radius: 15px; }
         .sidebar { display: none; }
         .back-btn { background: transparent; color: #444; border: 1px solid #222; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .footer { padding: 60px 0 30px; color: #222; font-size: 11px; }
