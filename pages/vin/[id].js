@@ -87,13 +87,34 @@ export default function VinResult() {
   return (
     <div dir={t.dir} className="container">
       <Head>
-        <title>{id} Specs | VIN DECODER</title>
+        <title>{data ? `${data.ModelYear || ''} ${data.Make || ''} ${data.Model || ''}` : id} | VIN DECODER</title>
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
 
+      {/* НОВИЙ СТИЛЬНИЙ HEADER З ВЕЛИКИМ ЗАГОЛОВКОМ АВТО */}
       <div className="header">
         <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}><span className="yellow">VIN</span><span className="white">DECODER</span></h1>
-        <p className="subtitle">{t.subtitle} <b>{id}</b></p>
+        
+        {!data ? (
+          <p className="subtitle">{t.subtitle} <b>{id}</b></p>
+        ) : (
+          <div className="hero-title">
+            <h2>
+              {data.ModelYear && data.ModelYear !== "—" ? `${data.ModelYear} ` : ''}
+              {data.Make && data.Make !== "—" ? `${data.Make} ` : 'UNKNOWN VEHICLE'}
+              {data.Model && data.Model !== "—" ? data.Model : ''}
+            </h2>
+            <div className="hero-badges">
+              <span className="badge vin-badge">VIN: {id}</span>
+              {(data.DisplacementL || data.EngineConfiguration) && (
+                <span className="badge engine-badge">
+                  {data.DisplacementL && data.DisplacementL !== "—" ? `${data.DisplacementL}L ` : ''}
+                  {val(data.EngineConfiguration) !== "—" ? data.EngineConfiguration : ''}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {data && (
@@ -186,12 +207,28 @@ export default function VinResult() {
         .header h1 { font-size: 2.5rem; font-weight: 900; margin: 0; direction: ltr; letter-spacing: -2px;}
         .yellow { color: #facc15; } .white { color: #fff; }
         .subtitle { color: #888; margin-top: 10px; }
+        
+        /* СТИЛІ ДЛЯ НОВОГО ВЕЛИКОГО ЗАГОЛОВКУ МАШИНИ */
+        .hero-title { margin-top: 25px; animation: fadeInDown 0.5s ease-out; }
+        .hero-title h2 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; margin: 0 0 15px 0; color: #fff; text-transform: uppercase; letter-spacing: -1px; line-height: 1.1; }
+        .hero-badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .badge { padding: 6px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .vin-badge { background: #1a1a1a; color: #aaa; border: 1px solid #333; }
+        .engine-badge { background: #facc15; color: #000; box-shadow: 0 4px 15px rgba(250, 204, 21, 0.2); }
+
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
         .results-wrapper { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
         .main-content { flex: 1; min-width: 0; }
         .partner-banner { background: linear-gradient(135deg, #1a1a1a 0%, #2d2000 100%); border: 1px solid #facc15; padding: 25px; border-radius: 15px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 20px; align-items: center; text-align: center; }
         .partner-banner h2 { color: #facc15; margin: 0; font-size: 1.4rem; }
         .partner-banner p { color: #ccc; margin: 10px 0 0 0; font-size: 0.95rem; }
-        .partner-btn { background: #facc15; color: #000; font-weight: 900; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 1rem; text-transform: uppercase; width: 100%; max-width: 300px; }
+        .partner-btn { background: #facc15; color: #000; font-weight: 900; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 1rem; text-transform: uppercase; width: 100%; max-width: 300px; transition: 0.2s; }
+        .partner-btn:hover { background: #fff; }
+        
         .info-section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 15px; margin-bottom: 20px; text-align: left; }
         .info-section h3 { color: #facc15; margin-top: 0; font-size: 0.9rem; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 20px; }
         .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
