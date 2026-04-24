@@ -1,226 +1,156 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
-  en: { 
-    dir: 'ltr', subtitle: "Vehicle Specification Report", back: "Back to Search", error: "Error loading data", ad: "ADVERTISEMENT",
-    partnerTitle: "Full European / Global Report Available", partnerDesc: "Get hidden damages, mileage rollbacks, and historical photos.", partnerBtn: "GET FULL REPORT",
-    sections: { general: "General Information", engine: "Engine & Performance", dimensions: "Dimensions & Weight", safety: "Safety Equipment", origin: "Manufacturing" },
-    fields: { make: "Make", model: "Model", year: "Year", trim: "Trim", type: "Vehicle Type", body: "Body Class", doors: "Doors", engine: "Engine", cylinders: "Cylinders", hp: "Horsepower (HP)", fuel: "Fuel Type", drive: "Drive Type", transmission: "Transmission", gvwr: "Gross Weight (GVWR)", wheelbase: "Wheelbase (in)", axles: "Axles", abs: "Anti-lock Braking (ABS)", esc: "Stability Control (ESC)", tpms: "Tire Pressure Monitor", airbagsF: "Front Airbags", airbagsS: "Side Airbags", country: "Country", plant: "Plant City", manufacturer: "Manufacturer" }
-  },
-  uk: { 
-    dir: 'ltr', subtitle: "Звіт про специфікації автомобіля", back: "Назад до пошуку", error: "Помилка завантаження", ad: "РЕКЛАМА",
-    partnerTitle: "Доступний повний звіт для Європи / Азії", partnerDesc: "Перевірте скручений пробіг, приховані ДТП та історичні фотографії.", partnerBtn: "ОТРИМАТИ ПОВНИЙ ЗВІТ",
-    sections: { general: "Загальна інформація", engine: "Двигун та трансмісія", dimensions: "Габарити та Вага", safety: "Системи безпеки", origin: "Виробництво" },
-    fields: { make: "Марка", model: "Модель", year: "Рік", trim: "Комплектація", type: "Тип ТЗ", body: "Клас кузова", doors: "Двері", engine: "Двигун", cylinders: "Циліндри", hp: "Кінські сили (К.С.)", fuel: "Паливо", drive: "Привід", transmission: "Трансмісія", gvwr: "Повна маса (GVWR)", wheelbase: "Колісна база", axles: "Осі", abs: "Система ABS", esc: "Стабілізація (ESC)", tpms: "Датчик тиску шин", airbagsF: "Фронтальні Airbag", airbagsS: "Бокові Airbag", country: "Країна", plant: "Місто заводу", manufacturer: "Виробник" }
-  },
-  es: { 
-    dir: 'ltr', subtitle: "Informe de especificaciones", back: "Volver", error: "Error", ad: "ANUNCIO",
-    partnerTitle: "Informe completo disponible", partnerDesc: "Obtenga daños ocultos e historial.", partnerBtn: "OBTENER INFORME",
-    sections: { general: "Información general", engine: "Motor y Transmisión", dimensions: "Dimensiones y Peso", safety: "Seguridad", origin: "Fabricación" },
-    fields: { make: "Marca", model: "Modelo", year: "Año", trim: "Versión", type: "Tipo", body: "Carrocería", doors: "Puertas", engine: "Motor", cylinders: "Cilindros", hp: "Caballos (HP)", fuel: "Combustible", drive: "Tracción", transmission: "Transmisión", gvwr: "Peso Bruto", wheelbase: "Distancia entre ejes", axles: "Ejes", abs: "Frenos ABS", esc: "Control de Estabilidad", tpms: "Monitor de Presión", airbagsF: "Bolsas Frontales", airbagsS: "Bolsas Laterales", country: "País", plant: "Planta", manufacturer: "Fabricante" }
-  },
-  de: { 
-    dir: 'ltr', subtitle: "Fahrzeugspezifikationsbericht", back: "Zurück", error: "Fehler", ad: "ANZEIGE",
-    partnerTitle: "Vollständiger Bericht verfügbar", partnerDesc: "Erhalten Sie versteckte Schäden und Historie.", partnerBtn: "BERICHT ABRUFEN",
-    sections: { general: "Allgemeine Informationen", engine: "Motor & Getriebe", dimensions: "Abmessungen & Gewicht", safety: "Sicherheit", origin: "Herstellung" },
-    fields: { make: "Marke", model: "Modell", year: "Jahr", trim: "Ausstattung", type: "Typ", body: "Karosserie", doors: "Türen", engine: "Motor", cylinders: "Zylinder", hp: "PS", fuel: "Kraftstoff", drive: "Antrieb", transmission: "Getriebe", gvwr: "Zul. Gesamtgewicht", wheelbase: "Radstand", axles: "Achsen", abs: "ABS", esc: "ESP", tpms: "Reifendruckkontrolle", airbagsF: "Frontairbags", airbagsS: "Seitenairbags", country: "Land", plant: "Werk", manufacturer: "Hersteller" }
-  },
-  zh: { 
-    dir: 'ltr', subtitle: "车辆规格报告", back: "返回", error: "错误", ad: "广告",
-    partnerTitle: "获取完整报告", partnerDesc: "获取隐藏损坏和历史记录。", partnerBtn: "获取完整报告",
-    sections: { general: "一般信息", engine: "发动机与传动", dimensions: "尺寸与重量", safety: "安全配置", origin: "制造信息" },
-    fields: { make: "品牌", model: "型号", year: "年份", trim: "配置", type: "类型", body: "车身", doors: "车门", engine: "发动机", cylinders: "气缸", hp: "马力 (HP)", fuel: "燃料", drive: "驱动", transmission: "变速箱", gvwr: "总重量", wheelbase: "轴距", axles: "车轴", abs: "防抱死刹车 (ABS)", esc: "车身稳定系统 (ESC)", tpms: "胎压监测", airbagsF: "前排气囊", airbagsS: "侧排气囊", country: "国家", plant: "工厂", manufacturer: "制造商" }
-  },
-  ar: { 
-    dir: 'rtl', subtitle: "تقرير مواصفات السيارة", back: "العودة", error: "خطأ", ad: "إعلان",
-    partnerTitle: "تقرير كامل متاح", partnerDesc: "احصل على الأضرار المخفية والتاريخ.", partnerBtn: "احصل على التقرير",
-    sections: { general: "معلومات عامة", engine: "المحرك وناقل الحركة", dimensions: "الأبعاد والوزن", safety: "معدات السلامة", origin: "التصنيع" },
-    fields: { make: "العلامة التجارية", model: "الموديل", year: "السنة", trim: "الفئة", type: "النوع", body: "الهيكل", doors: "الأبواب", engine: "المحرك", cylinders: "الاسطوانات", hp: "قوة الحصان", fuel: "الوقود", drive: "نظام الدفع", transmission: "ناقل الحركة", gvwr: "الوزن الإجمالي", wheelbase: "قاعدة العجلات", axles: "المحاور", abs: "نظام ABS", esc: "نظام الاستقرار", tpms: "مراقبة ضغط الإطارات", airbagsF: "وسائد هوائية أمامية", airbagsS: "وسائد هوائية جانبية", country: "البلد", plant: "المصنع", manufacturer: "الشركة المصنعة" }
-  }
+  en: { dir: 'ltr', subtitle: "Free vehicle specification check", placeholder: "Enter 17-digit VIN...", button: "CHECK", history: "Recent Searches", ad: "ADVERTISEMENT", regions: { us: "US / Canada", eu: "Europe", asia: "Asia / Global" } },
+  uk: { dir: 'ltr', subtitle: "Безкоштовна розшифровка специфікацій", placeholder: "Введіть 17 символів VIN...", button: "ПЕРЕВІРИТИ", history: "Останні перевірки", ad: "РЕКЛАМА", regions: { us: "США / Канада", eu: "Європа", asia: "Азія / Інші" } },
+  es: { dir: 'ltr', subtitle: "Comprobación gratuita de especificaciones", placeholder: "Ingrese el VIN...", button: "VERIFICAR", history: "Búsquedas recientes", ad: "ANUNCIO", regions: { us: "EE.UU. / Canadá", eu: "Europa", asia: "Asia / Global" } },
+  de: { dir: 'ltr', subtitle: "Kostenlose Fahrzeug-Prüfung", placeholder: "VIN eingeben...", button: "PRÜFEN", history: "Letzte Suchen", ad: "ANZEIGE", regions: { us: "USA / Kanada", eu: "Europa", asia: "Asien / Global" } },
+  zh: { dir: 'ltr', subtitle: "免费车辆规格查询", placeholder: "输入17位VIN码...", button: "查询", history: "最近查询", ad: "广告", regions: { us: "美国 / 加拿大", eu: "欧洲", asia: "亚洲 / 全球" } },
+  ar: { dir: 'rtl', subtitle: "فحص مواصفات السيارة مجاناً", placeholder: "أدخل رمز VIN...", button: "تحقق", history: "عمليات البحث الأخيرة", ad: "إعلان", regions: { us: "أمريكا / كندا", eu: "أوروبا", asia: "آسيا / عالمي" } }
 };
 
-export default function VinResult() {
-  const router = useRouter();
-  const { id, region } = router.query;
+// Це базові VIN-коди для SEO та нових користувачів. 
+// Google проіндексує їх у першу чергу.
+const popularVins = ["1FA6P8CF5G", "1J8G2E8A03Y515470", "WAUZZZ8K6BA011442"];
+
+export default function Home() {
   const [lang, setLang] = useState('en');
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [vin, setVin] = useState('');
+  const [region, setRegion] = useState('us');
+  const [history, setHistory] = useState(popularVins); // За замовчуванням показуємо популярні
 
   useEffect(() => {
     document.body.style.margin = "0";
     document.body.style.padding = "0";
     document.body.style.backgroundColor = "#000";
-    
+
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang && translations[savedLang]) setLang(savedLang);
-    
-    if (!router.isReady) return;
-    if (id) fetchVinData(id);
-  }, [router.isReady, id]);
 
-  const fetchVinData = async (vinCode) => {
+    // Якщо у користувача є своя історія - замінюємо базовий список на його власний
     try {
-      setLoading(true);
-      const res = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvaluesextended/${vinCode}?format=json`);
-      const result = await res.json();
-      setData(result.Results[0]);
-    } catch (err) { console.error(err); } finally { setLoading(false); }
-  };
+      const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || "[]");
+      if (Array.isArray(savedHistory) && savedHistory.length > 0) {
+        setHistory(savedHistory);
+      }
+    } catch (e) {}
+  }, []);
 
   const t = translations[lang] || translations.en;
 
-  // Функція для перевірки, чи є поле порожнім
-  const val = (field) => {
-    if (!field || field === "" || field === "Not Applicable") return "—";
-    return field;
+  const handleSearch = () => {
+    const cleanVin = vin.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    
+    if (cleanVin.length === 17) {
+      try {
+        const safeHistory = Array.isArray(history) ? history : popularVins;
+        const newHistory = [cleanVin, ...safeHistory.filter(h => h !== cleanVin)].slice(0, 5);
+        localStorage.setItem('vinHistory', JSON.stringify(newHistory));
+      } catch (err) {}
+      
+      // Жорсткий перехід для гарантованого результату
+      window.location.href = `/vin/${cleanVin}?region=${region}`;
+    } else {
+      alert(lang === 'uk' ? `Потрібно 17 символів! Ви ввели: ${cleanVin.length}` : `17 symbols required! You entered: ${cleanVin.length}`);
+    }
   };
 
-  if (loading) return (
-    <div className="loader-container">
-      <h1 className="logo"><span className="yellow">VIN</span><span className="white">DECODER</span></h1>
-      <div className="spinner"></div><p>Decoding {id || 'vehicle'}...</p>
-      <style jsx>{`.loader-container { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; color: #888; font-family: sans-serif; } .logo { font-size: 2rem; font-weight: 900; margin-bottom: 20px; } .yellow { color: #facc15; } .white { color: #fff; } .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top: 4px solid #facc15; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; } @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-    </div>
-  );
+  const handleKeyDown = (e) => { if (e.key === 'Enter') handleSearch(); };
 
   return (
     <div dir={t.dir} className="container">
       <Head>
-        <title>{id} Specs | VIN DECODER</title>
+        <title>VIN DECODER - {t.subtitle}</title>
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
 
-      <div className="header">
-        <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}><span className="yellow">VIN</span><span className="white">DECODER</span></h1>
-        <p className="subtitle">{t.subtitle} <b>{id}</b></p>
+      <div className="lang-switcher">
+        {Object.keys(translations).map(l => (
+          <button key={l} onClick={() => { setLang(l); localStorage.setItem('userLanguage', l); }} className={lang === l ? 'active' : ''}>
+            {l.toUpperCase()}
+          </button>
+        ))}
       </div>
 
-      {data && (
-        <div className="results-wrapper">
-          <main className="main-content">
-            
-            {(region === 'eu' || region === 'asia') && (
-              <div className="partner-banner">
-                <div className="banner-content">
-                  <h2>{t.partnerTitle}</h2>
-                  <p>{t.partnerDesc}</p>
-                </div>
-                <button className="partner-btn" onClick={() => alert("Тут буде реферальне посилання!")}>
-                  {t.partnerBtn}
-                </button>
-              </div>
-            )}
-
-            {/* ЗАГАЛЬНА ІНФОРМАЦІЯ */}
-            <section className="info-section">
-              <h3>{t.sections.general}</h3>
-              <div className="data-grid">
-                <div className="data-item"><span>{t.fields.make}</span><b>{val(data.Make)}</b></div>
-                <div className="data-item"><span>{t.fields.model}</span><b>{val(data.Model)}</b></div>
-                <div className="data-item"><span>{t.fields.year}</span><b>{val(data.ModelYear)}</b></div>
-                <div className="data-item"><span>{t.fields.trim}</span><b>{val(data.Trim)}</b></div>
-                <div className="data-item"><span>{t.fields.type}</span><b>{val(data.VehicleType)}</b></div>
-                <div className="data-item"><span>{t.fields.body}</span><b>{val(data.BodyClass)}</b></div>
-                <div className="data-item"><span>{t.fields.doors}</span><b>{val(data.Doors)}</b></div>
-              </div>
-            </section>
-
-            <div className="ad-placeholder native-ad"><span>{t.ad}</span></div>
-
-            {/* ДВИГУН ТА ТРАНСМІСІЯ */}
-            <section className="info-section">
-              <h3>{t.sections.engine}</h3>
-              <div className="data-grid">
-                <div className="data-item"><span>{t.fields.engine}</span><b>{data.DisplacementL ? `${data.DisplacementL}L` : ''} {val(data.EngineConfiguration)}</b></div>
-                <div className="data-item"><span>{t.fields.cylinders}</span><b>{val(data.EngineNumberofCylinders)}</b></div>
-                <div className="data-item"><span>{t.fields.hp}</span><b>{val(data.EngineHP)}</b></div>
-                <div className="data-item"><span>{t.fields.fuel}</span><b>{val(data.FuelTypePrimary)}</b></div>
-                <div className="data-item"><span>{t.fields.drive}</span><b>{val(data.DriveType)}</b></div>
-                <div className="data-item"><span>{t.fields.transmission}</span><b>{val(data.TransmissionStyle)}</b></div>
-              </div>
-            </section>
-
-            {/* СИСТЕМИ БЕЗПЕКИ (Нова секція) */}
-            <section className="info-section">
-              <h3>{t.sections.safety}</h3>
-              <div className="data-grid">
-                <div className="data-item"><span>{t.fields.abs}</span><b>{val(data.ABS)}</b></div>
-                <div className="data-item"><span>{t.fields.esc}</span><b>{val(data.ESC)}</b></div>
-                <div className="data-item"><span>{t.fields.tpms}</span><b>{val(data.TPMS)}</b></div>
-                <div className="data-item"><span>{t.fields.airbagsF}</span><b>{val(data.AirBagLocFront)}</b></div>
-                <div className="data-item"><span>{t.fields.airbagsS}</span><b>{val(data.AirBagLocSide)}</b></div>
-              </div>
-            </section>
-
-            {/* ГАБАРИТИ ТА ВАГА (Нова секція) */}
-            <section className="info-section">
-              <h3>{t.sections.dimensions}</h3>
-              <div className="data-grid">
-                <div className="data-item"><span>{t.fields.gvwr}</span><b>{val(data.GVWR)}</b></div>
-                <div className="data-item"><span>{t.fields.wheelbase}</span><b>{val(data.WheelBaseLong)}</b></div>
-                <div className="data-item"><span>{t.fields.axles}</span><b>{val(data.Axles)}</b></div>
-              </div>
-            </section>
-
-            {/* ІНФОРМАЦІЯ ПРО ВИРОБНИКА */}
-            <section className="info-section">
-              <h3>{t.sections.origin}</h3>
-              <div className="data-grid">
-                <div className="data-item"><span>{t.fields.manufacturer}</span><b>{val(data.Manufacturer)}</b></div>
-                <div className="data-item"><span>{t.fields.country}</span><b>{val(data.PlantCountry)}</b></div>
-                <div className="data-item"><span>{t.fields.plant}</span><b>{data.PlantCity ? `${data.PlantCity}, ${data.PlantState}` : '—'}</b></div>
-              </div>
-            </section>
-            
-            <button className="back-btn" onClick={() => router.push('/')}>← {t.back}</button>
-          </main>
-
-          <aside className="sidebar">
-            <div className="ad-placeholder sidebar-ad"><span>{t.ad}<br/><br/>(300x600)</span></div>
-          </aside>
+      <div className="header">
+        <h1><span className="yellow">VIN</span><span className="white">DECODER</span></h1>
+        <p className="subtitle">{t.subtitle}</p>
+      </div>
+      
+      <div className="vin-form">
+        <div className="region-selector">
+          {Object.entries(t.regions).map(([key, label]) => (
+            <button key={key} type="button" className={`region-btn ${region === key ? 'active' : ''}`} onClick={() => setRegion(key)}>
+              {label}
+            </button>
+          ))}
         </div>
-      )}
+
+        <div className="input-group">
+          <input 
+            type="text" 
+            value={vin} 
+            onChange={(e) => setVin(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={t.placeholder}
+            maxLength="25"
+          />
+          <button type="button" onClick={handleSearch}>{t.button}</button>
+        </div>
+      </div>
+
+      <div className="history-section">
+        <p>{t.history}</p>
+        <div className="history-chips">
+          {/* ТЕГ <a> ДУЖЕ ВАЖЛИВИЙ ДЛЯ SEO! Googlebot ходить тільки по <a> */}
+          {history.map((h, i) => (
+            <a key={i} href={`/vin/${h}?region=${region}`} className="chip" style={{textDecoration: 'none'}}>
+              {h}
+            </a>
+          ))}
+        </div>
+      </div>
 
       <footer className="footer"><p>© 2026 VIN DECODER</p></footer>
 
       <style jsx global>{`
-        body { background-color: #000; color: #fff; font-family: sans-serif; line-height: 1.5; }
-        .container { padding: 20px; min-height: 100vh; box-sizing: border-box; }
-        .header { text-align: center; margin-bottom: 40px; }
-        .header h1 { font-size: 2.5rem; font-weight: 900; margin: 0; direction: ltr; letter-spacing: -2px;}
+        body { background-color: #000; margin: 0; padding: 0; color: #fff; }
+        .container { min-height: 100vh; padding: 20px; font-family: sans-serif; box-sizing: border-box; text-align: center; }
+        .lang-switcher { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 30px; direction: ltr; }
+        .lang-switcher button { background: #111; color: #fff; border: 1px solid #222; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s; }
+        .lang-switcher button.active { background: #facc15; color: #000; border-color: #facc15; }
+        .header { margin-bottom: 40px; }
+        .header h1 { font-size: clamp(2.5rem, 10vw, 4rem); font-weight: 900; margin: 0; letter-spacing: -3px; line-height: 1; direction: ltr; }
         .yellow { color: #facc15; } .white { color: #fff; }
-        .subtitle { color: #888; margin-top: 10px; }
+        .subtitle { color: #888; font-size: 1rem; font-weight: bold; margin-top: 10px; }
+        .vin-form { max-width: 600px; margin: 0 auto 30px; }
         
-        .results-wrapper { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
-        .main-content { flex: 1; min-width: 0; }
+        .region-selector { display: flex; background: #0a0a0a; border: 1px solid #333; border-radius: 12px; padding: 5px; margin-bottom: 15px; }
+        .region-btn { flex: 1; background: transparent; color: #888; border: none; padding: 12px; font-size: 0.9rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .region-btn.active { background: #333; color: #fff; }
         
-        .partner-banner { background: linear-gradient(135deg, #1a1a1a 0%, #2d2000 100%); border: 1px solid #facc15; padding: 25px; border-radius: 15px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 20px; align-items: center; text-align: center; }
-        .partner-banner h2 { color: #facc15; margin: 0; font-size: 1.4rem; }
-        .partner-banner p { color: #ccc; margin: 10px 0 0 0; font-size: 0.95rem; }
-        .partner-btn { background: #facc15; color: #000; font-weight: 900; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 1rem; text-transform: uppercase; width: 100%; max-width: 300px; transition: 0.2s; }
-        .partner-btn:hover { background: #fff; }
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin: 0; }
+        .input-group input { padding: 18px; font-size: 18px; border: 1px solid #333; background: #0a0a0a; color: #fff; text-align: center; outline: none; width: 100%; box-sizing: border-box; }
+        .input-group input:focus { border-color: #facc15; }
         
-        .info-section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 15px; margin-bottom: 20px; }
-        .info-section h3 { color: #facc15; margin-top: 0; font-size: 0.9rem; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 20px; }
-        .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .data-item span { color: #666; font-size: 11px; text-transform: uppercase; font-weight: bold; }
-        .data-item b { display: block; font-size: 1.1rem; margin-top: 4px; color: #eee; }
+        .input-group button { padding: 18px; font-size: 18px; background: #facc15; border: none; font-weight: bold; color: #000; cursor: pointer; width: 100%; transition: 0.2s; }
         
-        .ad-placeholder { background: #080808; border: 1px dashed #333; display: flex; align-items: center; justify-content: center; color: #555; font-size: 11px; font-weight: bold; letter-spacing: 2px; border-radius: 10px; }
-        .native-ad { height: 100px; margin: 25px 0; width: 100%; }
-        .sidebar { display: none; }
-        .sidebar-ad { width: 300px; height: 600px; position: sticky; top: 20px; }
-        .back-btn { background: #facc15; color: #000; border: none; padding: 14px 28px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s;}
-        .back-btn:hover { background: #fff; }
-        .footer { text-align: center; margin-top: 80px; color: #222; font-size: 11px; direction: ltr; }
+        .history-section { margin-bottom: 40px; }
+        .history-section p { color: #444; font-size: 11px; text-transform: uppercase; margin-bottom: 12px; font-weight: bold; }
+        .history-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .chip { display: inline-block; background: #0a0a0a; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; color: #888; transition: 0.2s; }
+        .chip:hover { border-color: #facc15; color: #facc15; }
+        .footer { text-align: center; margin-top: 60px; color: #222; font-size: 11px; direction: ltr; }
 
-        @media (min-width: 900px) {
-          .results-wrapper { flex-direction: row; align-items: flex-start; }
-          .sidebar { display: block; }
-          .partner-banner { flex-direction: row; text-align: left; justify-content: space-between; }
-          .partner-btn { width: auto; }
+        @media (min-width: 600px) {
+          .input-group { flex-direction: row; gap: 0; }
+          
+          [dir='ltr'] .input-group input { border-radius: 12px 0 0 12px; border-right: none; }
+          [dir='ltr'] .input-group button { border-radius: 0 12px 12px 0; width: auto; padding: 0 40px; }
+          
+          [dir='rtl'] .input-group input { border-radius: 0 12px 12px 0; border-left: none; text-align: center; }
+          [dir='rtl'] .input-group button { border-radius: 12px 0 0 12px; width: auto; padding: 0 40px; }
         }
       `}</style>
     </div>
