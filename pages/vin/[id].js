@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
@@ -10,15 +11,15 @@ const translations = {
   ar: { dir: 'rtl', subtitle: "فحص مواصفات السيارة مجاناً", placeholder: "أدخل رمز VIN...", button: "تحقق", history: "عمليات البحث الأخيرة", ad: "إعلان", regions: { us: "أمريكا / كندا", eu: "أوروبا", asia: "آسيا / عالمي" } }
 };
 
-// Це базові VIN-коди для SEO та нових користувачів. 
-// Google проіндексує їх у першу чергу.
 const popularVins = ["1FA6P8CF5G", "1J8G2E8A03Y515470", "WAUZZZ8K6BA011442"];
 
 export default function Home() {
+  const router = useRouter();
   const [lang, setLang] = useState('en');
   const [vin, setVin] = useState('');
   const [region, setRegion] = useState('us');
-  const [history, setHistory] = useState(popularVins); // За замовчуванням показуємо популярні
+  const [history, setHistory] = useState(popularVins);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     document.body.style.margin = "0";
@@ -28,7 +29,6 @@ export default function Home() {
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang && translations[savedLang]) setLang(savedLang);
 
-    // Якщо у користувача є своя історія - замінюємо базовий список на його власний
     try {
       const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || "[]");
       if (Array.isArray(savedHistory) && savedHistory.length > 0) {
@@ -39,24 +39,24 @@ export default function Home() {
 
   const t = translations[lang] || translations.en;
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault(); // Залишаємо ідеальну логіку, яка працювала!
     const cleanVin = vin.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     
     if (cleanVin.length === 17) {
+      setIsSearching(true);
       try {
         const safeHistory = Array.isArray(history) ? history : popularVins;
         const newHistory = [cleanVin, ...safeHistory.filter(h => h !== cleanVin)].slice(0, 5);
         localStorage.setItem('vinHistory', JSON.stringify(newHistory));
       } catch (err) {}
       
-      // Жорсткий перехід для гарантованого результату
-      window.location.href = `/vin/${cleanVin}?region=${region}`;
+      // Повернули правильний перехід!
+      router.push(`/vin/${cleanVin}?region=${region}`);
     } else {
-      alert(lang === 'uk' ? `Потрібно 17 символів! Ви ввели: ${cleanVin.length}` : `17 symbols required! You entered: ${cleanVin.length}`);
+      alert(lang === 'uk' ? `Потрібно 17 символів! (Введено: ${cleanVin.length})` : `17 symbols required! (Entered: ${cleanVin.length})`);
     }
   };
-
-  const handleKeyDown = (e) => { if (e.key === 'Enter') handleSearch(); };
 
   return (
     <div dir={t.dir} className="container">
@@ -67,9 +67,7 @@ export default function Home() {
 
       <div className="lang-switcher">
         {Object.keys(translations).map(l => (
-          <button key={l} onClick={() => { setLang(l); localStorage.setItem('userLanguage', l); }} className={lang === l ? 'active' : ''}>
-            {l.toUpperCase()}
-          </button>
+          <button key={l} onClick={() => { setLang(l); localStorage.setItem('userLanguage', l); }} className={lang === l ? 'active' : ''}>{l.toUpperCase()}</button>
         ))}
       </div>
 
@@ -81,31 +79,32 @@ export default function Home() {
       <div className="vin-form">
         <div className="region-selector">
           {Object.entries(t.regions).map(([key, label]) => (
-            <button key={key} type="button" className={`region-btn ${region === key ? 'active' : ''}`} onClick={() => setRegion(key)}>
-              {label}
-            </button>
+            <button key={key} type="button" className={`region-btn ${region === key ? 'active' : ''}`} onClick={() => setRegion(key)}>{label}</button>
           ))}
         </div>
 
-        <div className="input-group">
-          <input 
-            type="text" 
-            value={vin} 
-            onChange={(e) => setVin(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={t.placeholder}
-            maxLength="25"
-          />
-          <button type="button" onClick={handleSearch}>{t.button}</button>
-        </div>
+        {/* ТУТ ЗНОВУ ПРАВИЛЬНА ФОРМА, ЯКА ПРАЦЮВАЛА */}
+        <form onSubmit={handleSearch} className="input-group">
+          <input type="text" value={vin} onChange={(e) => setVin(e.target.value)} placeholder={t.placeholder} maxLength="25" />
+          <button type="submit" disabled={isSearching}>{isSearching ? "..." : t.button}</button>
+        </form>
       </div>
 
       <div className="history-section">
         <p>{t.history}</p>
         <div className="history-chips">
-          {/* ТЕГ <a> ДУЖЕ ВАЖЛИВИЙ ДЛЯ SEO! Googlebot ходить тільки по <a> */}
           {history.map((h, i) => (
-            <a key={i} href={`/vin/${h}?region=${region}`} className="chip" style={{textDecoration: 'none'}}>
+            <a 
+              key={i} 
+              href={`/vin/${h}?region=${region}`} 
+              onClick={(e) => {
+                e.preventDefault(); // Щоб перехід був швидким для людей
+                setIsSearching(true);
+                router.push(`/vin/${h}?region=${region}`);
+              }} 
+              className="chip" 
+              style={{textDecoration: 'none'}}
+            >
               {h}
             </a>
           ))}
@@ -125,30 +124,24 @@ export default function Home() {
         .yellow { color: #facc15; } .white { color: #fff; }
         .subtitle { color: #888; font-size: 1rem; font-weight: bold; margin-top: 10px; }
         .vin-form { max-width: 600px; margin: 0 auto 30px; }
-        
         .region-selector { display: flex; background: #0a0a0a; border: 1px solid #333; border-radius: 12px; padding: 5px; margin-bottom: 15px; }
         .region-btn { flex: 1; background: transparent; color: #888; border: none; padding: 12px; font-size: 0.9rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
         .region-btn.active { background: #333; color: #fff; }
-        
         .input-group { display: flex; flex-direction: column; gap: 10px; margin: 0; }
         .input-group input { padding: 18px; font-size: 18px; border: 1px solid #333; background: #0a0a0a; color: #fff; text-align: center; outline: none; width: 100%; box-sizing: border-box; }
         .input-group input:focus { border-color: #facc15; }
-        
         .input-group button { padding: 18px; font-size: 18px; background: #facc15; border: none; font-weight: bold; color: #000; cursor: pointer; width: 100%; transition: 0.2s; }
-        
+        .input-group button:disabled { opacity: 0.7; cursor: not-allowed; }
         .history-section { margin-bottom: 40px; }
         .history-section p { color: #444; font-size: 11px; text-transform: uppercase; margin-bottom: 12px; font-weight: bold; }
         .history-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
         .chip { display: inline-block; background: #0a0a0a; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; color: #888; transition: 0.2s; }
         .chip:hover { border-color: #facc15; color: #facc15; }
         .footer { text-align: center; margin-top: 60px; color: #222; font-size: 11px; direction: ltr; }
-
         @media (min-width: 600px) {
           .input-group { flex-direction: row; gap: 0; }
-          
           [dir='ltr'] .input-group input { border-radius: 12px 0 0 12px; border-right: none; }
           [dir='ltr'] .input-group button { border-radius: 0 12px 12px 0; width: auto; padding: 0 40px; }
-          
           [dir='rtl'] .input-group input { border-radius: 0 12px 12px 0; border-left: none; text-align: center; }
           [dir='rtl'] .input-group button { border-radius: 12px 0 0 12px; width: auto; padding: 0 40px; }
         }
