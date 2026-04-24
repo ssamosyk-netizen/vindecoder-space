@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
@@ -14,12 +13,10 @@ const translations = {
 const popularVins = ["1FA6P8CF5G", "1J8G2E8A03Y515470", "WAUZZZ8K6BA011442"];
 
 export default function Home() {
-  const router = useRouter();
   const [lang, setLang] = useState('en');
   const [vin, setVin] = useState('');
   const [region, setRegion] = useState('us');
   const [history, setHistory] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     document.body.style.margin = "0";
@@ -38,31 +35,17 @@ export default function Home() {
   }, []);
 
   const t = translations[lang] || translations.en;
+  
+  // Очищаємо VIN для посилання
+  const cleanVin = vin.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+  const targetUrl = `/vin/${cleanVin}?region=${region}`;
 
-  const handleSearch = (e) => {
-    // ЖОРСТКО блокуємо стандартну поведінку браузера (саме вона ламала перехід)
-    if (e) e.preventDefault(); 
-    
-    const cleanVin = vin.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-    
-    if (cleanVin.length === 17) {
-      setIsSearching(true);
-      
-      try {
-        const safeHistory = Array.isArray(history) ? history : popularVins;
-        const newHistory = [cleanVin, ...safeHistory.filter(h => h !== cleanVin)].slice(0, 5);
-        localStorage.setItem('vinHistory', JSON.stringify(newHistory));
-      } catch (err) {}
-      
-      // Ідеальний спосіб переходу для Next.js (гарантовано завантажить нову сторінку)
-      router.push({
-        pathname: '/vin/[id]',
-        query: { id: cleanVin, region: region }
-      });
-      
-    } else {
-      alert(lang === 'uk' ? `Потрібно 17 символів! Ви ввели: ${cleanVin.length}` : `17 symbols required! You entered: ${cleanVin.length}`);
-    }
+  const handleSaveHistory = () => {
+    try {
+      const safeHistory = Array.isArray(history) ? history : popularVins;
+      const newHistory = [cleanVin, ...safeHistory.filter(h => h !== cleanVin)].slice(0, 5);
+      localStorage.setItem('vinHistory', JSON.stringify(newHistory));
+    } catch (err) {}
   };
 
   return (
@@ -94,8 +77,7 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Форма з правильним onSubmit */}
-        <form onSubmit={handleSearch} className="input-group">
+        <div className="input-group">
           <input 
             type="text" 
             value={vin} 
@@ -103,26 +85,31 @@ export default function Home() {
             placeholder={t.placeholder}
             maxLength="25"
           />
-          <button type="submit" disabled={isSearching}>
-            {isSearching ? "..." : t.button}
-          </button>
-        </form>
+          {/* ТЕПЕР ЦЕ ЗВИЧАЙНЕ ПОСИЛАННЯ <a>, ЯКЕ ВИГЛЯДАЄ ЯК КНОПКА */}
+          <a 
+            href={cleanVin.length === 17 ? targetUrl : '#'}
+            className="submit-link"
+            onClick={(e) => {
+              if (cleanVin.length !== 17) {
+                e.preventDefault();
+                alert(lang === 'uk' ? `Потрібно 17 символів! Ви ввели: ${cleanVin.length}` : `17 symbols required! You entered: ${cleanVin.length}`);
+              } else {
+                handleSaveHistory();
+              }
+            }}
+          >
+            {t.button}
+          </a>
+        </div>
       </div>
 
       <div className="history-section">
         <p>{t.history}</p>
         <div className="history-chips">
           {history.map((h, i) => (
-            <span 
-              key={i} 
-              onClick={() => {
-                setIsSearching(true);
-                router.push({ pathname: '/vin/[id]', query: { id: h, region: region } });
-              }} 
-              className="chip"
-            >
+            <a key={i} href={`/vin/${h}?region=${region}`} className="chip" style={{textDecoration: 'none'}}>
               {h}
-            </span>
+            </a>
           ))}
         </div>
       </div>
@@ -149,26 +136,27 @@ export default function Home() {
         .input-group input { padding: 18px; font-size: 18px; border: 1px solid #333; background: #0a0a0a; color: #fff; text-align: center; outline: none; width: 100%; box-sizing: border-box; }
         .input-group input:focus { border-color: #facc15; }
         
-        .input-group button { padding: 18px; font-size: 18px; background: #facc15; border: none; font-weight: bold; color: #000; cursor: pointer; width: 100%; transition: 0.2s; }
-        .input-group button:disabled { opacity: 0.7; cursor: not-allowed; }
+        /* СТИЛІ ПОСИЛАННЯ-КНОПКИ */
+        .submit-link { padding: 18px; font-size: 18px; background: #facc15; border: none; border-radius: 12px; font-weight: bold; color: #000; cursor: pointer; width: 100%; text-decoration: none; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: 0.2s; }
+        .submit-link:hover { background: #eab308; }
         
         .history-section { margin-bottom: 40px; }
         .history-section p { color: #444; font-size: 11px; text-transform: uppercase; margin-bottom: 12px; font-weight: bold; }
         .history-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        .chip { background: #0a0a0a; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; color: #888; transition: 0.2s; }
+        .chip { display: inline-block; background: #0a0a0a; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; color: #888; transition: 0.2s; }
         .chip:hover { border-color: #facc15; color: #facc15; }
         .footer { text-align: center; margin-top: 60px; color: #222; font-size: 11px; direction: ltr; }
 
         @media (min-width: 600px) {
           .input-group { flex-direction: row; gap: 0; }
           
-          /* Логіка для LTR мов (UA, EN...) */
+          /* Логіка для LTR мов */
           [dir='ltr'] .input-group input { border-radius: 12px 0 0 12px; border-right: none; }
-          [dir='ltr'] .input-group button { border-radius: 0 12px 12px 0; width: auto; padding: 0 40px; }
+          [dir='ltr'] .submit-link { border-radius: 0 12px 12px 0; width: auto; padding: 0 40px; }
           
           /* Логіка для RTL мов (AR) */
           [dir='rtl'] .input-group input { border-radius: 0 12px 12px 0; border-left: none; text-align: center; }
-          [dir='rtl'] .input-group button { border-radius: 12px 0 0 12px; width: auto; padding: 0 40px; }
+          [dir='rtl'] .submit-link { border-radius: 12px 0 0 12px; width: auto; padding: 0 40px; }
         }
       `}</style>
     </div>
