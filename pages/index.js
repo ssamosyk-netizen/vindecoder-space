@@ -23,7 +23,7 @@ const translations = {
     metaTitle: "VIN ДЕКОДЕР | Безкоштовний звіт про технічні характеристики",
     metaDesc: "Безкоштовний онлайн VIN декодер. Миттєво перевіряйте характеристики авто, дані двигуна та деталі виробництва.",
     title: "БЕЗКОШТОВНИЙ VIN ДЕКОДЕР",
-    subtitle: "Отримайте повні технічні характеристики та дані про заводське складання.",
+    subtitle: "Отримайте повні технічні характеристики та дані про заводське складання автомобіля.",
     placeholder: "Введіть 17-значний VIN...",
     button: "ПЕРЕВІРИТИ",
     popular: "Популярні марки",
@@ -172,7 +172,6 @@ export default function Home() {
       </header>
 
       <main className="main">
-        {/* Ось тут тепер правильний головний заголовок */}
         <h1 className="title">{t.title}</h1>
         <p className="subtitle">{t.subtitle}</p>
 
@@ -236,9 +235,9 @@ export default function Home() {
 
         .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0 40px; text-align: center; }
         
-        /* Стиль для БЕЗКОШТОВНИЙ VIN ДЕКОДЕР */
-        .title { font-size: clamp(2.2rem, 8vw, 4.5rem); font-weight: 900; margin: 0; line-height: 1; letter-spacing: -2px; text-transform: uppercase; }
-        .subtitle { color: #777; margin: 20px 0 40px; font-size: clamp(1rem, 2.5vw, 1.2rem); max-width: 600px; line-height: 1.5; }
+        /* Зменшений заголовок */
+        .title { font-size: clamp(1.8rem, 5vw, 3.5rem); font-weight: 900; margin: 0; line-height: 1.1; letter-spacing: -1px; text-transform: uppercase; }
+        .subtitle { color: #777; margin: 15px 0 40px; font-size: clamp(0.9rem, 2vw, 1.1rem); max-width: 600px; line-height: 1.5; }
 
         .search-box { width: 100%; max-width: 700px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 25px; border: 1px solid #222; margin-bottom: 80px; }
         input { flex: 1; background: transparent; border: none; padding: 15px 25px; color: #fff; font-size: 1.1rem; outline: none; }
