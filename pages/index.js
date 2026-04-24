@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
@@ -10,13 +11,15 @@ const translations = {
   ar: { dir: 'rtl', subtitle: "فحص مواصفات السيارة مجاناً", placeholder: "أدخل رمز VIN...", button: "تحقق", history: "عمليات البحث الأخيرة", ad: "إعلان", regions: { us: "أمريكا / كندا", eu: "أوروبا", asia: "آسيا / عالمي" } }
 };
 
+const popularVins = ["1FA6P8CF5G", "1J8G2E8A03Y515470", "WAUZZZ8K6BA011442"];
+
 export default function Home() {
+  const router = useRouter();
   const [lang, setLang] = useState('en');
   const [vin, setVin] = useState('');
   const [region, setRegion] = useState('us');
-
-  // Жорстко задані популярні VIN-коди (без збереження в пам'ять, щоб уникнути зависань)
-  const history = ["1FA6P8CF5G", "1J8G2E8A03Y515470", "WAUZZZ8K6BA011442"];
+  const [history, setHistory] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     document.body.style.margin = "0";
@@ -25,19 +28,40 @@ export default function Home() {
 
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang && translations[savedLang]) setLang(savedLang);
+
+    try {
+      const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || "[]");
+      setHistory(Array.isArray(savedHistory) && savedHistory.length > 0 ? savedHistory : popularVins);
+    } catch (e) {
+      setHistory(popularVins);
+    }
   }, []);
 
   const t = translations[lang] || translations.en;
 
-  // НАЙПРОСТІША ТА НАЙНАДІЙНІША ФУНКЦІЯ ПЕРЕХОДУ
-  const executeSearch = () => {
+  const handleSearch = (e) => {
+    // ЖОРСТКО блокуємо стандартну поведінку браузера (саме вона ламала перехід)
+    if (e) e.preventDefault(); 
+    
     const cleanVin = vin.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     
     if (cleanVin.length === 17) {
-      // Використовуємо стандартний перехід браузера (працює 100%)
-      window.location.assign(`/vin/${cleanVin}?region=${region}`);
+      setIsSearching(true);
+      
+      try {
+        const safeHistory = Array.isArray(history) ? history : popularVins;
+        const newHistory = [cleanVin, ...safeHistory.filter(h => h !== cleanVin)].slice(0, 5);
+        localStorage.setItem('vinHistory', JSON.stringify(newHistory));
+      } catch (err) {}
+      
+      // Ідеальний спосіб переходу для Next.js (гарантовано завантажить нову сторінку)
+      router.push({
+        pathname: '/vin/[id]',
+        query: { id: cleanVin, region: region }
+      });
+      
     } else {
-      alert(`Потрібно 17 символів! Ви ввели: ${cleanVin.length}`);
+      alert(lang === 'uk' ? `Потрібно 17 символів! Ви ввели: ${cleanVin.length}` : `17 symbols required! You entered: ${cleanVin.length}`);
     }
   };
 
@@ -70,24 +94,35 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="input-group">
+        {/* Форма з правильним onSubmit */}
+        <form onSubmit={handleSearch} className="input-group">
           <input 
             type="text" 
             value={vin} 
             onChange={(e) => setVin(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') executeSearch(); }}
             placeholder={t.placeholder}
             maxLength="25"
           />
-          <button type="button" onClick={executeSearch}>{t.button}</button>
-        </div>
+          <button type="submit" disabled={isSearching}>
+            {isSearching ? "..." : t.button}
+          </button>
+        </form>
       </div>
 
       <div className="history-section">
         <p>{t.history}</p>
         <div className="history-chips">
           {history.map((h, i) => (
-            <span key={i} onClick={() => window.location.assign(`/vin/${h}?region=${region}`)} className="chip">{h}</span>
+            <span 
+              key={i} 
+              onClick={() => {
+                setIsSearching(true);
+                router.push({ pathname: '/vin/[id]', query: { id: h, region: region } });
+              }} 
+              className="chip"
+            >
+              {h}
+            </span>
           ))}
         </div>
       </div>
@@ -115,11 +150,12 @@ export default function Home() {
         .input-group input:focus { border-color: #facc15; }
         
         .input-group button { padding: 18px; font-size: 18px; background: #facc15; border: none; font-weight: bold; color: #000; cursor: pointer; width: 100%; transition: 0.2s; }
+        .input-group button:disabled { opacity: 0.7; cursor: not-allowed; }
         
         .history-section { margin-bottom: 40px; }
         .history-section p { color: #444; font-size: 11px; text-transform: uppercase; margin-bottom: 12px; font-weight: bold; }
         .history-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        .chip { background: #0a0a0a; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; color: #888; }
+        .chip { background: #0a0a0a; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; color: #888; transition: 0.2s; }
         .chip:hover { border-color: #facc15; color: #facc15; }
         .footer { text-align: center; margin-top: 60px; color: #222; font-size: 11px; direction: ltr; }
 
