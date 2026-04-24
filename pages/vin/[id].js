@@ -37,13 +37,20 @@ const fixEuroYear = (vin) => {
   return yearMap[yearChar] || null;
 };
 
+// ... (верхня частина з перекладами та функцією fixEuroYear залишається без змін)
+
 export default function VinResult() {
   const router = useRouter();
-  const { id, region } = router.query;
+  const { id } = router.query;
+  // Якщо регіон не передано в URL, ставимо 'us' за замовчуванням
+  const region = router.query.region || 'us'; 
+  
   const [lang, setLang] = useState('en');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEuro, setIsEuro] = useState(false);
+
+// ... (весь інший код залишається таким самим)
 
   useEffect(() => {
     document.body.style.backgroundColor = "#000";
