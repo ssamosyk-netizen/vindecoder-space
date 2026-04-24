@@ -7,7 +7,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Free Vehicle Specifications Report",
     metaDesc: "Free online VIN decoder. Check any vehicle specifications, engine data, and manufacturing details instantly.",
-    title: "FREE VIN DECODER",
+    title: "FREE VEHICLE CHECK",
     subtitle: "Get full vehicle specifications and manufacturing details instantly.",
     placeholder: "Enter 17-character VIN...",
     button: "DECODE",
@@ -20,10 +20,10 @@ const translations = {
   },
   uk: {
     dir: 'ltr',
-    metaTitle: "VIN ДЕКОДЕР | Безкоштовний звіт про технічні характеристики",
+    metaTitle: "VIN ДЕКОДЕР | Безкоштовна перевірка комплектації авто",
     metaDesc: "Безкоштовний онлайн VIN декодер. Миттєво перевіряйте характеристики авто, дані двигуна та деталі виробництва.",
-    title: "БЕЗКОШТОВНИЙ VIN ДЕКОДЕР",
-    subtitle: "Отримайте повні технічні характеристики та дані про виробництво миттєво.",
+    title: "БЕЗКОШТОВНА ПЕРЕВІРКА АВТО",
+    subtitle: "Отримайте повні технічні характеристики та дані про заводське складання.",
     placeholder: "Введіть 17-значний VIN...",
     button: "ПЕРЕВІРИТИ",
     popular: "Популярні марки",
@@ -37,7 +37,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "DECODIFICADOR VIN | Informe gratuito de especificaciones",
     metaDesc: "Decodificador VIN en línea gratuito. Verifique las especificaciones del vehículo al instante.",
-    title: "DECODIFICADOR VIN GRATUITO",
+    title: "VERIFICACIÓN DE VEHÍCULOS",
     subtitle: "Obtenga especificaciones completas del vehículo y detalles de fabricación.",
     placeholder: "Ingrese el VIN de 17 caracteres...",
     button: "DECODIFICAR",
@@ -52,7 +52,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Kostenloser Fahrzeugbericht",
     metaDesc: "Kostenloser Online-VIN-Decoder. Prüfen Sie sofort Fahrzeugspezifikationen.",
-    title: "KOSTENLOSER VIN DECODER",
+    title: "KOSTENLOSE FAHRZEUGPRÜFUNG",
     subtitle: "Erhalten Sie sofort vollständige Fahrzeugspezifikationen und Details.",
     placeholder: "17-stellige VIN eingeben...",
     button: "DEKODIEREN",
@@ -67,7 +67,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "车架号解码器 | 免费车辆规格报告",
     metaDesc: "免费在线车架号 (VIN) 解码器。立即查询车辆规格和制造详情。",
-    title: "免费车架号 (VIN) 解码器",
+    title: "免费车辆信息查询",
     subtitle: "立即获取完整的车辆规格和制造详情。",
     placeholder: "输入17位车架号...",
     button: "解码",
@@ -82,7 +82,7 @@ const translations = {
     dir: 'rtl',
     metaTitle: "فك تشفير رقم الشاسيه | تقرير مواصفات السيارة مجاناً",
     metaDesc: "أداة فك تشفير رقم الشاسيه مجانية عبر الإنترنت. تحقق من مواصفات السيارة وتفاصيل التصنيع فوراً.",
-    title: "فك تشفير رقم الشاسيه مجاناً",
+    title: "فحص مجاني للسيارة",
     subtitle: "احصل على مواصفات السيارة الكاملة وتفاصيل التصنيع على الفور.",
     placeholder: "أدخل رقم الشاسيه المكون من 17 حرفاً...",
     button: "فك التشفير",
@@ -95,13 +95,14 @@ const translations = {
   }
 };
 
+// Американські та популярні на ринку США бренди
 const popularMakes = [
-  { name: 'Ford', slug: 'ford' }, { name: 'Hyundai', slug: 'hyundai' },
-  { name: 'Kia', slug: 'kia' }, { name: 'Toyota', slug: 'toyota' },
-  { name: 'BMW', slug: 'bmw' }, { name: 'Mercedes', slug: 'mercedes-benz' },
-  { name: 'Volkswagen', slug: 'volkswagen' }, { name: 'Tesla', slug: 'tesla' },
-  { name: 'Chevrolet', slug: 'chevrolet' }, { name: 'Audi', slug: 'audi' },
-  { name: 'Nissan', slug: 'nissan' }, { name: 'Lexus', slug: 'lexus' }
+  { name: 'Ford', slug: 'ford' }, { name: 'Chevrolet', slug: 'chevrolet' },
+  { name: 'Dodge', slug: 'dodge' }, { name: 'Jeep', slug: 'jeep' },
+  { name: 'Tesla', slug: 'tesla' }, { name: 'GMC', slug: 'gmc' },
+  { name: 'Chrysler', slug: 'chrysler' }, { name: 'Cadillac', slug: 'cadillac' },
+  { name: 'Buick', slug: 'buick' }, { name: 'Lincoln', slug: 'lincoln' },
+  { name: 'Toyota', slug: 'toyota' }, { name: 'Honda', slug: 'honda' }
 ];
 
 export default function Home() {
@@ -192,7 +193,7 @@ export default function Home() {
           <div className="makes-grid">
             {popularMakes.map((make) => (
               <div key={make.slug} className="make-item" onClick={() => router.push(`/make/${make.slug}`)}>
-                {make.name === 'BMW' ? 'BMW' : make.name}
+                {make.name}
               </div>
             ))}
           </div>
@@ -210,7 +211,6 @@ export default function Home() {
         )}
       </main>
 
-      {/* ПОВЕРНУВ ФУТЕР З ПОЛІТИКОЮ */}
       <footer className="footer">
         <div className="footer-links">
           <span onClick={() => router.push('/privacy-policy')}>{t.policy}</span>
@@ -260,7 +260,7 @@ export default function Home() {
         .makes-section { width: 100%; max-width: 900px; margin-bottom: 60px; }
         .makes-section h3 { color: #222; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
         .makes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
-        .make-item { background: #0a0a0a; border: 1px solid #111; padding: 15px; border-radius: 12px; font-size: 13px; font-weight: bold; color: #777; cursor: pointer; transition: 0.2s; }
+        .make-item { background: #0a0a0a; border: 1px solid #111; padding: 15px; border-radius: 12px; font-size: 13px; font-weight: bold; color: #777; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
         .make-item:hover { border-color: #facc15; color: #fff; background: #111; }
 
         .history-section { display: flex; flex-direction: column; align-items: center; gap: 15px; padding-bottom: 40px; }
@@ -269,7 +269,6 @@ export default function Home() {
         .chip { background: #080808; border: 1px solid #1a1a1a; padding: 6px 14px; border-radius: 20px; font-size: 11px; color: #555; cursor: pointer; transition: 0.2s; font-family: monospace; }
         .chip:hover { border-color: #facc15; color: #facc15; }
 
-        /* СТИЛІ ФУТЕРА З ПОЛІТИКОЮ */
         .footer { padding: 40px 0; color: #555; font-size: 12px; text-align: center; }
         .footer-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
         .footer-links span { cursor: pointer; transition: color 0.2s; }
