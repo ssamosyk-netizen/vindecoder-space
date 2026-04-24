@@ -7,7 +7,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Free Vehicle Specifications Report",
     metaDesc: "Free online VIN decoder. Check any vehicle specifications, engine data, and manufacturing details instantly.",
-    title: "FREE VIN DECODER",
+    title: "Free Vehicle Check",
     subtitle: "Get full vehicle specifications and manufacturing details instantly.",
     placeholder: "Enter 17-character VIN...",
     button: "DECODE",
@@ -20,9 +20,9 @@ const translations = {
   },
   uk: {
     dir: 'ltr',
-    metaTitle: "VIN ДЕКОДЕР | Безкоштовний звіт про технічні характеристики",
+    metaTitle: "VIN ДЕКОДЕР | Безкоштовна перевірка комплектації авто",
     metaDesc: "Безкоштовний онлайн VIN декодер. Миттєво перевіряйте характеристики авто, дані двигуна та деталі виробництва.",
-    title: "БЕЗКОШТОВНИЙ VIN ДЕКОДЕР",
+    title: "Безкоштовна перевірка авто",
     subtitle: "Отримайте повні технічні характеристики та дані про заводське складання.",
     placeholder: "Введіть 17-значний VIN...",
     button: "ПЕРЕВІРИТИ",
@@ -37,7 +37,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "DECODIFICADOR VIN | Informe gratuito de especificaciones",
     metaDesc: "Decodificador VIN en línea gratuito. Verifique las especificaciones del vehículo al instante.",
-    title: "DECODIFICADOR VIN GRATUITO",
+    title: "Verificación de vehículos",
     subtitle: "Obtenga especificaciones completas del vehículo y detalles de fabricación.",
     placeholder: "Ingrese el VIN de 17 caracteres...",
     button: "DECODIFICAR",
@@ -52,7 +52,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "VIN DECODER | Kostenloser Fahrzeugbericht",
     metaDesc: "Kostenloser Online-VIN-Decoder. Prüfen Sie sofort Fahrzeugspezifikationen.",
-    title: "KOSTENLOSER VIN DECODER",
+    title: "Kostenlose Fahrzeugprüfung",
     subtitle: "Erhalten Sie sofort vollständige Fahrzeugspezifikationen und Details.",
     placeholder: "17-stellige VIN eingeben...",
     button: "DEKODIEREN",
@@ -67,7 +67,7 @@ const translations = {
     dir: 'ltr',
     metaTitle: "车架号解码器 | 免费车辆规格报告",
     metaDesc: "免费在线车架号 (VIN) 解码器。立即查询车辆规格和制造详情。",
-    title: "免费车架号 (VIN) 解码器",
+    title: "免费车辆信息查询",
     subtitle: "立即获取完整的车辆规格和制造详情。",
     placeholder: "输入17位车架号...",
     button: "解码",
@@ -82,7 +82,7 @@ const translations = {
     dir: 'rtl',
     metaTitle: "فك تشفير رقم الشاسيه | تقرير مواصفات السيارة مجاناً",
     metaDesc: "أداة فك تشفير رقم الشاسيه مجانية عبر الإنترنت. تحقق من مواصفات السيارة وتفاصيل التصنيع فوراً.",
-    title: "فك تشفير رقم الشاسيه مجاناً",
+    title: "فحص مجاني للسيارة",
     subtitle: "احصل على مواصفات السيارة الكاملة وتفاصيل التصنيع على الفور.",
     placeholder: "أدخل رقم الشاسيه المكون من 17 حرفاً...",
     button: "فك التشفير",
@@ -147,11 +147,6 @@ export default function Home() {
         <title>{t.metaTitle}</title>
         <meta name="description" content={t.metaDesc} />
         <link rel="icon" href="/favicon.png" />
-        
-        <meta property="og:title" content={t.metaTitle} />
-        <meta property="og:description" content={t.metaDesc} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://vindecoder.space/" />
       </Head>
 
       <header className="header">
@@ -172,10 +167,8 @@ export default function Home() {
       </header>
 
       <main className="main">
-        {/* Гігантський бренд */}
-        <h1 className="brand-title"><span className="yellow">VIN</span>DECODER</h1>
-        {/* Акуратний, менший переклад */}
-        <h2 className="localized-title">{t.title}</h2>
+        {/* АКУРАТНИЙ, НЕВЕЛИКИЙ ЗАГОЛОВОК, ЯКИЙ НЕ ДУБЛЮЄ ЛОГОТИП */}
+        <h1 className="title">{t.title}</h1>
         <p className="subtitle">{t.subtitle}</p>
 
         <div className="search-box">
@@ -238,12 +231,9 @@ export default function Home() {
 
         .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0 40px; text-align: center; }
         
-        /* ВЕЛИКИЙ ЛОГОТИП ПО ЦЕНТРУ */
-        .brand-title { font-size: clamp(3.5rem, 12vw, 6.5rem); font-weight: 900; margin: 0; line-height: 0.9; letter-spacing: -3px; }
-        
-        /* МЕНШИЙ ТА АКУРАТНИЙ ПІДЗАГОЛОВОК */
-        .localized-title { font-size: clamp(0.9rem, 2.5vw, 1.2rem); font-weight: 600; color: #888; margin: 20px 0 10px; letter-spacing: 2px; text-transform: uppercase; }
-        .subtitle { color: #666; margin: 0 0 40px; font-size: clamp(0.85rem, 2vw, 1rem); max-width: 600px; line-height: 1.5; }
+        /* ЗМЕНШЕНИЙ ТА ВИТОНЧЕНИЙ ЗАГОЛОВОК */
+        .title { font-size: clamp(1.5rem, 4vw, 2.8rem); font-weight: 800; margin: 0; line-height: 1.2; letter-spacing: 1px; text-transform: uppercase; color: #fdfdfd; }
+        .subtitle { color: #888; margin: 15px 0 40px; font-size: clamp(0.9rem, 2vw, 1.1rem); max-width: 600px; line-height: 1.5; }
 
         .search-box { width: 100%; max-width: 700px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 25px; border: 1px solid #222; margin-bottom: 80px; }
         input { flex: 1; background: transparent; border: none; padding: 15px 25px; color: #fff; font-size: 1.1rem; outline: none; }
@@ -280,4 +270,3 @@ export default function Home() {
     </div>
   );
 }
-// --- КІНЕЦЬ ФАЙЛУ INDEX.JS ---
