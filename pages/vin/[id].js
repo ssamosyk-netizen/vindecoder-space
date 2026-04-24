@@ -59,17 +59,17 @@ export default function VinResult() {
   const t = translations[lang] || translations.en;
   const val = (v) => (!v || v === "" || v === "Not Applicable" || v === "null") ? "—" : v;
 
-  if (loading) return <div className="loader">Decoding...<style jsx>{`.loader{height:100vh;display:flex;align-items:center;justify-content:center;background:#000;color:#facc15;font-weight:900;}`}</style></div>;
+  if (loading) return <div className="loader"><div className="spinner"></div><style jsx>{`.loader{height:100vh;display:flex;align-items:center;justify-content:center;background:#000;color:#facc15;}.spinner{width:40px;height:40px;border:4px solid #333;border-top:4px solid #facc15;border-radius:50%;animation:spin 1s linear infinite;}@keyframes spin{to{transform:rotate(360deg);}}`}</style></div>;
 
   return (
     <div dir={t.dir} className="container">
-      <Head><title>{data ? `${data.ModelYear} ${data.Make} ${data.Model}` : id}</title></Head>
+      <Head><title>{data ? `${data.ModelYear} ${data.Make} ${data.Model}` : id} | VIN DECODER</title></Head>
 
       <div className="header">
         <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}><span className="yellow">VIN</span><span className="white">DECODER</span></h1>
         {data && (
           <div className="hero">
-            <h2>{data.ModelYear} {data.Make} {data.Model}</h2>
+            <h2>{val(data.ModelYear)} {val(data.Make)} {val(data.Model)}</h2>
             <p className="subtitle">{t.subtitle} <b>{id}</b></p>
             <div className="badges">
               <span className="badge engine">{val(data.DisplacementL)}L {val(data.EngineConfiguration)}</span>
@@ -82,16 +82,22 @@ export default function VinResult() {
       {data && (
         <div className="wrapper">
           <main className="main">
+            {/* ГЕНЕРАЛЬНА СЕКЦІЯ */}
             <section className="section">
               <h3>{t.sections.general}</h3>
               <div className="grid">
                 <div className="item"><span>{t.fields.make}</span><b>{val(data.Make)}</b></div>
                 <div className="item"><span>{t.fields.model}</span><b>{val(data.Model)}</b></div>
                 <div className="item"><span>{t.fields.year}</span><b style={{color: isEuro ? '#4ade80' : '#eee'}}>{val(data.ModelYear)}</b></div>
+                <div className="item"><span>{t.fields.type}</span><b>{val(data.VehicleType)}</b></div>
                 <div className="item"><span>{t.fields.body}</span><b>{val(data.BodyClass)}</b></div>
+                <div className="item"><span>{t.fields.doors}</span><b>{val(data.Doors)}</b></div>
               </div>
             </section>
 
+            <div className="ad-box-wide">{t.ad}</div>
+
+            {/* ЛОГІКА ДЛЯ ЄВРОПИ ТА АМЕРИКИ */}
             {isEuro ? (
               <div className="premium-lock">
                 <div className="lock-icon">🔒</div>
@@ -100,18 +106,53 @@ export default function VinResult() {
                 <button className="partner-btn pulse" onClick={() => window.open('https://www.carvertical.com/', '_blank')}>{t.unlockBtn}</button>
               </div>
             ) : (
-              <section className="section">
-                <h3>{t.sections.engine}</h3>
-                <div className="grid">
-                  <div className="item"><span>{t.fields.engine}</span><b>{val(data.DisplacementL)}L {val(data.EngineConfiguration)}</b></div>
-                  <div className="item"><span>{t.fields.hp}</span><b>{val(data.EngineHP)}</b></div>
-                  <div className="item"><span>{t.fields.drive}</span><b>{val(data.DriveType)}</b></div>
-                </div>
-              </section>
+              <>
+                <section className="section">
+                  <h3>{t.sections.engine}</h3>
+                  <div className="grid">
+                    <div className="item"><span>{t.fields.engine}</span><b>{val(data.DisplacementL)}L {val(data.EngineConfiguration)}</b></div>
+                    <div className="item"><span>{t.fields.cylinders}</span><b>{val(data.EngineNumberofCylinders)}</b></div>
+                    <div className="item"><span>{t.fields.hp}</span><b>{val(data.EngineHP)}</b></div>
+                    <div className="item"><span>{t.fields.fuel}</span><b>{val(data.FuelTypePrimary)}</b></div>
+                    <div className="item"><span>{t.fields.drive}</span><b>{val(data.DriveType)}</b></div>
+                    <div className="item"><span>{t.fields.transmission}</span><b>{val(data.TransmissionStyle)}</b></div>
+                  </div>
+                </section>
+
+                <section className="section">
+                  <h3>{t.sections.safety}</h3>
+                  <div className="grid">
+                    <div className="item"><span>{t.fields.abs}</span><b>{val(data.ABS)}</b></div>
+                    <div className="item"><span>{t.fields.esc}</span><b>{val(data.ESC)}</b></div>
+                    <div className="item"><span>{t.fields.tpms}</span><b>{val(data.TPMS)}</b></div>
+                    <div className="item"><span>{t.fields.airbagsF}</span><b>{val(data.AirBagLocFront)}</b></div>
+                  </div>
+                </section>
+
+                <section className="section">
+                  <h3>{t.sections.dimensions}</h3>
+                  <div className="grid">
+                    <div className="item"><span>{t.fields.gvwr}</span><b>{val(data.GVWR)}</b></div>
+                    <div className="item"><span>{t.fields.wheelbase}</span><b>{val(data.WheelBaseLong)}</b></div>
+                  </div>
+                </section>
+              </>
             )}
+
+            <section className="section">
+              <h3>{t.sections.origin}</h3>
+              <div className="grid">
+                <div className="item"><span>{t.fields.manufacturer}</span><b>{val(data.Manufacturer)}</b></div>
+                <div className="item"><span>{t.fields.country}</span><b>{val(data.PlantCountry)}</b></div>
+              </div>
+            </section>
+
             <button className="back-btn" onClick={() => router.push('/')}>← {t.back}</button>
           </main>
-          <aside className="sidebar"><div className="ad-box">{t.ad} (300x600)</div></aside>
+
+          <aside className="sidebar">
+            <div className="ad-box-side">{t.ad} (300x600)</div>
+          </aside>
         </div>
       )}
 
@@ -124,31 +165,36 @@ export default function VinResult() {
         .container { padding: 20px; min-height: 100vh; text-align: center; }
         .header h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 30px; letter-spacing: -2px; }
         .yellow { color: #facc15; } .white { color: #fff; }
-        .hero h2 { font-size: 2.5rem; text-transform: uppercase; margin: 0; }
-        .subtitle { color: #666; margin: 10px 0 20px; }
-        .badges { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
-        .badge { padding: 5px 15px; border-radius: 5px; font-weight: bold; font-size: 12px; }
+        .hero h2 { font-size: clamp(1.8rem, 5vw, 3rem); text-transform: uppercase; margin: 0; font-weight: 900; line-height: 1.1; }
+        .subtitle { color: #666; margin: 10px 0 20px; font-size: 14px; }
+        .badges { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; }
+        .badge { padding: 6px 16px; border-radius: 8px; font-weight: bold; font-size: 13px; text-transform: uppercase; }
         .engine { background: #facc15; color: #000; }
-        .eu { background: #1e3a8a; color: #fff; }
-        .wrapper { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-        .section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 20px; border-radius: 15px; text-align: left; }
-        .section h3 { color: #facc15; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-top: 15px; }
-        .item span { color: #444; font-size: 10px; font-weight: bold; text-transform: uppercase; }
-        .item b { display: block; font-size: 18px; margin-top: 5px; word-break: break-word; }
-        .premium-lock { background: #050505; border: 1px dashed #333; padding: 40px; border-radius: 15px; }
-        .lock-icon { font-size: 40px; margin-bottom: 10px; }
-        .partner-btn { background: #facc15; border: none; padding: 15px 30px; font-weight: 900; cursor: pointer; border-radius: 10px; }
+        .eu { background: #1e3a8a; color: #fff; border: 1px solid #3b82f6; }
+        .wrapper { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
+        .section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 20px; text-align: left; }
+        .section h3 { color: #facc15; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 12px; margin-bottom: 20px; letter-spacing: 1px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
+        .item span { color: #555; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .item b { display: block; font-size: 18px; margin-top: 6px; word-break: break-word; color: #eee; }
+        .premium-lock { background: linear-gradient(180deg, #0a0a0a 0%, #000 100%); border: 1px dashed #333; padding: 50px 20px; border-radius: 20px; margin-bottom: 20px; }
+        .lock-icon { font-size: 50px; margin-bottom: 15px; opacity: 0.5; }
+        .premium-lock h3 { color: #fff; margin-bottom: 10px; }
+        .premium-lock p { color: #666; max-width: 500px; margin: 0 auto 25px; font-size: 14px; }
+        .partner-btn { background: #facc15; border: none; padding: 18px 40px; font-weight: 900; cursor: pointer; border-radius: 12px; text-transform: uppercase; font-size: 15px; }
         .pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.4); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(250, 204, 21, 0); } 100% { transform: scale(1); } }
+        .ad-box-wide { background: #080808; border: 1px dashed #222; padding: 20px; border-radius: 15px; color: #333; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+        .ad-box-side { background: #080808; border: 1px dashed #222; height: 600px; display: flex; align-items: center; justify-content: center; color: #333; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; writing-mode: vertical-rl; }
         .sidebar { display: none; }
-        .ad-box { background: #080808; border: 1px dashed #222; height: 600px; display: flex; align-items: center; justify-content: center; color: #333; font-size: 10px; }
-        .footer { padding: 60px 0; color: #222; font-size: 11px; }
+        .back-btn { background: transparent; color: #666; border: 1px solid #222; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.2s; }
+        .back-btn:hover { background: #111; color: #fff; }
+        .footer { padding: 80px 0 40px; color: #222; font-size: 11px; }
         .footer a { color: #444; text-decoration: none; margin-left: 10px; }
-        @media (min-width: 800px) {
+        @media (min-width: 900px) {
           .wrapper { flex-direction: row; align-items: flex-start; }
           .main { flex: 1; }
-          .sidebar { display: block; width: 300px; }
+          .sidebar { display: block; width: 300px; position: sticky; top: 20px; }
         }
       `}</style>
     </div>
