@@ -30,12 +30,13 @@ export async function getServerSideProps() {
   }
 }
 
-// Тепер компонент відразу отримує initialHistory з сервера
+// ... (верхня частина з перекладами та getServerSideProps залишається такою ж)
+
 export default function Home({ initialHistory }) {
   const router = useRouter();
   const [lang, setLang] = useState('en');
   const [vin, setVin] = useState('');
-  const [region, setRegion] = useState('us');
+  const [region, setRegion] = useState('us'); // За замовчуванням 'us'
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
@@ -53,7 +54,6 @@ export default function Home({ initialHistory }) {
     const cleanVin = vin.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     if (cleanVin.length === 17) {
       setIsSearching(true);
-      // Зберігаємо новий запит у базу
       try {
         await fetch('/api/vins', {
           method: 'POST',
@@ -61,29 +61,23 @@ export default function Home({ initialHistory }) {
           body: JSON.stringify({ vin: cleanVin })
         });
       } catch (err) {}
-      router.push(`/vin/${cleanVin}?region=${region}`);
+      
+      // ЧИСТИЙ ЛІНК: Додаємо регіон лише якщо це НЕ 'us'
+      const url = `/vin/${cleanVin}${region !== 'us' ? `?region=${region}` : ''}`;
+      router.push(url);
     } else {
-      alert(lang === 'uk' ? `Потрібно 17 символів! (Введено: ${cleanVin.length})` : `17 symbols required! (Entered: ${cleanVin.length})`);
+      alert(lang === 'uk' ? `Потрібно 17 символів!` : `17 symbols required!`);
     }
   };
 
   return (
     <div dir={t.dir} className="container">
       <Head>
-  <title>VIN DECODER - {t.subtitle}</title>
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  
-  {/* ЦІ РЯДКИ ДЛЯ КАРТИНКИ ПРИ ПЕРЕСИЛАННІ */}
-  <meta property="og:title" content="VIN DECODER - Free Vehicle Specification Report" />
-  <meta property="og:description" content="Instant access to detailed vehicle specifications, engine data, and manufacturing history." />
-  <meta property="og:image" content="https://vindecoder.space/og-image.jpg" />
-  <meta property="og:url" content="https://vindecoder.space" />
-  <meta property="og:type" content="website" />
-  
-  {/* ТЕГ ДЛЯ TWITTER */}
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://vindecoder.space/og-image.jpg" />
-    </Head>
+        <title>VIN DECODER - {t.subtitle}</title>
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <meta property="og:title" content="VIN DECODER - Free Vehicle Specification Report" />
+        <meta property="og:image" content="https://vindecoder.space/og-image.jpg" />
+      </Head>
 
       <div className="lang-switcher">
         {Object.keys(translations).map(l => (
@@ -109,21 +103,22 @@ export default function Home({ initialHistory }) {
         </form>
       </div>
 
-      {/* Показуємо історію тільки якщо в базі є реальні записи */}
       {initialHistory && initialHistory.length > 0 && (
         <div className="history-section">
           <p>{t.history}</p>
           <div className="history-chips">
-            {initialHistory.map((h, i) => (
-              <a key={i} href={`/vin/${h}?region=${region}`} onClick={(e) => { e.preventDefault(); setIsSearching(true); router.push(`/vin/${h}?region=${region}`); }} className="chip" style={{textDecoration: 'none'}}>{h}</a>
-            ))}
+            {initialHistory.map((h, i) => {
+              // Чистий лінк для історії (якщо людина клікає на історію, зазвичай це US авто)
+              const historyUrl = `/vin/${h}${region !== 'us' ? `?region=${region}` : ''}`;
+              return (
+                <a key={i} href={historyUrl} onClick={(e) => { e.preventDefault(); setIsSearching(true); router.push(historyUrl); }} className="chip" style={{textDecoration: 'none'}}>{h}</a>
+              );
+            })}
           </div>
         </div>
       )}
 
-      <footer className="footer">
-        <p>© 2026 VIN DECODER | <a href="/privacy">{t.privacy}</a></p>
-      </footer>
+      <footer className="footer"><p>© 2026 VIN DECODER | <a href="/privacy">{t.privacy}</a></p></footer>
 
       <style jsx global>{`
         body { background-color: #000; margin: 0; padding: 0; color: #fff; }
