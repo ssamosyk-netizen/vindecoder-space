@@ -138,7 +138,6 @@ export default function VinReport() {
 
   const t = translations[lang] || translations.en;
 
-  // Отримання даних VIN
   useEffect(() => {
     if (!id) return;
     
@@ -146,7 +145,10 @@ export default function VinReport() {
       setLoading(true);
       setError(false);
       try {
+        // Використання HTTPS для NHTSA API
         const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${id}?format=json`);
+        if (!response.ok) throw new Error('Network error');
+        
         const json = await response.json();
         
         if (json.Results && json.Results[0] && json.Results[0].Make) {
@@ -155,7 +157,7 @@ export default function VinReport() {
           setError(true);
         }
       } catch (err) {
-        console.error(err);
+        console.error("API Error:", err);
         setError(true);
       } finally {
         setLoading(false);
@@ -165,32 +167,21 @@ export default function VinReport() {
     fetchVinData();
   }, [id]);
 
-  // Партнерське посилання на CARFAX або інший сервіс (додай своє)
   const affiliateLink = `https://your-affiliate-link.com/report?vin=${id}`;
-  
-  // Посилання на донати
   const donationLink = `https://buymeacoffee.com/yourprofile`;
-
-  // Формуємо динамічне посилання на картинку для месенджерів (OG Image)
-  const currentVin = id || 'CHECK';
-  const ogImageUrl = `https://vindecoder.space/api/og?vin=${currentVin}`;
+  const ogImageUrl = `https://vindecoder.space/api/og?vin=${id || ''}&make=${vehicleData?.Make || ''}&model=${vehicleData?.Model || ''}&year=${vehicleData?.ModelYear || ''}`;
 
   return (
     <div className="container" dir={t.dir}>
       <Head>
-        <title>{id ? `VIN Report: ${id}` : 'VIN DECODER'} | Free Check</title>
-        <meta name="description" content={`Get full vehicle specifications and history report for VIN ${id}.`} />
+        <title>{id ? `${vehicleData?.Make || ''} ${vehicleData?.Model || ''} ${id}` : 'VIN Report'} | VIN DECODER</title>
+        <meta name="description" content={`Technical report for ${id}. Make: ${vehicleData?.Make}, Model: ${vehicleData?.Model}, Year: ${vehicleData?.ModelYear}`} />
         <link rel="icon" type="image/png" href="/favicon.png" />
         
-        {/* КАРТИНКА ДЛЯ МЕСЕНДЖЕРІВ, ЯКА ГЕНЕРУЄТЬСЯ ДЛЯ КОЖНОГО VIN */}
-        <meta property="og:title" content={`${id ? id : 'Vehicle'} | Free VIN Decoder`} />
-        <meta property="og:description" content={`Get full vehicle specifications and history report for VIN ${id}.`} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://vindecoder.space/vin/${id}`} />
+        <meta property="og:title" content={`${id} | Free VIN Report`} />
+        <meta property="og:description" content={`Report for ${vehicleData?.Make} ${vehicleData?.Model}.`} />
         <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:image:secure_url" content={ogImageUrl} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
+        <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={ogImageUrl} />
       </Head>
@@ -199,14 +190,9 @@ export default function VinReport() {
         <div className="logo" onClick={() => router.push('/')} style={{cursor: 'pointer'}}>
           <span className="yellow">VIN</span>DECODER
         </div>
-        
         <div className="lang-switcher">
           {languages.map((l) => (
-            <span 
-              key={l.code}
-              className={lang === l.code ? 'active' : ''} 
-              onClick={() => toggleLang(l.code)}
-            >
+            <span key={l.code} className={lang === l.code ? 'active' : ''} onClick={() => toggleLang(l.code)}>
               {l.label}
             </span>
           ))}
@@ -221,14 +207,13 @@ export default function VinReport() {
             <div className="spinner"></div>
             <p>{t.loading}</p>
           </div>
-        ) : error || !vehicleData ? (
+        ) : error ? (
           <div className="status-box error">
             <p>{t.error}</p>
             <button className="back-btn" onClick={() => router.push('/')}>Go Back</button>
           </div>
         ) : (
           <>
-            {/* БЛОК МОНЕТИЗАЦІЇ */}
             <div className="monetization-banner">
               <div className="banner-text">
                 <h3>⚠️ {t.getHistoryTitle}</h3>
@@ -247,21 +232,17 @@ export default function VinReport() {
                   <li><span>Model:</span> {vehicleData.Model || 'N/A'}</li>
                   <li><span>Year:</span> {vehicleData.ModelYear || 'N/A'}</li>
                   <li><span>Trim:</span> {vehicleData.Trim || 'N/A'}</li>
-                  <li><span>Body Style:</span> {vehicleData.BodyClass || 'N/A'}</li>
-                  <li><span>Drive Type:</span> {vehicleData.DriveType || 'N/A'}</li>
-                  <li><span>Vehicle Type:</span> {vehicleData.VehicleType || 'N/A'}</li>
+                  <li><span>Body:</span> {vehicleData.BodyClass || 'N/A'}</li>
                 </ul>
               </div>
 
               <div className="data-card">
                 <h3>{t.engine}</h3>
                 <ul>
-                  <li><span>Engine Model:</span> {vehicleData.EngineModel || 'N/A'}</li>
+                  <li><span>Engine:</span> {vehicleData.DisplacementL ? `${vehicleData.DisplacementL}L` : 'N/A'}</li>
                   <li><span>Cylinders:</span> {vehicleData.EngineCylinders || 'N/A'}</li>
-                  <li><span>Displacement (L):</span> {vehicleData.DisplacementL || 'N/A'}</li>
-                  <li><span>Horsepower:</span> {vehicleData.EngineHP || 'N/A'}</li>
-                  <li><span>Fuel Type:</span> {vehicleData.FuelTypePrimary || 'N/A'}</li>
-                  <li><span>Transmission:</span> {vehicleData.TransmissionStyle || 'N/A'}</li>
+                  <li><span>Fuel:</span> {vehicleData.FuelTypePrimary || 'N/A'}</li>
+                  <li><span>HP:</span> {vehicleData.EngineHP || 'N/A'}</li>
                 </ul>
               </div>
 
@@ -269,9 +250,7 @@ export default function VinReport() {
                 <h3>{t.production}</h3>
                 <ul>
                   <li><span>Manufacturer:</span> {vehicleData.Manufacturer || 'N/A'}</li>
-                  <li><span>Plant City:</span> {vehicleData.PlantCity || 'N/A'}</li>
-                  <li><span>Plant Country:</span> {vehicleData.PlantCountry || 'N/A'}</li>
-                  <li><span>Plant State:</span> {vehicleData.PlantState || 'N/A'}</li>
+                  <li><span>Plant:</span> {vehicleData.PlantCountry || 'N/A'}</li>
                   <li><span>Series:</span> {vehicleData.Series || 'N/A'}</li>
                 </ul>
               </div>
@@ -297,66 +276,38 @@ export default function VinReport() {
       </footer>
 
       <style jsx global>{`
-        html, body { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow-x: hidden; }
+        body { margin: 0; background-color: #000; color: #fff; font-family: sans-serif; }
       `}</style>
-
       <style jsx>{`
-        .container { padding: 0 20px; max-width: 1200px; margin: 0 auto; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 30px 0 50px; }
-        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; }
+        .container { padding: 0 20px; max-width: 1100px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 30px 0; }
+        .logo { font-size: 1.5rem; font-weight: 900; }
         .yellow { color: #facc15; }
-        
-        .lang-switcher { display: flex; gap: 8px; font-size: 10px; font-weight: bold; }
-        .lang-switcher span { cursor: pointer; padding: 6px 10px; border: 1px solid transparent; border-radius: 8px; transition: all 0.2s; color: #444; }
-        .lang-switcher span.active { color: #facc15; border-color: #facc15; background: rgba(250, 204, 21, 0.05); }
-        .lang-switcher span:hover:not(.active) { color: #aaa; border-color: #222; }
-
-        .content { flex: 1; width: 100%; max-width: 900px; margin: 0 auto; }
-        .report-title { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 900; margin-bottom: 30px; text-transform: uppercase; text-align: center; }
-        .report-title .yellow { word-break: break-all; }
-
-        .status-box { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 50px 20px; border-radius: 20px; text-align: center; color: #aaa; font-size: 1.1rem; }
-        .status-box.error { color: #ff4d4d; border-color: #331111; }
-        .spinner { width: 40px; height: 40px; border: 4px solid rgba(250, 204, 21, 0.1); border-left-color: #facc15; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        .lang-switcher { display: flex; gap: 10px; font-size: 12px; font-weight: bold; }
+        .lang-switcher span { cursor: pointer; padding: 5px 10px; border-radius: 5px; color: #444; }
+        .lang-switcher span.active { color: #facc15; border: 1px solid #facc15; }
+        .content { flex: 1; max-width: 800px; margin: 0 auto; width: 100%; }
+        .report-title { text-align: center; margin-bottom: 40px; }
+        .status-box { text-align: center; padding: 60px 0; background: #0a0a0a; border-radius: 20px; border: 1px solid #1a1a1a; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #222; border-left-color: #facc15; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        .back-btn { background: #222; color: #fff; border: none; padding: 12px 30px; border-radius: 12px; margin-top: 20px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .back-btn:hover { background: #333; color: #facc15; }
-
-        .monetization-banner { background: linear-gradient(135deg, #111, #1a1a1a); border: 1px solid #333; padding: 25px 30px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .banner-text h3 { margin: 0 0 5px; color: #fff; font-size: 1.2rem; }
-        .banner-text p { margin: 0; color: #aaa; font-size: 0.95rem; }
-        .action-btn { background: #facc15; color: #000; text-decoration: none; padding: 14px 24px; border-radius: 12px; font-weight: 900; font-size: 0.9rem; text-transform: uppercase; white-space: nowrap; transition: 0.2s; box-shadow: 0 4px 15px rgba(250, 204, 21, 0.3); }
-        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(250, 204, 21, 0.5); }
-
+        .monetization-banner { background: #111; padding: 25px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border: 1px solid #222; }
+        .action-btn { background: #facc15; color: #000; text-decoration: none; padding: 12px 20px; border-radius: 10px; font-weight: 900; text-align: center; }
         .data-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 40px; }
-        .data-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 20px; }
-        .data-card h3 { color: #facc15; margin-top: 0; margin-bottom: 20px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #222; padding-bottom: 10px; }
-        .data-card ul { list-style: none; padding: 0; margin: 0; }
-        .data-card li { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #111; font-size: 0.95rem; color: #eee; }
-        .data-card li:last-child { border-bottom: none; }
-        .data-card li span { color: #777; font-weight: bold; }
-
-        .support-banner { text-align: center; background: #080808; border: 1px dashed #333; padding: 30px; border-radius: 20px; margin-bottom: 20px; }
-        .support-banner h3 { color: #aaa; margin: 0 0 15px; font-size: 1rem; }
-        .donate-btn { display: inline-block; background: #222; color: #fff; text-decoration: none; padding: 10px 24px; border-radius: 12px; font-weight: bold; border: 1px solid #333; transition: 0.2s; }
-        .donate-btn:hover { background: #333; border-color: #facc15; color: #facc15; }
-
-        .footer { padding: 40px 0; color: #555; font-size: 12px; text-align: center; margin-top: 40px; }
-        .footer-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
-        .footer-links span { cursor: pointer; transition: color 0.2s; }
-        .footer-links span:hover { color: #facc15; }
-        .dot { color: #333; cursor: default !important; }
-        .copyright { font-size: 10px; font-weight: bold; letter-spacing: 1px; color: #222; text-transform: uppercase; margin: 0; }
-
+        .data-card { background: #0a0a0a; padding: 20px; border-radius: 15px; border: 1px solid #1a1a1a; }
+        .data-card h3 { color: #facc15; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #111; padding-bottom: 10px; }
+        .data-card ul { list-style: none; padding: 0; }
+        .data-card li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #080808; font-size: 14px; }
+        .data-card span { color: #555; font-weight: bold; }
+        .support-banner { text-align: center; padding: 30px; border-top: 1px solid #111; }
+        .donate-btn { color: #555; text-decoration: none; font-size: 14px; }
+        .footer { padding: 40px 0; text-align: center; font-size: 12px; color: #333; }
+        .footer-links { margin-bottom: 10px; color: #555; }
+        .footer-links span { cursor: pointer; margin: 0 10px; }
         @media (max-width: 768px) {
-          .header { flex-direction: column; gap: 20px; padding-bottom: 30px; }
-          .monetization-banner { flex-direction: column; text-align: center; gap: 20px; padding: 25px 20px; }
-          .action-btn { width: 100%; text-align: center; box-sizing: border-box; }
-          .data-card li { flex-direction: column; gap: 5px; }
+          .monetization-banner { flex-direction: column; text-align: center; gap: 20px; }
         }
       `}</style>
     </div>
   );
 }
-// --- КІНЕЦЬ ФАЙЛУ VIN/[ID].JS ---
