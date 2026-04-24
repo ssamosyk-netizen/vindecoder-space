@@ -1,0 +1,91 @@
+import { ImageResponse } from '@vercel/og';
+
+export const config = {
+  runtime: 'edge', // Використовуємо надшвидкий Edge runtime
+};
+
+export default function handler(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+
+    // Дістаємо дані про авто з URL
+    const vin = searchParams.get('vin') || 'UNKNOWN VIN';
+    const make = searchParams.get('make') || '';
+    const model = searchParams.get('model') || '';
+    const year = searchParams.get('year') || '';
+
+    const carName = `${year} ${make} ${model}`.trim() || 'Vehicle Specification Report';
+
+    // Малюємо картинку за допомогою HTML та CSS
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            backgroundColor: '#000', // Чорний фон
+            padding: '80px',
+            fontFamily: 'sans-serif',
+          }}
+        >
+          {/* Верхній рядок: Логотип */}
+          <div style={{ display: 'flex', marginBottom: '40px' }}>
+            <span style={{ color: '#facc15', fontSize: 30, fontWeight: 900, letterSpacing: '-2px' }}>VIN</span>
+            <span style={{ color: '#fff', fontSize: 30, fontWeight: 900, letterSpacing: '-2px' }}>DECODER</span>
+          </div>
+
+          {/* VIN код (сірим) */}
+          <div
+            style={{
+              fontSize: 22,
+              color: '#666',
+              marginBottom: '15px',
+              fontWeight: 'bold',
+            }}
+          >
+            VIN: {vin}
+          </div>
+
+          {/* Назва автомобіля (Велика, біла) */}
+          <div
+            style={{
+              fontSize: 65,
+              fontWeight: 900,
+              color: '#fff',
+              textTransform: 'uppercase',
+              lineHeight: 1.1,
+              marginBottom: '30px',
+            }}
+          >
+            {year} <span style={{ color: '#facc15' }}>{make}</span> {model}
+          </div>
+
+          {/* Нижня плашка: Статус */}
+          <div
+            style={{
+              display: 'flex',
+              background: '#facc15',
+              color: '#000',
+              padding: '10px 20px',
+              borderRadius: '10px',
+              fontSize: 18,
+              fontWeight: 'bold',
+            }}
+          >
+            ✓ Technical Report Generated
+          </div>
+        </div>
+      ),
+      {
+        width: 1200,
+        height: 630, // Стандартний розмір для соцмереж
+      }
+    );
+  } catch (e) {
+    return new Response(`Failed to generate image`, { status: 500 });
+  }
+}
