@@ -19,17 +19,17 @@ const translations = {
   },
   uk: {
     dir: 'ltr',
-    heroTitle: "Безкоштовна розшифровка VIN {make}",
-    heroSub: "Миттєвий технічний звіт та повні характеристики для автомобілів {make}.",
+    heroTitle: "Безкоштовний VIN Декодер {make}",
+    heroSub: "Миттєвий технічний звіт та характеристики для автомобілів {make}.",
     searchPlaceholder: "Введіть VIN {make}...",
     searchBtn: "Пошук",
-    whyTitle: "Навіщо перевіряти VIN-код {make}?",
-    whyText: "Кожен {make} має унікальний 17-значний ідентифікатор. Розшифрувавши його, ви дізнаєтесь:",
-    bullet1: "Реальний об'єм двигуна та його конфігурацію",
-    bullet2: "Заводське обладнання та рівень комплектації",
-    bullet3: "Завод-виробник та точний рік складання",
-    bullet4: "Системи безпеки та тип гальмівної системи",
-    alert: "Будь ласка, введіть коректний VIN-код"
+    whyTitle: "Навіщо перевіряти VIN {make}?",
+    whyText: "Кожен {make} має унікальний 17-значний ідентифікатор. Розшифрувавши його, ви можете перевірити:",
+    bullet1: "Реальний об'єм та конфігурацію двигуна",
+    bullet2: "Оригінальне обладнання та рівень комплектації",
+    bullet3: "Завод-виробник та рік складання",
+    bullet4: "Системи безпеки та гальмівні системи",
+    alert: "Будь ласка, введіть коректний VIN код"
   },
   es: {
     dir: 'ltr',
@@ -104,7 +104,6 @@ export default function MakeLanding() {
   const [vinInput, setVinInput] = useState('');
   const [lang, setLang] = useState('en');
 
-  // Виправлення BMW та інших абревіатур, щоб вони були великими літерами
   const formatMakeName = (m) => {
     if (!m) return '';
     const acronyms = ['bmw', 'kia', 'vw', 'gmc'];
@@ -139,12 +138,11 @@ export default function MakeLanding() {
   return (
     <div className="container" dir={t.dir}>
       <Head>
-        <title>{displayMake} VIN Decoder | {lang === 'uk' ? 'Розшифровка та Характеристики' : 'Free Report'}</title>
+        <title>{displayMake} VIN Decoder | {lang === 'uk' ? 'Безкоштовна перевірка' : 'Free Report'}</title>
         <meta name="description" content={t.heroSub.replace('{make}', displayMake)} />
         <link rel="canonical" href={`https://vindecoder.space/make/${make}`} />
         <link rel="icon" type="image/png" href="/favicon.png" />
         
-        {/* ПОВНІ OG ТА ТВІТТЕР ТЕГИ ДЛЯ СОЦМЕРЕЖ ТА МЕСЕНДЖЕРІВ */}
         <meta property="og:title" content={`${displayMake} VIN Decoder`} />
         <meta property="og:description" content={t.heroSub.replace('{make}', displayMake)} />
         <meta property="og:type" content="website" />
@@ -159,10 +157,9 @@ export default function MakeLanding() {
 
       <header className="header">
         <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}>
-          <span className="yellow">VIN</span>-DECODER
+          <span className="yellow">VIN</span>DECODER
         </h1>
         
-        {/* ОНОВЛЕНИЙ МОВНИЙ БАР ЯК НА ГОЛОВНІЙ */}
         <div className="lang-switcher">
           {languages.map((l) => (
             <span 
@@ -209,7 +206,7 @@ export default function MakeLanding() {
         </div>
       </div>
 
-      <footer className="footer"><p>© 2026 VIN-DECODER | PROFESSIONAL DATA</p></footer>
+      <footer className="footer"><p>© 2026 VIN DECODER | PROFESSIONAL DATA</p></footer>
 
       <style jsx global>{`
         html, body {
@@ -228,7 +225,6 @@ export default function MakeLanding() {
         h1 { font-size: 1.5rem; font-weight: 900; margin: 0; letter-spacing: -1px; }
         .yellow { color: #facc15; }
         
-        /* СТИЛІ МОВНОГО БАРУ (ЯК НА ГОЛОВНІЙ) */
         .lang-switcher { display: flex; gap: 8px; font-size: 10px; font-weight: bold; }
         .lang-switcher span { 
           cursor: pointer; 
@@ -260,7 +256,8 @@ export default function MakeLanding() {
           border: 1px solid #222; 
         }
         input { flex: 1; padding: 15px 25px; border: none; background: transparent; color: #fff; font-size: 1.1rem; outline: none; }
-        button { padding: 0 40px; border-radius: 18px; border: none; background: #facc15; color: #000; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        button { padding: 0 40px; border-radius: 18px; border: none; background: #facc15; color: #000; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: transform 0.2s; }
+        button:active { transform: scale(0.95); }
         
         .info-section { 
           max-width: 800px; 
@@ -273,11 +270,7 @@ export default function MakeLanding() {
         .info-section h3 { color: #facc15; margin-bottom: 20px; font-size: 1.4rem; }
         .info-section p { color: #aaa; line-height: 1.6; margin-bottom: 30px; }
         
-        /* ВИРІВНЮВАННЯ СПИСКУ */
-        .list-container {
-          display: inline-block;
-          text-align: start;
-        }
+        .list-container { display: inline-block; text-align: start; }
         .info-section ul { 
           color: #777; 
           line-height: 1.8; 
@@ -286,10 +279,7 @@ export default function MakeLanding() {
           list-style-position: outside;
           padding-inline-start: 25px;
         }
-        .info-section li {
-          margin-bottom: 12px;
-          font-size: 1.05rem;
-        }
+        .info-section li { margin-bottom: 12px; font-size: 1.05rem; }
 
         .footer { padding: 40px 0; color: #222; font-size: 10px; text-transform: uppercase; font-weight: bold; }
         
@@ -304,3 +294,4 @@ export default function MakeLanding() {
     </div>
   );
 }
+// --- КІНЕЦЬ ФАЙЛУ ---
