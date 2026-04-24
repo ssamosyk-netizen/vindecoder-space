@@ -10,8 +10,9 @@ const translations = {
     placeholder: "Enter 17-character VIN...",
     button: "DECODE",
     popular: "Popular Brands",
+    history: "Recent Searches",
     footer: "© 2026 VIN DECODER | PROFESSIONAL DATA",
-    alert: "Please enter a valid 17-character VIN"
+    alert: "Please enter a valid VIN code"
   },
   uk: {
     dir: 'ltr',
@@ -20,8 +21,9 @@ const translations = {
     placeholder: "Введіть 17-значний VIN...",
     button: "ПЕРЕВІРИТИ",
     popular: "Популярні марки",
+    history: "Останні пошуки",
     footer: "© 2026 VIN DECODER | ПРОФЕСІЙНІ ДАНІ",
-    alert: "Будь ласка, введіть коректний 17-значний VIN"
+    alert: "Будь ласка, введіть коректний VIN код"
   },
   es: {
     dir: 'ltr',
@@ -30,8 +32,9 @@ const translations = {
     placeholder: "Ingrese el VIN de 17 caracteres...",
     button: "DECODIFICAR",
     popular: "Marcas populares",
+    history: "Búsquedas recientes",
     footer: "© 2026 VIN DECODER | DATOS PROFESIONALES",
-    alert: "Ingrese un VIN válido de 17 caracteres"
+    alert: "Ingrese un VIN válido"
   },
   de: {
     dir: 'ltr',
@@ -40,8 +43,9 @@ const translations = {
     placeholder: "17-stellige VIN eingeben...",
     button: "DEKODIEREN",
     popular: "Beliebte Marken",
+    history: "Letzte Suchen",
     footer: "© 2026 VIN DECODER | PROFESSIONELLE DATEN",
-    alert: "Bitte geben Sie eine gültige 17-stellige VIN ein"
+    alert: "Bitte geben Sie eine gültige VIN ein"
   },
   zh: {
     dir: 'ltr',
@@ -50,8 +54,9 @@ const translations = {
     placeholder: "输入17位车架号...",
     button: "解码",
     popular: "热门品牌",
+    history: "最近搜索",
     footer: "© 2026 VIN DECODER | 专业数据",
-    alert: "请输入有效的17位车架号"
+    alert: "请输入有效的车架号"
   },
   ar: {
     dir: 'rtl',
@@ -60,34 +65,35 @@ const translations = {
     placeholder: "أدخل رقم الشاسيه المكون من 17 حرفًا...",
     button: "فك التشفير",
     popular: "ماركات شعبية",
+    history: "عمليات البحث الأخيرة",
     footer: "© 2026 VIN DECODER | بيانات احترافية",
-    alert: "يرجى إدخال رقم شاسيه صحيح مكون من 17 حرفًا"
+    alert: "يرجى إدخال رقم شاسيه صحيح"
   }
 };
 
 const popularMakes = [
-  { name: 'Ford', slug: 'ford' },
-  { name: 'Hyundai', slug: 'hyundai' },
-  { name: 'Kia', slug: 'kia' },
-  { name: 'Toyota', slug: 'toyota' },
-  { name: 'BMW', slug: 'bmw' },
-  { name: 'Mercedes', slug: 'mercedes-benz' },
-  { name: 'Volkswagen', slug: 'volkswagen' },
-  { name: 'Tesla', slug: 'tesla' },
-  { name: 'Chevrolet', slug: 'chevrolet' },
-  { name: 'Audi', slug: 'audi' },
-  { name: 'Nissan', slug: 'nissan' },
-  { name: 'Lexus', slug: 'lexus' }
+  { name: 'Ford', slug: 'ford' }, { name: 'Hyundai', slug: 'hyundai' },
+  { name: 'Kia', slug: 'kia' }, { name: 'Toyota', slug: 'toyota' },
+  { name: 'BMW', slug: 'bmw' }, { name: 'Mercedes', slug: 'mercedes-benz' },
+  { name: 'Volkswagen', slug: 'volkswagen' }, { name: 'Tesla', slug: 'tesla' },
+  { name: 'Chevrolet', slug: 'chevrolet' }, { name: 'Audi', slug: 'audi' },
+  { name: 'Nissan', slug: 'nissan' }, { name: 'Lexus', slug: 'lexus' }
 ];
 
 export default function Home() {
   const router = useRouter();
   const [vin, setVin] = useState('');
   const [lang, setLang] = useState('en');
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
+    // Мова
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang && translations[savedLang]) setLang(savedLang);
+    
+    // Історія
+    const savedHistory = JSON.parse(localStorage.getItem('vinHistory') || '[]');
+    setHistory(savedHistory);
   }, []);
 
   const t = translations[lang];
@@ -97,9 +103,15 @@ export default function Home() {
     localStorage.setItem('userLanguage', newLang);
   };
 
-  const handleSearch = () => {
-    if (vin.trim().length >= 10) {
-      router.push(`/vin/${vin.toUpperCase().trim()}`);
+  const handleSearch = (searchVin = vin) => {
+    const finalVin = searchVin.toUpperCase().trim();
+    if (finalVin.length >= 8) {
+      // Оновлюємо історію
+      const newHistory = [finalVin, ...history.filter(h => h !== finalVin)].slice(0, 5);
+      setHistory(newHistory);
+      localStorage.setItem('vinHistory', JSON.stringify(newHistory));
+      
+      router.push(`/vin/${finalVin}`);
     } else {
       alert(t.alert);
     }
@@ -109,7 +121,7 @@ export default function Home() {
     <div className="container" dir={t.dir}>
       <Head>
         <title>VIN DECODER | Free Vehicle Specifications Report</title>
-        <meta name="description" content="Free online VIN decoder. Check any vehicle specifications, engine data, and options instantly." />
+        <meta name="description" content="Free online VIN decoder. Check any vehicle specifications instantly." />
         <link rel="icon" href="/favicon.png" />
       </Head>
 
@@ -140,19 +152,27 @@ export default function Home() {
             onChange={(e) => setVin(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
-          <button onClick={handleSearch}>{t.button}</button>
+          <button onClick={() => handleSearch()}>{t.button}</button>
         </div>
 
-        {/* Блок з марками */}
+        {/* ІСТОРІЯ ПОШУКУ */}
+        {history.length > 0 && (
+          <div className="history-section">
+            <span className="section-label">{t.history}:</span>
+            <div className="history-chips">
+              {history.map((h) => (
+                <span key={h} className="chip" onClick={() => handleSearch(h)}>{h}</span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ПОПУЛЯРНІ МАРКИ */}
         <div className="makes-section">
           <h3>{t.popular}</h3>
           <div className="makes-grid">
             {popularMakes.map((make) => (
-              <div 
-                key={make.slug} 
-                className="make-item"
-                onClick={() => router.push(`/make/${make.slug}`)}
-              >
+              <div key={make.slug} className="make-item" onClick={() => router.push(`/make/${make.slug}`)}>
                 {make.name}
               </div>
             ))}
@@ -167,38 +187,56 @@ export default function Home() {
       `}</style>
 
       <style jsx>{`
-        .container { min-height: 100vh; display: flex; flex-direction: column; padding: 0 20px; max-width: 1200px; margin: 0 auto; box-sizing: border-box; }
+        .container { min-height: 100vh; display: flex; flex-direction: column; padding: 0 20px; max-width: 1200px; margin: 0 auto; }
         .header { display: flex; justify-content: space-between; align-items: center; padding: 30px 0; }
-        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; cursor: pointer; }
+        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; }
         .yellow { color: #facc15; }
         
-        .lang-bar { display: flex; gap: 10px; font-size: 11px; font-weight: bold; color: #444; }
-        .lang-bar span { cursor: pointer; padding: 5px; transition: color 0.2s; }
-        .lang-bar span.active { color: #facc15; }
-        .lang-bar span:hover { color: #fff; }
+        /* Мовний бар з підсвіткою-бордером */
+        .lang-bar { display: flex; gap: 8px; font-size: 10px; font-weight: bold; }
+        .lang-bar span { 
+          cursor: pointer; 
+          padding: 6px 10px; 
+          border: 1px solid transparent; 
+          border-radius: 8px; 
+          transition: all 0.2s; 
+          color: #444;
+        }
+        .lang-bar span.active { 
+          color: #facc15; 
+          border-color: #facc15; 
+          background: rgba(250, 204, 21, 0.05); 
+        }
+        .lang-bar span:hover:not(.active) { color: #aaa; border-color: #222; }
 
-        .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 0; text-align: center; }
-        .title { font-size: clamp(2.5rem, 10vw, 5rem); font-weight: 900; margin: 0; line-height: 0.9; letter-spacing: -3px; }
-        .subtitle { color: #555; margin: 20px 0 40px; font-size: clamp(1rem, 2vw, 1.2rem); max-width: 600px; }
+        .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; text-align: center; }
+        .title { font-size: clamp(2.2rem, 10vw, 5rem); font-weight: 900; margin: 0; line-height: 0.9; letter-spacing: -3px; }
+        .subtitle { color: #555; margin: 20px 0 40px; font-size: clamp(0.9rem, 2vw, 1.1rem); max-width: 600px; }
 
-        .search-box { width: 100%; max-width: 700px; display: flex; gap: 10px; background: #111; padding: 12px; border-radius: 25px; border: 1px solid #222; margin-bottom: 80px; }
-        input { flex: 1; background: transparent; border: none; padding: 15px 25px; color: #fff; font-size: 1.2rem; outline: none; }
-        button { background: #facc15; color: #000; border: none; padding: 0 40px; border-radius: 20px; font-weight: 900; cursor: pointer; transition: transform 0.2s; }
-        button:active { transform: scale(0.95); }
+        .search-box { width: 100%; max-width: 700px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 25px; border: 1px solid #222; margin-bottom: 30px; }
+        input { flex: 1; background: transparent; border: none; padding: 15px; color: #fff; font-size: 1.1rem; outline: none; }
+        button { background: #facc15; color: #000; border: none; padding: 0 40px; border-radius: 18px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+
+        /* Стилі історії */
+        .history-section { margin-bottom: 60px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .section-label { font-size: 10px; color: #333; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        .history-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .chip { background: #080808; border: 1px solid #1a1a1a; padding: 6px 14px; border-radius: 20px; font-size: 12px; color: #666; cursor: pointer; transition: 0.2s; font-family: monospace; }
+        .chip:hover { border-color: #facc15; color: #facc15; }
 
         .makes-section { width: 100%; max-width: 900px; }
-        .makes-section h3 { color: #333; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
-        .makes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
-        .make-item { background: #0a0a0a; border: 1px solid #111; padding: 15px; border-radius: 12px; font-size: 14px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.2s; }
+        .makes-section h3 { color: #222; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
+        .makes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+        .make-item { background: #0a0a0a; border: 1px solid #111; padding: 15px; border-radius: 12px; font-size: 13px; font-weight: bold; color: #777; cursor: pointer; transition: 0.2s; }
         .make-item:hover { border-color: #facc15; color: #fff; background: #111; }
 
-        .footer { padding: 40px 0; color: #222; font-size: 10px; font-weight: bold; letter-spacing: 1px; text-align: center; }
+        .footer { padding: 40px 0; color: #222; font-size: 10px; font-weight: bold; text-align: center; }
 
         @media (max-width: 768px) {
           .header { flex-direction: column; gap: 20px; }
           .search-box { flex-direction: column; background: transparent; border: none; padding: 0; }
           input { background: #111; border: 1px solid #222; border-radius: 20px; margin-bottom: 10px; }
-          button { padding: 20px; border-radius: 20px; }
+          button { padding: 18px; border-radius: 20px; }
           .makes-grid { grid-template-columns: repeat(2, 1fr); }
         }
       `}</style>
