@@ -82,7 +82,6 @@ export default function VinResult() {
       {data && (
         <div className="wrapper">
           <main className="main">
-            {/* ГЕНЕРАЛЬНА СЕКЦІЯ */}
             <section className="section">
               <h3>{t.sections.general}</h3>
               <div className="grid">
@@ -95,9 +94,12 @@ export default function VinResult() {
               </div>
             </section>
 
-            <div className="ad-box-wide">{t.ad}</div>
+            {/* ЦЕНТРАЛЬНИЙ БАННЕР (Leaderboard 728x90) */}
+            <div className="ad-container horizontal">
+              <span className="ad-tag">{t.ad}</span>
+              <div className="ad-placeholder-hor">728 x 90</div>
+            </div>
 
-            {/* ЛОГІКА ДЛЯ ЄВРОПИ ТА АМЕРИКИ */}
             {isEuro ? (
               <div className="premium-lock">
                 <div className="lock-icon">🔒</div>
@@ -124,34 +126,20 @@ export default function VinResult() {
                   <div className="grid">
                     <div className="item"><span>{t.fields.abs}</span><b>{val(data.ABS)}</b></div>
                     <div className="item"><span>{t.fields.esc}</span><b>{val(data.ESC)}</b></div>
-                    <div className="item"><span>{t.fields.tpms}</span><b>{val(data.TPMS)}</b></div>
                     <div className="item"><span>{t.fields.airbagsF}</span><b>{val(data.AirBagLocFront)}</b></div>
-                  </div>
-                </section>
-
-                <section className="section">
-                  <h3>{t.sections.dimensions}</h3>
-                  <div className="grid">
-                    <div className="item"><span>{t.fields.gvwr}</span><b>{val(data.GVWR)}</b></div>
-                    <div className="item"><span>{t.fields.wheelbase}</span><b>{val(data.WheelBaseLong)}</b></div>
                   </div>
                 </section>
               </>
             )}
 
-            <section className="section">
-              <h3>{t.sections.origin}</h3>
-              <div className="grid">
-                <div className="item"><span>{t.fields.manufacturer}</span><b>{val(data.Manufacturer)}</b></div>
-                <div className="item"><span>{t.fields.country}</span><b>{val(data.PlantCountry)}</b></div>
-              </div>
-            </section>
-
             <button className="back-btn" onClick={() => router.push('/')}>← {t.back}</button>
           </main>
 
           <aside className="sidebar">
-            <div className="ad-box-side">{t.ad} (300x600)</div>
+            <div className="ad-container vertical">
+              <span className="ad-tag">{t.ad}</span>
+              <div className="ad-placeholder-vert">300 x 600</div>
+            </div>
           </aside>
         </div>
       )}
@@ -165,35 +153,41 @@ export default function VinResult() {
         .container { padding: 20px; min-height: 100vh; text-align: center; }
         .header h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 30px; letter-spacing: -2px; }
         .yellow { color: #facc15; } .white { color: #fff; }
-        .hero h2 { font-size: clamp(1.8rem, 5vw, 3rem); text-transform: uppercase; margin: 0; font-weight: 900; line-height: 1.1; }
+        .hero h2 { font-size: clamp(1.8rem, 5vw, 3rem); text-transform: uppercase; margin: 0; font-weight: 900; }
         .subtitle { color: #666; margin: 10px 0 20px; font-size: 14px; }
         .badges { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; }
-        .badge { padding: 6px 16px; border-radius: 8px; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        .badge { padding: 6px 16px; border-radius: 8px; font-weight: bold; font-size: 12px; text-transform: uppercase; }
         .engine { background: #facc15; color: #000; }
         .eu { background: #1e3a8a; color: #fff; border: 1px solid #3b82f6; }
+        
         .wrapper { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
-        .section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 20px; text-align: left; }
-        .section h3 { color: #facc15; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 12px; margin-bottom: 20px; letter-spacing: 1px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
+        .main { flex: 1; min-width: 0; }
+        
+        .section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 20px; text-align: left; margin-bottom: 20px; }
+        .section h3 { color: #facc15; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 12px; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
         .item span { color: #555; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .item b { display: block; font-size: 18px; margin-top: 6px; word-break: break-word; color: #eee; }
-        .premium-lock { background: linear-gradient(180deg, #0a0a0a 0%, #000 100%); border: 1px dashed #333; padding: 50px 20px; border-radius: 20px; margin-bottom: 20px; }
-        .lock-icon { font-size: 50px; margin-bottom: 15px; opacity: 0.5; }
-        .premium-lock h3 { color: #fff; margin-bottom: 10px; }
-        .premium-lock p { color: #666; max-width: 500px; margin: 0 auto 25px; font-size: 14px; }
-        .partner-btn { background: #facc15; border: none; padding: 18px 40px; font-weight: 900; cursor: pointer; border-radius: 12px; text-transform: uppercase; font-size: 15px; }
+
+        .premium-lock { background: #050505; border: 1px dashed #333; padding: 50px 20px; border-radius: 20px; margin-bottom: 20px; }
+        .lock-icon { font-size: 50px; margin-bottom: 15px; }
+        .partner-btn { background: #facc15; border: none; padding: 18px 40px; font-weight: 900; cursor: pointer; border-radius: 12px; text-transform: uppercase; }
         .pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.4); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(250, 204, 21, 0); } 100% { transform: scale(1); } }
-        .ad-box-wide { background: #080808; border: 1px dashed #222; padding: 20px; border-radius: 15px; color: #333; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
-        .ad-box-side { background: #080808; border: 1px dashed #222; height: 600px; display: flex; align-items: center; justify-content: center; color: #333; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; writing-mode: vertical-rl; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* РЕКЛАМНІ БЛОКИ */
+        .ad-container { margin: 20px 0; text-align: center; }
+        .ad-tag { display: block; font-size: 9px; color: #333; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+        .ad-placeholder-hor { background: #080808; border: 1px solid #111; min-height: 90px; display: flex; align-items: center; justify-content: center; color: #222; font-weight: 900; font-size: 30px; border-radius: 10px; }
+        .ad-placeholder-vert { background: #080808; border: 1px solid #111; width: 300px; height: 600px; display: flex; align-items: center; justify-content: center; color: #222; font-weight: 900; font-size: 40px; border-radius: 15px; }
+
         .sidebar { display: none; }
-        .back-btn { background: transparent; color: #666; border: 1px solid #222; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.2s; }
-        .back-btn:hover { background: #111; color: #fff; }
+        .back-btn { background: transparent; color: #444; border: 1px solid #222; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 20px; }
         .footer { padding: 80px 0 40px; color: #222; font-size: 11px; }
         .footer a { color: #444; text-decoration: none; margin-left: 10px; }
+
         @media (min-width: 900px) {
           .wrapper { flex-direction: row; align-items: flex-start; }
-          .main { flex: 1; }
           .sidebar { display: block; width: 300px; position: sticky; top: 20px; }
         }
       `}</style>
