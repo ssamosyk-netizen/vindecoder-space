@@ -23,7 +23,7 @@ const translations = {
     metaTitle: "VIN ДЕКОДЕР | Безкоштовний звіт про технічні характеристики",
     metaDesc: "Безкоштовний онлайн VIN декодер. Миттєво перевіряйте характеристики авто, дані двигуна та деталі виробництва.",
     title: "БЕЗКОШТОВНИЙ VIN ДЕКОДЕР",
-    subtitle: "Отримайте повні технічні характеристики та дані про заводське складання автомобіля.",
+    subtitle: "Отримайте повні технічні характеристики та дані про заводське складання.",
     placeholder: "Введіть 17-значний VIN...",
     button: "ПЕРЕВІРИТИ",
     popular: "Популярні марки",
@@ -172,8 +172,8 @@ export default function Home() {
       </header>
 
       <main className="main">
-        <h1 className="brand-title"><span className="yellow">VIN</span>DECODER</h1>
-        <h2 className="localized-title">{t.title}</h2>
+        {/* Ось тут тепер правильний головний заголовок */}
+        <h1 className="title">{t.title}</h1>
         <p className="subtitle">{t.subtitle}</p>
 
         <div className="search-box">
@@ -236,9 +236,9 @@ export default function Home() {
 
         .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0 40px; text-align: center; }
         
-        .brand-title { font-size: clamp(3.5rem, 12vw, 6.5rem); font-weight: 900; margin: 0; line-height: 0.9; letter-spacing: -3px; }
-        .localized-title { font-size: clamp(1.3rem, 4vw, 1.8rem); font-weight: 700; color: #aaa; margin: 20px 0 10px; letter-spacing: 2px; text-transform: uppercase; }
-        .subtitle { color: #777; margin: 0 0 40px; font-size: clamp(1.1rem, 2.5vw, 1.3rem); max-width: 600px; line-height: 1.5; }
+        /* Стиль для БЕЗКОШТОВНИЙ VIN ДЕКОДЕР */
+        .title { font-size: clamp(2.2rem, 8vw, 4.5rem); font-weight: 900; margin: 0; line-height: 1; letter-spacing: -2px; text-transform: uppercase; }
+        .subtitle { color: #777; margin: 20px 0 40px; font-size: clamp(1rem, 2.5vw, 1.2rem); max-width: 600px; line-height: 1.5; }
 
         .search-box { width: 100%; max-width: 700px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 25px; border: 1px solid #222; margin-bottom: 80px; }
         input { flex: 1; background: transparent; border: none; padding: 15px 25px; color: #fff; font-size: 1.1rem; outline: none; }
