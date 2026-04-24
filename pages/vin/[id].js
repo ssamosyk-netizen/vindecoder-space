@@ -35,20 +35,16 @@ const fixEuroYear = (vin) => {
   return yearMap[yearChar] || null;
 };
 
-// СЕРВЕРНА ЧАСТИНА: Завантажуємо дані до віддачі сторінки
 export async function getServerSideProps(context) {
   const { id } = context.params;
   try {
     const res = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvaluesextended/${id}?format=json`);
     const result = await res.json();
     let carData = result.Results[0];
-
-    // Фікс року для Європи (ZZZ)
     if (id.toUpperCase().includes('ZZZ')) {
       const cYear = fixEuroYear(id);
       if (cYear) carData.ModelYear = cYear;
     }
-
     return { props: { serverData: carData, vin: id.toUpperCase() } };
   } catch (error) {
     return { props: { serverData: null, vin: id.toUpperCase() } };
@@ -69,32 +65,20 @@ export default function VinResult({ serverData, vin }) {
   const t = translations[lang] || translations.en;
   const val = (v) => (!v || v === "" || v === "Not Applicable" || v === "null" || v === "None") ? "—" : v;
 
-  // --- ФОРМУЄМО ДАНІ ДЛЯ МЕСЕНДЖЕРІВ ---
-  const carNameShort = serverData && serverData.Make 
-    ? `${serverData.Make} ${serverData.Model}` 
-    : 'Vehicle Report';
-    
-  // Ідеальний заголовок: VIN | Рік Марка Модель Двигун
-  const shareTitle = serverData && serverData.Make
-    ? `${vin} | ${serverData.ModelYear} ${serverData.Make} ${serverData.Model} ${data.DisplacementL ? DisplacementL + 'L' : ''}`
+  const carNameShort = serverData && serverData.Make ? `${serverData.Make} ${serverData.Model}` : 'Vehicle Report';
+  const shareTitle = serverData && serverData.Make 
+    ? `${vin} | ${serverData.ModelYear} ${serverData.Make} ${serverData.Model} ${serverData.DisplacementL ? serverData.DisplacementL + 'L' : ''}`
     : `VIN Report: ${vin}`;
-    
-  const shareDesc = `Full technical specification report for ${val(serverData.ModelYear)} ${carNameShort}. Check engine, safety and manufacturing data.`;
 
-  // ПОСИЛАННЯ НА ДИНАМІЧНУ КАРТИНКУ
-  const ogImageUrl = `https://vindecoder.space/api/og?vin=${vin}&make=${val(serverData.Make)}&model=${val(serverData.Model)}&year=${val(serverData.ModelYear)}`;
+  const ogImageUrl = `/api/og?vin=${vin}&make=${val(serverData.Make)}&model=${val(serverData.Model)}&year=${val(serverData.ModelYear)}`;
 
   return (
     <div dir={t.dir} className="container">
       <Head>
-        <title>{shareTitle} | VIN DECODER</title>
+        <title>{shareTitle}</title>
         <link rel="icon" type="image/png" href="/favicon.png" />
-        
-        {/* МЕТА-ТЕГИ ДЛЯ СОЦМЕРЕЖ */}
         <meta property="og:title" content={shareTitle} />
-        <meta property="og:description" content={shareDesc} />
         <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={ogImageUrl} />
       </Head>
@@ -114,7 +98,6 @@ export default function VinResult({ serverData, vin }) {
       {serverData && (
         <div className="wrapper">
           <main className="main">
-            {/* 1. ГЕНЕРАЛЬНІ ДАНІ */}
             <section className="section">
               <h3>{t.sections.general}</h3>
               <div className="grid">
@@ -122,7 +105,6 @@ export default function VinResult({ serverData, vin }) {
                 <div className="item"><span>{t.fields.model}</span><b>{val(serverData.Model)}</b></div>
                 <div className="item"><span>{t.fields.year}</span><b style={{color: isEuro ? '#4ade80' : '#eee'}}>{val(serverData.ModelYear)}</b></div>
                 <div className="item"><span>{t.fields.trim}</span><b>{val(serverData.Trim)}</b></div>
-                <div className="item"><span>{t.fields.series}</span><b>{val(serverData.Series)}</b></div>
                 <div className="item"><span>{t.fields.type}</span><b>{val(serverData.VehicleType)}</b></div>
                 <div className="item"><span>{t.fields.body}</span><b>{val(serverData.BodyClass)}</b></div>
                 <div className="item"><span>{t.fields.doors}</span><b>{val(serverData.Doors)}</b></div>
@@ -140,7 +122,6 @@ export default function VinResult({ serverData, vin }) {
               </div>
             ) : (
               <>
-                {/* 2. ДВИГУН */}
                 <section className="section">
                   <h3>{t.sections.engine}</h3>
                   <div className="grid">
@@ -148,40 +129,31 @@ export default function VinResult({ serverData, vin }) {
                     <div className="item"><span>{t.fields.cylinders}</span><b>{val(serverData.EngineNumberofCylinders)}</b></div>
                     <div className="item"><span>{t.fields.hp}</span><b>{val(serverData.EngineHP)} hp</b></div>
                     <div className="item"><span>{t.fields.fuel}</span><b>{val(serverData.FuelTypePrimary)}</b></div>
-                    <div className="item"><span>{t.fields.injection}</span><b>{val(serverData.FuelInjectionType)}</b></div>
                     <div className="item"><span>{t.fields.drive}</span><b>{val(serverData.DriveType)}</b></div>
-                    <div className="item"><span>{t.fields.transmission}</span><span>{val(serverData.TransmissionStyle)}</span></div>
+                    <div className="item"><span>{t.fields.transmission}</span><b>{val(serverData.TransmissionStyle)}</b></div>
                   </div>
                 </section>
-
-                {/* 3. МЕХАНІКА */}
                 <section className="section">
                   <h3>{t.sections.mechanical}</h3>
                   <div className="grid">
                     <div className="item"><span>{t.fields.brakes}</span><b>{val(serverData.BrakeSystemType)}</b></div>
-                    <div className="item"><span>{t.fields.steering}</span><b>{val(serverData.SteeringLocation)}</b></div>
                     <div className="item"><span>{t.fields.axles}</span><b>{val(serverData.Axles)}</b></div>
                     <div className="item"><span>{t.fields.wheelbase}</span><b>{val(serverData.WheelBaseLong)} in</b></div>
                     <div className="item"><span>{t.fields.gvwr}</span><b>{val(serverData.GVWR)}</b></div>
                   </div>
                 </section>
-
-                {/* 4. БЕЗПЕКА */}
                 <section className="section">
                   <h3>{t.sections.safety}</h3>
                   <div className="grid">
                     <div className="item"><span>{t.fields.abs}</span><b>{val(serverData.ABS)}</b></div>
                     <div className="item"><span>{t.fields.esc}</span><b>{val(serverData.ESC)}</b></div>
-                    <div className="item"><span>{t.fields.tpms}</span><b>{val(serverData.TPMS)}</b></div>
                     <div className="item"><span>{t.fields.airbagF}</span><b>{val(serverData.AirBagLocFront)}</b></div>
                     <div className="item"><span>{t.fields.airbagS}</span><b>{val(serverData.AirBagLocSide)}</b></div>
-                    <div className="item"><span>{t.fields.airbagK}</span><b>{val(serverData.AirBagLocKnee)}</b></div>
                   </div>
                 </section>
               </>
             )}
 
-            {/* 5. ВИРОБНИЦТВО */}
             <section className="section">
               <h3>{t.sections.origin}</h3>
               <div className="grid">
@@ -212,26 +184,20 @@ export default function VinResult({ serverData, vin }) {
         .wrapper { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
         .main { flex: 1; min-width: 0; }
         .section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 20px; text-align: left; margin-bottom: 25px; }
-        .section h3 { color: #facc15; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 12px; margin-bottom: 20px; letter-spacing: 1px; }
+        .section h3 { color: #facc15; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 12px; margin-bottom: 20px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
         .item span { color: #555; font-size: 10px; font-weight: bold; text-transform: uppercase; }
-        .item b { display: block; font-size: 16px; margin-top: 6px; word-break: break-word; color: #eee; line-height: 1.2; }
-        .premium-lock { background: #050505; border: 1px dashed #444; padding: 50px 20px; border-radius: 20px; margin-bottom: 25px; }
-        .lock-icon { font-size: 40px; margin-bottom: 15px; }
-        .partner-btn { background: #facc15; color: #000; border: none; padding: 18px 40px; font-weight: 900; cursor: pointer; border-radius: 12px; text-transform: uppercase; }
-        .pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .item b { display: block; font-size: 16px; margin-top: 6px; word-break: break-word; color: #eee; }
         .ad-container { margin: 25px 0; text-align: center; }
         .ad-tag { display: block; font-size: 9px; color: #333; margin-bottom: 5px; text-transform: uppercase; }
-        .ad-placeholder-hor { background: #080808; border: 1px solid #111; min-height: 90px; display: flex; align-items: center; justify-content: center; color: #222; border-radius: 10px; }
-        .ad-placeholder-vert { background: #080808; border: 1px solid #111; width: 300px; height: 600px; display: flex; align-items: center; justify-content: center; color: #222; border-radius: 15px; }
+        .ad-placeholder-hor { background: #080808; border: 1px solid #111; min-height: 90px; display: flex; border-radius: 10px; }
+        .ad-placeholder-vert { background: #080808; border: 1px solid #111; width: 300px; height: 600px; display: flex; border-radius: 15px; }
         .sidebar { display: none; }
         .back-btn { background: transparent; color: #444; border: 1px solid #222; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .footer { padding: 60px 0 30px; color: #222; font-size: 11px; }
         .footer a { color: #444; text-decoration: none; margin-left: 10px; }
         @media (min-width: 900px) {
           .wrapper { flex-direction: row; align-items: flex-start; }
-          .main { flex: 1; }
           .sidebar { display: block; width: 300px; position: sticky; top: 20px; }
         }
       `}</style>
