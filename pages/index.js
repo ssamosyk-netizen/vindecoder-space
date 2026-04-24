@@ -130,7 +130,6 @@ export default function Home() {
         <title>{t.metaTitle}</title>
         <meta name="description" content={t.metaDesc} />
         <link rel="icon" href="/favicon.png" />
-        
         <meta property="og:title" content={t.metaTitle} />
         <meta property="og:description" content={t.metaDesc} />
         <meta property="og:type" content="website" />
@@ -233,7 +232,7 @@ export default function Home() {
         .makes-section h3 { color: #222; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
         .makes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
         .make-item { background: #0a0a0a; border: 1px solid #111; padding: 15px; border-radius: 12px; font-size: 13px; font-weight: bold; color: #777; cursor: pointer; transition: 0.2s; }
-        .make-item:hover { border-color: #facc15; color: #fff; }
+        .make-item:hover { border-color: #facc15; color: #fff; background: #111; }
 
         .history-section { display: flex; flex-direction: column; align-items: center; gap: 15px; padding-bottom: 40px; }
         .section-label { font-size: 10px; color: #222; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
@@ -254,4 +253,3 @@ export default function Home() {
     </div>
   );
 }
-// --- КІНЕЦЬ ФАЙЛУ ---
