@@ -131,9 +131,10 @@ export default function MakeLanding() {
   return (
     <div className="container" dir={t.dir}>
       <Head>
-        <title>{capitalizedMake} VIN Decoder | {lang === 'uk' ? 'Перевірка характеристик' : 'Technical Specifications'}</title>
+        <title>{capitalizedMake} VIN Decoder | {lang === 'uk' ? 'Безкоштовна перевірка' : 'Free Specifications'}</title>
         <meta name="description" content={t.heroSub.replace('{make}', capitalizedMake)} />
         <link rel="canonical" href={`https://vindecoder.space/make/${make}`} />
+        <link rel="icon" type="image/png" href="/favicon.png" />
         
         <meta property="og:title" content={`${capitalizedMake} VIN Decoder`} />
         <meta property="og:image" content={`https://vindecoder.space/api/og?make=${capitalizedMake}`} />
@@ -196,7 +197,7 @@ export default function MakeLanding() {
           padding: 0;
           background-color: #000;
           color: #fff;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
       `}</style>
 
