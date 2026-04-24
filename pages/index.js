@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
@@ -13,10 +14,12 @@ const translations = {
 const popularVins = ["1FA6P8CF5G", "1J8G2E8A03Y515470", "3VW637AJ7H"];
 
 export default function Home() {
+  const router = useRouter();
   const [lang, setLang] = useState('en');
   const [vin, setVin] = useState('');
   const [region, setRegion] = useState('us');
   const [history, setHistory] = useState([]);
+  const [isSearching, setIsSearching] = useState(false); // Стан для анімації кнопки
 
   useEffect(() => {
     document.body.style.margin = "0";
@@ -36,27 +39,24 @@ export default function Home() {
 
   const t = translations[lang] || translations.en;
 
-  // БРОНЕБІЙНА ФУНКЦІЯ ПЕРЕХОДУ
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault(); // Зупиняємо стандартне перезавантаження сторінки
+    
     const cleanVin = vin.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    
     if (cleanVin.length === 17) {
+      setIsSearching(true); // Показуємо "..." на кнопці
+      
       try {
         const safeHistory = Array.isArray(history) ? history : popularVins;
         const newHistory = [cleanVin, ...safeHistory.filter(h => h !== cleanVin)].slice(0, 5);
         localStorage.setItem('vinHistory', JSON.stringify(newHistory));
       } catch (err) {}
       
-      // Жорсткий перехід браузером (працює 100%)
-      window.location.href = `/vin/${cleanVin}?region=${region}`;
+      // Правильний перехід Next.js
+      router.push(`/vin/${cleanVin}?region=${region}`);
     } else {
       alert(lang === 'uk' ? `Потрібно 17 символів! (Введено: ${cleanVin.length})` : `17 symbols required! (Entered: ${cleanVin.length})`);
-    }
-  };
-
-  // Щоб працював Enter з клавіатури
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
     }
   };
 
@@ -80,7 +80,6 @@ export default function Home() {
         <p className="subtitle">{t.subtitle}</p>
       </div>
       
-      {/* Замінили <form> на <div>, щоб браузер не блокував запит */}
       <div className="vin-form">
         <div className="region-selector">
           {Object.entries(t.regions).map(([key, label]) => (
@@ -90,24 +89,28 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="input-group">
+        {/* ПОВЕРНУЛИ ТЕГ <form> ДЛЯ ПРАВИЛЬНОЇ РОБОТИ ENTER ТА КНОПОК */}
+        <form onSubmit={handleSearch} className="input-group">
           <input 
             type="text" 
             value={vin} 
             onChange={(e) => setVin(e.target.value)}
-            onKeyDown={handleKeyDown}
             placeholder={t.placeholder}
             maxLength="25"
           />
-          <button type="button" onClick={handleSearch}>{t.button}</button>
-        </div>
+          <button type="submit" disabled={isSearching}>
+            {isSearching ? "..." : t.button}
+          </button>
+        </form>
       </div>
 
       <div className="history-section">
         <p>{t.history}</p>
         <div className="history-chips">
           {history.map((h, i) => (
-            <span key={i} onClick={() => { window.location.href = `/vin/${h}?region=${region}`; }} className="chip">{h}</span>
+            <span key={i} onClick={() => { setIsSearching(true); router.push(`/vin/${h}?region=${region}`); }} className="chip">
+              {h}
+            </span>
           ))}
         </div>
       </div>
@@ -125,10 +128,37 @@ export default function Home() {
         .yellow { color: #facc15; } .white { color: #fff; }
         .subtitle { color: #888; font-size: 1rem; font-weight: bold; margin-top: 10px; }
         .vin-form { max-width: 600px; margin: 0 auto 30px; }
+        
         .region-selector { display: flex; background: #0a0a0a; border: 1px solid #333; border-radius: 12px; padding: 5px; margin-bottom: 15px; }
         .region-btn { flex: 1; background: transparent; color: #888; border: none; padding: 12px; font-size: 0.9rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
         .region-btn.active { background: #333; color: #fff; }
-        .input-group { display: flex; flex-direction: column; gap: 10px; }
+        
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin: 0; }
         .input-group input { padding: 18px; font-size: 18px; border: 1px solid #333; background: #0a0a0a; color: #fff; text-align: center; outline: none; width: 100%; box-sizing: border-box; }
-        .input-group button { padding: 18px; font-size: 18px; background: #facc15; border: none; font-weight: bold; color: #000; cursor: pointer; width: 100%; }
-        .history-section { margin-bottom:
+        .input-group input:focus { border-color: #facc15; }
+        
+        .input-group button { padding: 18px; font-size: 18px; background: #facc15; border: none; font-weight: bold; color: #000; cursor: pointer; width: 100%; transition: 0.2s; }
+        .input-group button:disabled { opacity: 0.7; cursor: not-allowed; }
+        
+        .history-section { margin-bottom: 40px; }
+        .history-section p { color: #444; font-size: 11px; text-transform: uppercase; margin-bottom: 12px; font-weight: bold; }
+        .history-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .chip { background: #0a0a0a; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; color: #888; }
+        .chip:hover { border-color: #facc15; color: #facc15; }
+        .footer { text-align: center; margin-top: 60px; color: #222; font-size: 11px; direction: ltr; }
+
+        @media (min-width: 600px) {
+          .input-group { flex-direction: row; gap: 0; }
+          
+          /* Логіка для LTR мов (UA, EN...) */
+          [dir='ltr'] .input-group input { border-radius: 12px 0 0 12px; border-right: none; }
+          [dir='ltr'] .input-group button { border-radius: 0 12px 12px 0; width: auto; padding: 0 40px; }
+          
+          /* Логіка для RTL мов (AR) */
+          [dir='rtl'] .input-group input { border-radius: 0 12px 12px 0; border-left: none; text-align: center; }
+          [dir='rtl'] .input-group button { border-radius: 12px 0 0 12px; width: auto; padding: 0 40px; }
+        }
+      `}</style>
+    </div>
+  );
+}
