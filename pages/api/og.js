@@ -15,7 +15,7 @@ export default function handler(req) {
     const year = searchParams.get('year') || '';
     let engine = searchParams.get('engine') || '';
     
-    // Очищення символів
+    // Очищення
     if (engine === '—' || engine === 'null') engine = '';
 
     return new ImageResponse(
@@ -39,12 +39,12 @@ export default function handler(req) {
             <div style={{ color: '#ffffff', fontSize: '30px', fontWeight: 900, marginLeft: '8px' }}>DECODER</div>
           </div>
 
-          {/* ВЕЛИКИЙ VIN НОМЕР (Тепер він помітний) */}
+          {/* ВЕЛИКИЙ VIN НОМЕР */}
           <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '30px' }}>
             <div style={{ fontSize: '20px', color: '#facc15', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '5px', letterSpacing: '2px' }}>
               Vehicle Identification Number
             </div>
-            <div style={{ fontSize: '52px', color: '#ffffff', fontWeight: 900, letterSpacing: '1px' }}>
+            <div style={{ fontSize: '56px', color: '#ffffff', fontWeight: 900, letterSpacing: '1px' }}>
               {vin}
             </div>
           </div>
@@ -60,21 +60,30 @@ export default function handler(req) {
             {model} {engine}
           </div>
 
-          {/* ПЛАШКА СТАТУСУ */}
+          {/* ПЛАШКА СТАТУСУ (БЕЗ СИМВОЛІВ, ЩО ЛАМАЮТЬСЯ) */}
           <div
             style={{
               display: 'flex',
+              alignItems: 'center',
               marginTop: '60px',
               backgroundColor: '#facc15',
-              paddingLeft: '30px',
+              paddingLeft: '25px',
               paddingRight: '30px',
               paddingTop: '15px',
               paddingBottom: '15px',
               borderRadius: '15px',
             }}
           >
+            {/* Малюємо точку замість галочки, щоб нічого не ламалося */}
+            <div style={{ 
+              width: '12px', 
+              height: '12px', 
+              backgroundColor: '#000000', 
+              borderRadius: '50%', 
+              marginRight: '15px' 
+            }} />
             <div style={{ color: '#000000', fontSize: '22px', fontWeight: 'bold' }}>
-              ✓ FULL SPECIFICATION REPORT READY
+              FULL SPECIFICATION REPORT READY
             </div>
           </div>
         </div>
