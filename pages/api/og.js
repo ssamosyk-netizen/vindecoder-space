@@ -8,14 +8,14 @@ export default function handler(req) {
   try {
     const { searchParams } = new URL(req.url);
 
-    // Отримуємо та очищуємо дані
+    // Отримуємо дані
     const vin = searchParams.get('vin') || '';
     const make = (searchParams.get('make') || '').toUpperCase();
     const model = (searchParams.get('model') || '').toUpperCase();
     const year = searchParams.get('year') || '';
     let engine = searchParams.get('engine') || '';
     
-    // Видаляємо спецсимволи, які можуть «вішати» рендеринг
+    // Очищення символів
     if (engine === '—' || engine === 'null') engine = '';
 
     return new ImageResponse(
@@ -28,30 +28,35 @@ export default function handler(req) {
             flexDirection: 'column',
             alignItems: 'flex-start',
             justifyContent: 'center',
-            backgroundColor: '#000000', // Тільки повні коди кольорів
+            backgroundColor: '#000000',
             paddingLeft: '80px',
             paddingRight: '80px',
           }}
         >
           {/* ЛОГОТИП */}
-          <div style={{ display: 'flex', marginBottom: '40px' }}>
-            <div style={{ color: '#facc15', fontSize: '40px', fontWeight: 900 }}>VIN</div>
-            <div style={{ color: '#ffffff', fontSize: '40px', fontWeight: 900, marginLeft: '10px' }}>DECODER</div>
+          <div style={{ display: 'flex', marginBottom: '60px' }}>
+            <div style={{ color: '#facc15', fontSize: '30px', fontWeight: 900 }}>VIN</div>
+            <div style={{ color: '#ffffff', fontSize: '30px', fontWeight: 900, marginLeft: '8px' }}>DECODER</div>
           </div>
 
-          {/* VIN НОМЕР */}
-          <div style={{ display: 'flex', fontSize: '24px', color: '#666666', marginBottom: '10px', fontWeight: 700 }}>
-            VIN: {vin}
+          {/* ВЕЛИКИЙ VIN НОМЕР (Тепер він помітний) */}
+          <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '30px' }}>
+            <div style={{ fontSize: '20px', color: '#facc15', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '5px', letterSpacing: '2px' }}>
+              Vehicle Identification Number
+            </div>
+            <div style={{ fontSize: '52px', color: '#ffffff', fontWeight: 900, letterSpacing: '1px' }}>
+              {vin}
+            </div>
           </div>
 
-          {/* РЯДОК 1: РІК ТА МАРКА */}
-          <div style={{ display: 'flex', fontSize: '80px', fontWeight: 900, color: '#ffffff', lineHeight: 1.1 }}>
+          {/* ГОЛОВНА ІНФОРМАЦІЯ: РІК ТА МАРКА */}
+          <div style={{ display: 'flex', fontSize: '85px', fontWeight: 900, color: '#ffffff', lineHeight: 1 }}>
             {year} 
             <div style={{ color: '#facc15', marginLeft: '25px' }}>{make}</div>
           </div>
 
-          {/* РЯДОК 2: МОДЕЛЬ ТА ДВИГУН */}
-          <div style={{ display: 'flex', fontSize: '80px', fontWeight: 900, color: '#ffffff', lineHeight: 1.1 }}>
+          {/* МОДЕЛЬ ТА ДВИГУН */}
+          <div style={{ display: 'flex', fontSize: '85px', fontWeight: 900, color: '#ffffff', lineHeight: 1, marginTop: '10px' }}>
             {model} {engine}
           </div>
 
@@ -68,8 +73,8 @@ export default function handler(req) {
               borderRadius: '15px',
             }}
           >
-            <div style={{ color: '#000000', fontSize: '24px', fontWeight: 'bold' }}>
-              ✓ TECHNICAL DATA VERIFIED
+            <div style={{ color: '#000000', fontSize: '22px', fontWeight: 'bold' }}>
+              ✓ FULL SPECIFICATION REPORT READY
             </div>
           </div>
         </div>
