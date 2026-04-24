@@ -6,38 +6,38 @@ const translations = {
   en: { 
     dir: 'ltr', subtitle: "Vehicle Specification Report", back: "Back to Search", error: "Error loading data", ad: "ADVERTISEMENT",
     partnerTitle: "Full European / Global Report Available", partnerDesc: "Get hidden damages, mileage rollbacks, and historical photos.", partnerBtn: "GET FULL REPORT",
-    sections: { general: "General Information", engine: "Engine & Drivetrain", body: "Body & Chassis", origin: "Manufacturing Information" },
-    fields: { make: "Make", model: "Model", year: "Year", trim: "Trim", type: "Vehicle Type", engine: "Engine", cylinders: "Cylinders", fuel: "Fuel Type", drive: "Drive Type", transmission: "Transmission", body: "Body Class", doors: "Doors", country: "Country", plant: "Plant City" }
+    sections: { general: "General Information", engine: "Engine & Performance", dimensions: "Dimensions & Weight", safety: "Safety Equipment", origin: "Manufacturing" },
+    fields: { make: "Make", model: "Model", year: "Year", trim: "Trim", type: "Vehicle Type", body: "Body Class", doors: "Doors", engine: "Engine", cylinders: "Cylinders", hp: "Horsepower (HP)", fuel: "Fuel Type", drive: "Drive Type", transmission: "Transmission", gvwr: "Gross Weight (GVWR)", wheelbase: "Wheelbase (in)", axles: "Axles", abs: "Anti-lock Braking (ABS)", esc: "Stability Control (ESC)", tpms: "Tire Pressure Monitor", airbagsF: "Front Airbags", airbagsS: "Side Airbags", country: "Country", plant: "Plant City", manufacturer: "Manufacturer" }
   },
   uk: { 
     dir: 'ltr', subtitle: "Звіт про специфікації автомобіля", back: "Назад до пошуку", error: "Помилка завантаження", ad: "РЕКЛАМА",
     partnerTitle: "Доступний повний звіт для Європи / Азії", partnerDesc: "Перевірте скручений пробіг, приховані ДТП та історичні фотографії.", partnerBtn: "ОТРИМАТИ ПОВНИЙ ЗВІТ",
-    sections: { general: "Загальна інформація", engine: "Двигун та трансмісія", body: "Кузов та шасі", origin: "Інформація про виробництво" },
-    fields: { make: "Марка", model: "Модель", year: "Рік", trim: "Комплектація", type: "Тип ТЗ", engine: "Двигун", cylinders: "Циліндри", fuel: "Паливо", drive: "Привід", transmission: "Трансмісія", body: "Клас кузова", doors: "Двері", country: "Країна", plant: "Місто заводу" }
+    sections: { general: "Загальна інформація", engine: "Двигун та трансмісія", dimensions: "Габарити та Вага", safety: "Системи безпеки", origin: "Виробництво" },
+    fields: { make: "Марка", model: "Модель", year: "Рік", trim: "Комплектація", type: "Тип ТЗ", body: "Клас кузова", doors: "Двері", engine: "Двигун", cylinders: "Циліндри", hp: "Кінські сили (К.С.)", fuel: "Паливо", drive: "Привід", transmission: "Трансмісія", gvwr: "Повна маса (GVWR)", wheelbase: "Колісна база", axles: "Осі", abs: "Система ABS", esc: "Стабілізація (ESC)", tpms: "Датчик тиску шин", airbagsF: "Фронтальні Airbag", airbagsS: "Бокові Airbag", country: "Країна", plant: "Місто заводу", manufacturer: "Виробник" }
   },
   es: { 
     dir: 'ltr', subtitle: "Informe de especificaciones", back: "Volver", error: "Error", ad: "ANUNCIO",
     partnerTitle: "Informe completo disponible", partnerDesc: "Obtenga daños ocultos e historial.", partnerBtn: "OBTENER INFORME",
-    sections: { general: "Información general", engine: "Motor", body: "Carrocería", origin: "Fabricación" },
-    fields: { make: "Marca", model: "Modelo", year: "Año", trim: "Versión", type: "Tipo", engine: "Motor", cylinders: "Cilindros", fuel: "Combustible", drive: "Tracción", transmission: "Transmisión", body: "Clase", doors: "Puertas", country: "País", plant: "Planta" }
+    sections: { general: "Información general", engine: "Motor y Transmisión", dimensions: "Dimensiones y Peso", safety: "Seguridad", origin: "Fabricación" },
+    fields: { make: "Marca", model: "Modelo", year: "Año", trim: "Versión", type: "Tipo", body: "Carrocería", doors: "Puertas", engine: "Motor", cylinders: "Cilindros", hp: "Caballos (HP)", fuel: "Combustible", drive: "Tracción", transmission: "Transmisión", gvwr: "Peso Bruto", wheelbase: "Distancia entre ejes", axles: "Ejes", abs: "Frenos ABS", esc: "Control de Estabilidad", tpms: "Monitor de Presión", airbagsF: "Bolsas Frontales", airbagsS: "Bolsas Laterales", country: "País", plant: "Planta", manufacturer: "Fabricante" }
   },
   de: { 
     dir: 'ltr', subtitle: "Fahrzeugspezifikationsbericht", back: "Zurück", error: "Fehler", ad: "ANZEIGE",
     partnerTitle: "Vollständiger Bericht verfügbar", partnerDesc: "Erhalten Sie versteckte Schäden und Historie.", partnerBtn: "BERICHT ABRUFEN",
-    sections: { general: "Allgemeine Informationen", engine: "Motor", body: "Karosserie", origin: "Herstellung" },
-    fields: { make: "Marke", model: "Modell", year: "Jahr", trim: "Ausstattung", type: "Typ", engine: "Motor", cylinders: "Zylinder", fuel: "Kraftstoff", drive: "Antrieb", transmission: "Getriebe", body: "Karosserie", doors: "Türen", country: "Land", plant: "Werk" }
+    sections: { general: "Allgemeine Informationen", engine: "Motor & Getriebe", dimensions: "Abmessungen & Gewicht", safety: "Sicherheit", origin: "Herstellung" },
+    fields: { make: "Marke", model: "Modell", year: "Jahr", trim: "Ausstattung", type: "Typ", body: "Karosserie", doors: "Türen", engine: "Motor", cylinders: "Zylinder", hp: "PS", fuel: "Kraftstoff", drive: "Antrieb", transmission: "Getriebe", gvwr: "Zul. Gesamtgewicht", wheelbase: "Radstand", axles: "Achsen", abs: "ABS", esc: "ESP", tpms: "Reifendruckkontrolle", airbagsF: "Frontairbags", airbagsS: "Seitenairbags", country: "Land", plant: "Werk", manufacturer: "Hersteller" }
   },
   zh: { 
     dir: 'ltr', subtitle: "车辆规格报告", back: "返回", error: "错误", ad: "广告",
     partnerTitle: "获取完整报告", partnerDesc: "获取隐藏损坏和历史记录。", partnerBtn: "获取完整报告",
-    sections: { general: "一般信息", engine: "发动机", body: "车身", origin: "制造信息" },
-    fields: { make: "品牌", model: "型号", year: "年份", trim: "配置", type: "类型", engine: "发动机", cylinders: "气缸", fuel: "燃料", drive: "驱动", transmission: "变速箱", body: "车身", doors: "车门", country: "国家", plant: "工厂" }
+    sections: { general: "一般信息", engine: "发动机与传动", dimensions: "尺寸与重量", safety: "安全配置", origin: "制造信息" },
+    fields: { make: "品牌", model: "型号", year: "年份", trim: "配置", type: "类型", body: "车身", doors: "车门", engine: "发动机", cylinders: "气缸", hp: "马力 (HP)", fuel: "燃料", drive: "驱动", transmission: "变速箱", gvwr: "总重量", wheelbase: "轴距", axles: "车轴", abs: "防抱死刹车 (ABS)", esc: "车身稳定系统 (ESC)", tpms: "胎压监测", airbagsF: "前排气囊", airbagsS: "侧排气囊", country: "国家", plant: "工厂", manufacturer: "制造商" }
   },
   ar: { 
     dir: 'rtl', subtitle: "تقرير مواصفات السيارة", back: "العودة", error: "خطأ", ad: "إعلان",
     partnerTitle: "تقرير كامل متاح", partnerDesc: "احصل على الأضرار المخفية والتاريخ.", partnerBtn: "احصل على التقرير",
-    sections: { general: "معلومات عامة", engine: "المحرك", body: "الهيكل", origin: "التصنيع" },
-    fields: { make: "العلامة التجارية", model: "الموديل", year: "السنة", trim: "الفئة", type: "النوع", engine: "المحرك", cylinders: "الاسطوانات", fuel: "الوقود", drive: "نظام الدفع", transmission: "ناقل الحركة", body: "الهيكل", doors: "الأبواب", country: "البلد", plant: "المصنع" }
+    sections: { general: "معلومات عامة", engine: "المحرك وناقل الحركة", dimensions: "الأبعاد والوزن", safety: "معدات السلامة", origin: "التصنيع" },
+    fields: { make: "العلامة التجارية", model: "الموديل", year: "السنة", trim: "الفئة", type: "النوع", body: "الهيكل", doors: "الأبواب", engine: "المحرك", cylinders: "الاسطوانات", hp: "قوة الحصان", fuel: "الوقود", drive: "نظام الدفع", transmission: "ناقل الحركة", gvwr: "الوزن الإجمالي", wheelbase: "قاعدة العجلات", axles: "المحاور", abs: "نظام ABS", esc: "نظام الاستقرار", tpms: "مراقبة ضغط الإطارات", airbagsF: "وسائد هوائية أمامية", airbagsS: "وسائد هوائية جانبية", country: "البلد", plant: "المصنع", manufacturer: "الشركة المصنعة" }
   }
 };
 
@@ -71,6 +71,12 @@ export default function VinResult() {
 
   const t = translations[lang] || translations.en;
 
+  // Функція для перевірки, чи є поле порожнім
+  const val = (field) => {
+    if (!field || field === "" || field === "Not Applicable") return "—";
+    return field;
+  };
+
   if (loading) return (
     <div className="loader-container">
       <h1 className="logo"><span className="yellow">VIN</span><span className="white">DECODER</span></h1>
@@ -101,33 +107,70 @@ export default function VinResult() {
                   <h2>{t.partnerTitle}</h2>
                   <p>{t.partnerDesc}</p>
                 </div>
-                <button className="partner-btn" onClick={() => alert("Реферальне посилання!")}>
+                <button className="partner-btn" onClick={() => alert("Тут буде реферальне посилання!")}>
                   {t.partnerBtn}
                 </button>
               </div>
             )}
 
+            {/* ЗАГАЛЬНА ІНФОРМАЦІЯ */}
             <section className="info-section">
               <h3>{t.sections.general}</h3>
               <div className="data-grid">
-                <div className="data-item"><span>{t.fields.make}</span><b>{data.Make || '—'}</b></div>
-                <div className="data-item"><span>{t.fields.model}</span><b>{data.Model || '—'}</b></div>
-                <div className="data-item"><span>{t.fields.year}</span><b>{data.ModelYear || '—'}</b></div>
-                <div className="data-item"><span>{t.fields.trim}</span><b>{data.Trim || '—'}</b></div>
-                <div className="data-item"><span>{t.fields.type}</span><b>{data.VehicleType || '—'}</b></div>
+                <div className="data-item"><span>{t.fields.make}</span><b>{val(data.Make)}</b></div>
+                <div className="data-item"><span>{t.fields.model}</span><b>{val(data.Model)}</b></div>
+                <div className="data-item"><span>{t.fields.year}</span><b>{val(data.ModelYear)}</b></div>
+                <div className="data-item"><span>{t.fields.trim}</span><b>{val(data.Trim)}</b></div>
+                <div className="data-item"><span>{t.fields.type}</span><b>{val(data.VehicleType)}</b></div>
+                <div className="data-item"><span>{t.fields.body}</span><b>{val(data.BodyClass)}</b></div>
+                <div className="data-item"><span>{t.fields.doors}</span><b>{val(data.Doors)}</b></div>
               </div>
             </section>
 
             <div className="ad-placeholder native-ad"><span>{t.ad}</span></div>
 
+            {/* ДВИГУН ТА ТРАНСМІСІЯ */}
             <section className="info-section">
               <h3>{t.sections.engine}</h3>
               <div className="data-grid">
-                <div className="data-item"><span>{t.fields.engine}</span><b>{data.DisplacementL ? `${data.DisplacementL}L` : '—'} {data.EngineConfiguration}</b></div>
-                <div className="data-item"><span>{t.fields.cylinders}</span><b>{data.EngineNumberofCylinders || '—'}</b></div>
-                <div className="data-item"><span>{t.fields.fuel}</span><b>{data.FuelTypePrimary || '—'}</b></div>
-                <div className="data-item"><span>{t.fields.drive}</span><b>{data.DriveType || '—'}</b></div>
-                <div className="data-item"><span>{t.fields.transmission}</span><b>{data.TransmissionStyle || '—'}</b></div>
+                <div className="data-item"><span>{t.fields.engine}</span><b>{data.DisplacementL ? `${data.DisplacementL}L` : ''} {val(data.EngineConfiguration)}</b></div>
+                <div className="data-item"><span>{t.fields.cylinders}</span><b>{val(data.EngineNumberofCylinders)}</b></div>
+                <div className="data-item"><span>{t.fields.hp}</span><b>{val(data.EngineHP)}</b></div>
+                <div className="data-item"><span>{t.fields.fuel}</span><b>{val(data.FuelTypePrimary)}</b></div>
+                <div className="data-item"><span>{t.fields.drive}</span><b>{val(data.DriveType)}</b></div>
+                <div className="data-item"><span>{t.fields.transmission}</span><b>{val(data.TransmissionStyle)}</b></div>
+              </div>
+            </section>
+
+            {/* СИСТЕМИ БЕЗПЕКИ (Нова секція) */}
+            <section className="info-section">
+              <h3>{t.sections.safety}</h3>
+              <div className="data-grid">
+                <div className="data-item"><span>{t.fields.abs}</span><b>{val(data.ABS)}</b></div>
+                <div className="data-item"><span>{t.fields.esc}</span><b>{val(data.ESC)}</b></div>
+                <div className="data-item"><span>{t.fields.tpms}</span><b>{val(data.TPMS)}</b></div>
+                <div className="data-item"><span>{t.fields.airbagsF}</span><b>{val(data.AirBagLocFront)}</b></div>
+                <div className="data-item"><span>{t.fields.airbagsS}</span><b>{val(data.AirBagLocSide)}</b></div>
+              </div>
+            </section>
+
+            {/* ГАБАРИТИ ТА ВАГА (Нова секція) */}
+            <section className="info-section">
+              <h3>{t.sections.dimensions}</h3>
+              <div className="data-grid">
+                <div className="data-item"><span>{t.fields.gvwr}</span><b>{val(data.GVWR)}</b></div>
+                <div className="data-item"><span>{t.fields.wheelbase}</span><b>{val(data.WheelBaseLong)}</b></div>
+                <div className="data-item"><span>{t.fields.axles}</span><b>{val(data.Axles)}</b></div>
+              </div>
+            </section>
+
+            {/* ІНФОРМАЦІЯ ПРО ВИРОБНИКА */}
+            <section className="info-section">
+              <h3>{t.sections.origin}</h3>
+              <div className="data-grid">
+                <div className="data-item"><span>{t.fields.manufacturer}</span><b>{val(data.Manufacturer)}</b></div>
+                <div className="data-item"><span>{t.fields.country}</span><b>{val(data.PlantCountry)}</b></div>
+                <div className="data-item"><span>{t.fields.plant}</span><b>{data.PlantCity ? `${data.PlantCity}, ${data.PlantState}` : '—'}</b></div>
               </div>
             </section>
             
@@ -156,7 +199,8 @@ export default function VinResult() {
         .partner-banner { background: linear-gradient(135deg, #1a1a1a 0%, #2d2000 100%); border: 1px solid #facc15; padding: 25px; border-radius: 15px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 20px; align-items: center; text-align: center; }
         .partner-banner h2 { color: #facc15; margin: 0; font-size: 1.4rem; }
         .partner-banner p { color: #ccc; margin: 10px 0 0 0; font-size: 0.95rem; }
-        .partner-btn { background: #facc15; color: #000; font-weight: 900; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 1rem; text-transform: uppercase; width: 100%; max-width: 300px; }
+        .partner-btn { background: #facc15; color: #000; font-weight: 900; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 1rem; text-transform: uppercase; width: 100%; max-width: 300px; transition: 0.2s; }
+        .partner-btn:hover { background: #fff; }
         
         .info-section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 15px; margin-bottom: 20px; }
         .info-section h3 { color: #facc15; margin-top: 0; font-size: 0.9rem; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 20px; }
@@ -168,7 +212,8 @@ export default function VinResult() {
         .native-ad { height: 100px; margin: 25px 0; width: 100%; }
         .sidebar { display: none; }
         .sidebar-ad { width: 300px; height: 600px; position: sticky; top: 20px; }
-        .back-btn { background: #facc15; color: #000; border: none; padding: 14px 28px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .back-btn { background: #facc15; color: #000; border: none; padding: 14px 28px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s;}
+        .back-btn:hover { background: #fff; }
         .footer { text-align: center; margin-top: 80px; color: #222; font-size: 11px; direction: ltr; }
 
         @media (min-width: 900px) {
