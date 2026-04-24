@@ -14,6 +14,8 @@ const translations = {
     popular: "Popular Brands",
     history: "Recent Searches",
     footer: "© 2026 VIN DECODER | PROFESSIONAL DATA",
+    policy: "Privacy Policy",
+    terms: "Terms of Service",
     alert: "Please enter a valid VIN code"
   },
   uk: {
@@ -27,6 +29,8 @@ const translations = {
     popular: "Популярні марки",
     history: "Останні пошуки",
     footer: "© 2026 VIN DECODER | ПРОФЕСІЙНІ ДАНІ",
+    policy: "Політика конфіденційності",
+    terms: "Умови використання",
     alert: "Будь ласка, введіть коректний VIN код"
   },
   es: {
@@ -40,6 +44,8 @@ const translations = {
     popular: "Marcas populares",
     history: "Búsquedas recientes",
     footer: "© 2026 VIN DECODER | DATOS PROFESIONALES",
+    policy: "Política de privacidad",
+    terms: "Términos de servicio",
     alert: "Ingrese un VIN válido"
   },
   de: {
@@ -53,6 +59,8 @@ const translations = {
     popular: "Beliebte Marken",
     history: "Letzte Suchen",
     footer: "© 2026 VIN DECODER | PROFESSIONELLE DATEN",
+    policy: "Datenschutzrichtlinie",
+    terms: "Nutzungsbedingungen",
     alert: "Bitte geben Sie eine gültige VIN ein"
   },
   zh: {
@@ -66,6 +74,8 @@ const translations = {
     popular: "热门品牌",
     history: "最近搜索",
     footer: "© 2026 VIN DECODER | 专业数据",
+    policy: "隐私政策",
+    terms: "服务条款",
     alert: "请输入有效的车架号"
   },
   ar: {
@@ -79,6 +89,8 @@ const translations = {
     popular: "ماركات شعبية",
     history: "عمليات البحث الأخيرة",
     footer: "© 2026 VIN DECODER | بيانات احترافية",
+    policy: "سياسة الخصوصية",
+    terms: "شروط الخدمة",
     alert: "يرجى إدخال رقم شاسيه صحيح"
   }
 };
@@ -160,7 +172,6 @@ export default function Home() {
       </header>
 
       <main className="main">
-        {/* НОВИЙ БЛОК ЗАГОЛОВКА */}
         <h1 className="brand-title"><span className="yellow">VIN</span>DECODER</h1>
         <h2 className="localized-title">{t.title}</h2>
         <p className="subtitle">{t.subtitle}</p>
@@ -199,7 +210,15 @@ export default function Home() {
         )}
       </main>
 
-      <footer className="footer">{t.footer}</footer>
+      {/* ПОВЕРНУВ ФУТЕР З ПОЛІТИКОЮ */}
+      <footer className="footer">
+        <div className="footer-links">
+          <span onClick={() => router.push('/privacy-policy')}>{t.policy}</span>
+          <span className="dot">•</span>
+          <span onClick={() => router.push('/terms')}>{t.terms}</span>
+        </div>
+        <p className="copyright">{t.footer}</p>
+      </footer>
 
       <style jsx global>{`
         body { background-color: #000; color: #fff; margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow-x: hidden; }
@@ -229,7 +248,6 @@ export default function Home() {
 
         .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; text-align: center; }
         
-        /* СТИЛІ НОВОГО ЗАГОЛОВКА */
         .brand-title { font-size: clamp(3rem, 12vw, 6.5rem); font-weight: 900; margin: 0; line-height: 0.9; letter-spacing: -3px; }
         .localized-title { font-size: clamp(1rem, 3vw, 1.3rem); font-weight: 700; color: #888; margin: 20px 0 10px; letter-spacing: 2px; text-transform: uppercase; }
         .subtitle { color: #555; margin: 0 0 40px; font-size: clamp(0.9rem, 2vw, 1.1rem); max-width: 600px; }
@@ -251,7 +269,13 @@ export default function Home() {
         .chip { background: #080808; border: 1px solid #1a1a1a; padding: 6px 14px; border-radius: 20px; font-size: 11px; color: #555; cursor: pointer; transition: 0.2s; font-family: monospace; }
         .chip:hover { border-color: #facc15; color: #facc15; }
 
-        .footer { padding: 40px 0; color: #222; font-size: 10px; font-weight: bold; text-align: center; }
+        /* СТИЛІ ФУТЕРА З ПОЛІТИКОЮ */
+        .footer { padding: 40px 0; color: #555; font-size: 12px; text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .footer-links span { cursor: pointer; transition: color 0.2s; }
+        .footer-links span:hover { color: #facc15; }
+        .dot { color: #333; cursor: default !important; }
+        .copyright { font-size: 10px; font-weight: bold; letter-spacing: 1px; color: #222; text-transform: uppercase; margin: 0; }
 
         @media (max-width: 768px) {
           .header { flex-direction: column; gap: 20px; }
