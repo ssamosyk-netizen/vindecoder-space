@@ -3,12 +3,12 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
-  en: { dir: 'ltr', title: "VIN Report for", loading: "Decoding VIN...", error: "Invalid VIN.", details: "Specifications", engine: "Engine & Performance", production: "Manufacturing", getHistoryBtn: "GET FULL HISTORY", policy: "Privacy", terms: "Terms", footer: "© 2026 VIN DECODER" },
-  uk: { dir: 'ltr', title: "Звіт по VIN-коду", loading: "Розшифровуємо...", error: "VIN не знайдено.", details: "Характеристики", engine: "Двигун та Трансмісія", production: "Виробництво", getHistoryBtn: "ОТРИМАТИ ПОВНИЙ ЗВІТ", policy: "Політика", terms: "Умови", footer: "© 2026 VIN DECODER" },
-  es: { dir: 'ltr', title: "Informe VIN", loading: "Cargando...", error: "VIN no válido.", details: "Especificaciones", engine: "Motor", production: "Fabricación", getHistoryBtn: "INFORME COMPLETO", policy: "Privacidad", terms: "Términos", footer: "© 2026 VIN DECODER" },
-  de: { dir: 'ltr', title: "VIN-Bericht", loading: "Wird dekodiert...", error: "Ungültige VIN.", details: "Details", engine: "Motor", production: "Herstellung", getHistoryBtn: "VOLLER BERICHT", policy: "Datenschutz", terms: "AGB", footer: "© 2026 VIN DECODER" },
-  zh: { dir: 'ltr', title: "VIN 报告", loading: "解码中...", error: "无效 VIN。", details: "规格", engine: "发动机", production: "生产", getHistoryBtn: "获取完整报告", policy: "隐私", terms: "条款", footer: "© 2026 VIN DECODER" },
-  ar: { dir: 'rtl', title: "تقرير VIN", loading: "فك التشفير...", error: "رقم غير صالح", details: "المواصفات", engine: "المحرك", production: "التصنيع", getHistoryBtn: "تقرير كامل", policy: "الخصوصية", terms: "الشروط", footer: "© 2026 VIN DECODER" }
+  en: { dir: 'ltr', title: "VIN Report for", loading: "Decoding VIN...", error: "Invalid VIN.", details: "Specifications", engine: "Engine & Performance", production: "Manufacturing", getHistoryBtn: "GET FULL HISTORY", historyTitle: "Need history & photos?", policy: "Privacy Policy", terms: "Terms", footer: "© 2026 VIN DECODER" },
+  uk: { dir: 'ltr', title: "Звіт по VIN-коду", loading: "Розшифровуємо...", error: "VIN не знайдено.", details: "Характеристики", engine: "Двигун та Трансмісія", production: "Виробництво", getHistoryBtn: "ОТРИМАТИ ПОВНИЙ ЗВІТ", historyTitle: "Потрібна історія та фото?", policy: "Політика", terms: "Умови", footer: "© 2026 VIN DECODER" },
+  es: { dir: 'ltr', title: "Informe VIN", loading: "Cargando...", error: "VIN no válido.", details: "Especificaciones", engine: "Motor", production: "Fabricación", getHistoryBtn: "INFORME COMPLETO", historyTitle: "¿Necesitas historial?", policy: "Privacidad", terms: "Términos", footer: "© 2026 VIN DECODER" },
+  de: { dir: 'ltr', title: "VIN-Bericht", loading: "Wird dekodiert...", error: "Ungültige VIN.", details: "Details", engine: "Motor", production: "Herstellung", getHistoryBtn: "VOLLER BERICHT", historyTitle: "Historie & Fotos?", policy: "Datenschutz", terms: "AGB", footer: "© 2026 VIN DECODER" },
+  zh: { dir: 'ltr', title: "VIN 报告", loading: "解码中...", error: "无效 VIN。", details: "规格", engine: "发动机", production: "生产", getHistoryBtn: "获取完整报告", historyTitle: "需要历史报告吗？", policy: "隐私", terms: "条款", footer: "© 2026 VIN DECODER" },
+  ar: { dir: 'rtl', title: "تقرير VIN", loading: "فك التشفير...", error: "رقم غير صحيح", details: "المواصفات", engine: "المحرك", production: "التصنيع", getHistoryBtn: "تقرير كامل", historyTitle: "هل تريد التاريخ؟", policy: "الخصوصية", terms: "الشروط", footer: "© 2026 VIN DECODER" }
 };
 
 export default function VinReport() {
@@ -46,7 +46,6 @@ export default function VinReport() {
     <div className="container" dir={t.dir}>
       <Head>
         <title>{vehicleName ? `${vehicleName} | ${id}` : `${id} | VIN Report`}</title>
-        <meta name="description" content={`Full specifications for ${vehicleName}. VIN: ${id}`} />
         <meta property="og:title" content={`${vehicleName || id} | Free VIN Report`} />
         <meta property="og:image" content={ogImg} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -72,12 +71,11 @@ export default function VinReport() {
           <>
             <div className="cta-box">
               <div className="cta-text">
-                <h3>{lang === 'uk' ? `Історія ${vehicleName}` : `History for ${vehicleName}`}</h3>
+                <h3>{t.historyTitle}</h3>
                 <p>{lang === 'uk' ? 'ДТП, пробіг та фото з аукціонів США.' : 'Accidents, mileage and US auction photos.'}</p>
               </div>
               <a href={`https://www.epicvin.com/en/check-vin-number-report?vin=${id}&affiliate=YOUR_ID`} target="_blank" rel="noreferrer" className="action-btn">{t.getHistoryBtn}</a>
             </div>
-
             <div className="grid">
               <div className="card">
                 <h3>{t.details}</h3>
@@ -93,8 +91,8 @@ export default function VinReport() {
               <div className="card">
                 <h3>{t.engine}</h3>
                 <ul>
-                  <li><span>Displacement:</span> {v.DisplacementL}L</li>
-                  <li><span>Engine:</span> {v.EngineConfiguration}{v.EngineCylinders}</li>
+                  <li><span>Capacity:</span> {v.DisplacementL}L</li>
+                  <li><span>Config:</span> {v.EngineConfiguration}{v.EngineCylinders}</li>
                   <li><span>Power:</span> {v.EngineHP ? `${v.EngineHP} HP` : 'N/A'}</li>
                   <li><span>Fuel:</span> {v.FuelTypePrimary}</li>
                 </ul>
@@ -114,7 +112,7 @@ export default function VinReport() {
 
       <footer className="footer">
         <div className="footer-links"><span onClick={() => router.push('/privacy')}>{t.policy}</span> • <span onClick={() => router.push('/terms')}>{t.terms}</span></div>
-        <p>{t.footer}</p>
+        <p className="copy">{t.footer}</p>
       </footer>
 
       <style jsx global>{`body{background:#000;color:#fff;margin:0;font-family:-apple-system,sans-serif;overflow-x:hidden;}`}</style>
@@ -134,7 +132,7 @@ export default function VinReport() {
         .cta-box{background:#111;padding:25px 30px;border-radius:20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;border:1px solid #333;}
         .cta-text h3{margin:0 0 5px;font-size:1.1rem;}
         .cta-text p{margin:0;color:#777;font-size:0.9rem;}
-        .action-btn{background:#facc15;color:#000;text-decoration:none;padding:12px 24px;border-radius:12px;font-weight:900;font-size:13px;text-transform:uppercase;}
+        .action-btn{background:#facc15;color:#000;text-decoration:none;padding:12px 24px;border-radius:12px;font-weight:900;font-size:13px;text-transform:uppercase;white-space:nowrap;}
         .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-bottom:40px;}
         .card{background:#0a0a0a;padding:25px;border-radius:15px;border:1px solid #1a1a1a;}
         .card h3{color:#facc15;font-size:11px;text-transform:uppercase;border-bottom:1px solid #222;padding-bottom:8px;margin-bottom:15px;letter-spacing:1px;}
