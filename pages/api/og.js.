@@ -1,31 +1,91 @@
 import { ImageResponse } from '@vercel/og';
 
-export const config = { runtime: 'edge' };
+export const config = {
+  runtime: 'edge', // Використовуємо надшвидкий Edge runtime
+};
 
 export default function handler(req) {
-  const { searchParams } = new URL(req.url);
-  const vin = searchParams.get('vin') || '';
-  const make = searchParams.get('make') || '';
-  const model = searchParams.get('model') || '';
-  const year = searchParams.get('year') || '';
+  try {
+    const { searchParams } = new URL(req.url);
 
-  return new ImageResponse(
-    (
-      <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', backgroundColor: '#000', padding: '80px' }}>
-        <div style={{ display: 'flex', marginBottom: '40px' }}>
-          <span style={{ color: '#facc15', fontSize: 35, fontWeight: 900 }}>VIN</span>
-          <span style={{ color: '#fff', fontSize: 35, fontWeight: 900 }}>DECODER</span>
+    // Дістаємо дані про авто з URL
+    const vin = searchParams.get('vin') || 'UNKNOWN VIN';
+    const make = searchParams.get('make') || '';
+    const model = searchParams.get('model') || '';
+    const year = searchParams.get('year') || '';
+
+    const carName = `${year} ${make} ${model}`.trim() || 'Vehicle Specification Report';
+
+    // Малюємо картинку за допомогою HTML та CSS
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            backgroundColor: '#000', // Чорний фон
+            padding: '80px',
+            fontFamily: 'sans-serif',
+          }}
+        >
+          {/* Верхній рядок: Логотип */}
+          <div style={{ display: 'flex', marginBottom: '40px' }}>
+            <span style={{ color: '#facc15', fontSize: 30, fontWeight: 900, letterSpacing: '-2px' }}>VIN</span>
+            <span style={{ color: '#fff', fontSize: 30, fontWeight: 900, letterSpacing: '-2px' }}>DECODER</span>
+          </div>
+
+          {/* VIN код (сірим) */}
+          <div
+            style={{
+              fontSize: 22,
+              color: '#666',
+              marginBottom: '15px',
+              fontWeight: 'bold',
+            }}
+          >
+            VIN: {vin}
+          </div>
+
+          {/* Назва автомобіля (Велика, біла) */}
+          <div
+            style={{
+              fontSize: 65,
+              fontWeight: 900,
+              color: '#fff',
+              textTransform: 'uppercase',
+              lineHeight: 1.1,
+              marginBottom: '30px',
+            }}
+          >
+            {year} <span style={{ color: '#facc15' }}>{make}</span> {model}
+          </div>
+
+          {/* Нижня плашка: Статус */}
+          <div
+            style={{
+              display: 'flex',
+              background: '#facc15',
+              color: '#000',
+              padding: '10px 20px',
+              borderRadius: '10px',
+              fontSize: 18,
+              fontWeight: 'bold',
+            }}
+          >
+            ✓ Technical Report Generated
+          </div>
         </div>
-        <div style={{ fontSize: 24, color: '#666', marginBottom: '10px', fontWeight: 'bold' }}>VIN: {vin}</div>
-        <div style={{ fontSize: 70, fontWeight: 900, color: '#fff', textTransform: 'uppercase', lineHeight: 1.1 }}>
-          {year} <span style={{ color: '#facc15', marginLeft: '15px' }}>{make}</span>
-        </div>
-        <div style={{ fontSize: 70, fontWeight: 900, color: '#fff', textTransform: 'uppercase', lineHeight: 1.1, marginBottom: '40px' }}>{model}</div>
-        <div style={{ display: 'flex', background: '#facc15', color: '#000', padding: '12px 24px', borderRadius: '12px', fontSize: 20, fontWeight: 'bold' }}>
-          ✓ VERIFIED TECHNICAL DATA
-        </div>
-      </div>
-    ),
-    { width: 1200, height: 630 }
-  );
+      ),
+      {
+        width: 1200,
+        height: 630, // Стандартний розмір для соцмереж
+      }
+    );
+  } catch (e) {
+    return new Response(`Failed to generate image`, { status: 500 });
+  }
 }
