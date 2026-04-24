@@ -104,7 +104,6 @@ export default function VinResult() {
               {data.Model && data.Model !== "—" ? data.Model : ''}
             </h2>
             
-            {/* Офіційний підзаголовок з VIN-кодом */}
             <p className="subtitle hero-subtitle">{t.subtitle} <b>{id}</b></p>
             
             <div className="hero-badges">
@@ -213,7 +212,6 @@ export default function VinResult() {
         .yellow { color: #facc15; } .white { color: #fff; }
         .subtitle { color: #888; margin-top: 10px; }
         
-        /* СТИЛІ ДЛЯ ЗАГОЛОВКУ МАШИНИ ТА ПІДЗАГОЛОВКУ З ВІН-КОДОМ */
         .hero-title { margin-top: 20px; animation: fadeInDown 0.5s ease-out; }
         .hero-title h2 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; margin: 0 0 5px 0; color: #fff; text-transform: uppercase; letter-spacing: -1px; line-height: 1.1; }
         .hero-subtitle { margin-bottom: 20px; font-size: 1rem; color: #aaa; }
@@ -239,8 +237,20 @@ export default function VinResult() {
         .info-section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 15px; margin-bottom: 20px; text-align: left; }
         .info-section h3 { color: #facc15; margin-top: 0; font-size: 0.9rem; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 20px; }
         .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        
+        /* ДОДАНО: Правила для запобігання виходу тексту за рамки */
+        .data-item { min-width: 0; }
         .data-item span { color: #666; font-size: 11px; text-transform: uppercase; font-weight: bold; }
-        .data-item b { display: block; font-size: 1.1rem; margin-top: 4px; color: #eee; }
+        .data-item b { 
+          display: block; 
+          font-size: 1.1rem; 
+          margin-top: 4px; 
+          color: #eee; 
+          word-wrap: break-word; 
+          overflow-wrap: break-word; 
+          word-break: break-word; 
+        }
+        
         .ad-placeholder { background: #080808; border: 1px dashed #333; display: flex; align-items: center; justify-content: center; color: #555; font-size: 11px; font-weight: bold; letter-spacing: 2px; border-radius: 10px; }
         .native-ad { height: 100px; margin: 25px 0; width: 100%; }
         .sidebar { display: none; }
