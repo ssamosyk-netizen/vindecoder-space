@@ -95,7 +95,6 @@ const translations = {
   }
 };
 
-// Американські та популярні на ринку США бренди
 const popularMakes = [
   { name: 'Ford', slug: 'ford' }, { name: 'Chevrolet', slug: 'chevrolet' },
   { name: 'Dodge', slug: 'dodge' }, { name: 'Jeep', slug: 'jeep' },
@@ -173,8 +172,7 @@ export default function Home() {
       </header>
 
       <main className="main">
-        <h1 className="brand-title"><span className="yellow">VIN</span>DECODER</h1>
-        <h2 className="localized-title">{t.title}</h2>
+        <h1 className="title">{t.title}</h1>
         <p className="subtitle">{t.subtitle}</p>
 
         <div className="search-box">
@@ -231,26 +229,14 @@ export default function Home() {
         .yellow { color: #facc15; }
         
         .lang-bar { display: flex; gap: 8px; font-size: 10px; font-weight: bold; }
-        .lang-bar span { 
-          cursor: pointer; 
-          padding: 6px 10px; 
-          border: 1px solid transparent; 
-          border-radius: 8px; 
-          transition: all 0.2s; 
-          color: #444;
-        }
-        .lang-bar span.active { 
-          color: #facc15; 
-          border-color: #facc15; 
-          background: rgba(250, 204, 21, 0.05); 
-        }
+        .lang-bar span { cursor: pointer; padding: 6px 10px; border: 1px solid transparent; border-radius: 8px; transition: all 0.2s; color: #444; }
+        .lang-bar span.active { color: #facc15; border-color: #facc15; background: rgba(250, 204, 21, 0.05); }
         .lang-bar span:hover:not(.active) { color: #aaa; border-color: #222; }
 
         .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; text-align: center; }
         
-        .brand-title { font-size: clamp(3rem, 12vw, 6.5rem); font-weight: 900; margin: 0; line-height: 0.9; letter-spacing: -3px; }
-        .localized-title { font-size: clamp(1rem, 3vw, 1.3rem); font-weight: 700; color: #888; margin: 20px 0 10px; letter-spacing: 2px; text-transform: uppercase; }
-        .subtitle { color: #555; margin: 0 0 40px; font-size: clamp(0.9rem, 2vw, 1.1rem); max-width: 600px; }
+        .title { font-size: clamp(2.2rem, 8vw, 4.5rem); font-weight: 900; margin: 0; line-height: 1; letter-spacing: -2px; text-transform: uppercase; }
+        .subtitle { color: #555; margin: 20px 0 40px; font-size: clamp(0.9rem, 2vw, 1.1rem); max-width: 600px; }
 
         .search-box { width: 100%; max-width: 700px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 25px; border: 1px solid #222; margin-bottom: 80px; }
         input { flex: 1; background: transparent; border: none; padding: 15px 25px; color: #fff; font-size: 1.1rem; outline: none; }
@@ -287,4 +273,4 @@ export default function Home() {
     </div>
   );
 }
-// --- КІНЕЦЬ ФАЙЛУ ---
+// --- КІНЕЦЬ ФАЙЛУ INDEX.JS ---
