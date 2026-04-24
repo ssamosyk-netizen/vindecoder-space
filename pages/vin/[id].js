@@ -73,6 +73,9 @@ export default function VinResult({ serverData, vin }) {
     <div dir={t.dir} className="container">
       <Head>
         <title>{pageTitle} | VIN DECODER</title>
+        {/* ФАВІКОН ДЛЯ СТОРІНКИ ВІН КОДУ */}
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        
         <meta property="og:title" content={pageTitle} />
         <meta property="og:image" content="https://vindecoder.space/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -167,7 +170,7 @@ export default function VinResult({ serverData, vin }) {
               <div className="grid">
                 <div className="item"><span>{t.fields.manufacturer}</span><b>{val(serverData.Manufacturer)}</b></div>
                 <div className="item"><span>{t.fields.country}</span><b>{val(serverData.PlantCountry)}</b></div>
-                <div className="item"><span>{t.fields.plantCity}</span><b>{val(serverData.PlantCity)}</b></div>
+                <div className="item"><span>{t.fields.plantCity}</span><b>{val(serverData.PlantCity)}, {val(serverData.PlantState)}</b></div>
               </div>
             </section>
 
