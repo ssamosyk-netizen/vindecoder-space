@@ -5,7 +5,7 @@ import Head from 'next/head';
 const translations = {
   en: {
     dir: 'ltr',
-    heroTitle: "Free {make} VIN Decoder",
+    heroTitle: "Free {make} VIN Check",
     heroSub: "Instant technical report and specifications for {make} vehicles.",
     searchPlaceholder: "Enter {make} VIN...",
     searchBtn: "Search",
@@ -15,11 +15,13 @@ const translations = {
     bullet2: "Original equipment and trim level",
     bullet3: "Manufacturing plant and assembly year",
     bullet4: "Safety features and braking systems",
+    policy: "Privacy Policy",
+    terms: "Terms of Service",
     alert: "Please enter a valid VIN code"
   },
   uk: {
     dir: 'ltr',
-    heroTitle: "Безкоштовний VIN Декодер {make}",
+    heroTitle: "Перевірка авто {make}",
     heroSub: "Миттєвий технічний звіт та характеристики для автомобілів {make}.",
     searchPlaceholder: "Введіть VIN {make}...",
     searchBtn: "Пошук",
@@ -29,11 +31,13 @@ const translations = {
     bullet2: "Оригінальне обладнання та рівень комплектації",
     bullet3: "Завод-виробник та рік складання",
     bullet4: "Системи безпеки та гальмівні системи",
+    policy: "Політика конфіденційності",
+    terms: "Умови використання",
     alert: "Будь ласка, введіть коректний VIN код"
   },
   es: {
     dir: 'ltr',
-    heroTitle: "Decodificador VIN de {make} gratuito",
+    heroTitle: "Verificación de {make}",
     heroSub: "Informe técnico instantáneo y especificaciones para vehículos {make}.",
     searchPlaceholder: "Ingrese el VIN de {make}...",
     searchBtn: "Buscar",
@@ -43,11 +47,13 @@ const translations = {
     bullet2: "Equipamiento original y nivel de acabado",
     bullet3: "Planta de fabricación y año de ensamblaje",
     bullet4: "Funciones de seguridad y sistemas de frenado",
+    policy: "Política de privacidad",
+    terms: "Términos de servicio",
     alert: "Por favor, introduzca un código VIN válido"
   },
   de: {
     dir: 'ltr',
-    heroTitle: "Kostenloser {make} VIN Decoder",
+    heroTitle: "Kostenlose {make} Prüfung",
     heroSub: "Sofortiger technischer Bericht und Spezifikationen für {make} Fahrzeuge.",
     searchPlaceholder: "{make} VIN eingeben...",
     searchBtn: "Suche",
@@ -57,11 +63,13 @@ const translations = {
     bullet2: "Originalausstattung und Ausstattungsvariante",
     bullet3: "Herstellungswerk und Montagejahr",
     bullet4: "Sicherheitsmerkmale und Bremssysteme",
+    policy: "Datenschutzrichtlinie",
+    terms: "Nutzungsbedingungen",
     alert: "Bitte geben Sie einen gültigen VIN-Code ein"
   },
   zh: {
     dir: 'ltr',
-    heroTitle: "免费 {make} 车架号 (VIN) 解码器",
+    heroTitle: "免费 {make} 车辆检查",
     heroSub: "立即获取 {make} 车辆的技术报告和规格。",
     searchPlaceholder: "输入 {make} 车架号...",
     searchBtn: "搜索",
@@ -71,11 +79,13 @@ const translations = {
     bullet2: "原始设备和装饰级别",
     bullet3: "制造工厂和组装年份",
     bullet4: "安全功能和制动系统",
+    policy: "隐私政策",
+    terms: "服务条款",
     alert: "请输入有效的车架号"
   },
   ar: {
     dir: 'rtl',
-    heroTitle: "فك تشفير رقم الشاسيه {make} مجاني",
+    heroTitle: "فحص سيارة {make} مجاني",
     heroSub: "تقرير فني فوري ومواصفات لمركبات {make}.",
     searchPlaceholder: "أدخل رقم شاسيه {make}...",
     searchBtn: "بحث",
@@ -85,6 +95,8 @@ const translations = {
     bullet2: "المعدات الأصلية ومستوى القطع",
     bullet3: "مصنع التصنيع وسنة التجميع",
     bullet4: "ميزات السلامة وأنظمة الكبح",
+    policy: "سياسة الخصوصية",
+    terms: "شروط الخدمة",
     alert: "يرجى إدخال رقم شاسيه صحيح"
   }
 };
@@ -156,9 +168,9 @@ export default function MakeLanding() {
       </Head>
 
       <header className="header">
-        <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}>
+        <div className="logo" onClick={() => router.push('/')} style={{cursor: 'pointer'}}>
           <span className="yellow">VIN</span>DECODER
-        </h1>
+        </div>
         
         <div className="lang-switcher">
           {languages.map((l) => (
@@ -195,18 +207,23 @@ export default function MakeLanding() {
         <div className="info-section">
           <h3>{t.whyTitle.replace('{make}', displayMake)}</h3>
           <p>{t.whyText.replace('{make}', displayMake)}</p>
-          <div className="list-container">
-            <ul>
-              <li>{t.bullet1}</li>
-              <li>{t.bullet2}</li>
-              <li>{t.bullet3}</li>
-              <li>{t.bullet4}</li>
-            </ul>
-          </div>
+          <ul>
+            <li>{t.bullet1}</li>
+            <li>{t.bullet2}</li>
+            <li>{t.bullet3}</li>
+            <li>{t.bullet4}</li>
+          </ul>
         </div>
       </div>
 
-      <footer className="footer"><p>© 2026 VIN DECODER | PROFESSIONAL DATA</p></footer>
+      <footer className="footer">
+        <div className="footer-links">
+          <span onClick={() => router.push('/privacy')}>{t.policy}</span>
+          <span className="dot">•</span>
+          <span onClick={() => router.push('/terms')}>{t.terms}</span>
+        </div>
+        <p className="copyright">© 2026 VIN DECODER | PROFESSIONAL DATA</p>
+      </footer>
 
       <style jsx global>{`
         html, body {
@@ -222,70 +239,44 @@ export default function MakeLanding() {
       <style jsx>{`
         .container { padding: 0 20px; text-align: center; max-width: 1200px; margin: 0 auto; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
         .header { display: flex; justify-content: space-between; align-items: center; padding: 30px 0 60px; }
-        h1 { font-size: 1.5rem; font-weight: 900; margin: 0; letter-spacing: -1px; }
+        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; }
         .yellow { color: #facc15; }
         
         .lang-switcher { display: flex; gap: 8px; font-size: 10px; font-weight: bold; }
-        .lang-switcher span { 
-          cursor: pointer; 
-          padding: 6px 10px; 
-          border: 1px solid transparent; 
-          border-radius: 8px; 
-          transition: all 0.2s; 
-          color: #444; 
-        }
-        .lang-switcher span.active { 
-          color: #facc15; 
-          border-color: #facc15; 
-          background: rgba(250, 204, 21, 0.05);
-        }
+        .lang-switcher span { cursor: pointer; padding: 6px 10px; border: 1px solid transparent; border-radius: 8px; transition: all 0.2s; color: #444; }
+        .lang-switcher span.active { color: #facc15; border-color: #facc15; background: rgba(250, 204, 21, 0.05); }
         .lang-switcher span:hover:not(.active) { color: #aaa; border-color: #222; }
 
         .content { flex: 1; }
         .hero h2 { font-size: clamp(1.8rem, 7vw, 3.5rem); font-weight: 900; text-transform: uppercase; margin: 0 0 15px; line-height: 1.1; }
         .hero p { color: #666; font-size: 1.1rem; margin-bottom: 40px; }
         
-        .search-box { 
-          max-width: 700px; 
-          margin: 0 auto 80px; 
-          display: flex; 
-          gap: 10px; 
-          background: #111; 
-          padding: 10px; 
-          border-radius: 25px; 
-          border: 1px solid #222; 
-        }
+        .search-box { max-width: 700px; margin: 0 auto 80px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 25px; border: 1px solid #222; }
         input { flex: 1; padding: 15px 25px; border: none; background: transparent; color: #fff; font-size: 1.1rem; outline: none; }
         button { padding: 0 40px; border-radius: 18px; border: none; background: #facc15; color: #000; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: transform 0.2s; }
         button:active { transform: scale(0.95); }
         
-        .info-section { 
-          max-width: 800px; 
-          margin: 0 auto 60px; 
-          background: #0a0a0a; 
-          padding: 40px; 
-          border-radius: 30px; 
-          border: 1px solid #1a1a1a; 
-        }
-        .info-section h3 { color: #facc15; margin-bottom: 20px; font-size: 1.4rem; }
-        .info-section p { color: #aaa; line-height: 1.6; margin-bottom: 30px; }
+        .info-section { max-width: 800px; margin: 0 auto 60px; background: #0a0a0a; padding: 40px; border-radius: 30px; border: 1px solid #1a1a1a; text-align: left; }
+        .container[dir="rtl"] .info-section { text-align: right; }
         
-        .list-container { display: inline-block; text-align: start; }
-        .info-section ul { 
-          color: #777; 
-          line-height: 1.8; 
-          margin: 0; 
-          padding: 0;
-          list-style-position: outside;
-          padding-inline-start: 25px;
-        }
+        .info-section h3 { color: #facc15; margin-bottom: 20px; font-size: 1.4rem; }
+        .info-section p { color: #aaa; line-height: 1.6; margin-bottom: 20px; }
+        
+        .info-section ul { color: #777; line-height: 1.8; margin: 0; padding: 0; padding-left: 20px; text-align: left; }
+        .container[dir="rtl"] .info-section ul { padding-left: 0; padding-right: 20px; text-align: right; }
+        
         .info-section li { margin-bottom: 12px; font-size: 1.05rem; }
 
-        .footer { padding: 40px 0; color: #222; font-size: 10px; text-transform: uppercase; font-weight: bold; }
+        .footer { padding: 40px 0; color: #555; font-size: 12px; text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .footer-links span { cursor: pointer; transition: color 0.2s; }
+        .footer-links span:hover { color: #facc15; }
+        .dot { color: #333; cursor: default !important; }
+        .copyright { font-size: 10px; font-weight: bold; letter-spacing: 1px; color: #222; text-transform: uppercase; margin: 0; }
         
         @media (max-width: 768px) {
           .header { flex-direction: column; gap: 20px; padding-bottom: 40px; }
-          .search-box { flex-direction: column; background: transparent; border: none; padding: 0; }
+          .search-box { flex-direction: column; background: transparent; border: none; padding: 0; margin-bottom: 40px; }
           input { background: #111; border: 1px solid #222; margin-bottom: 10px; border-radius: 20px; }
           button { padding: 20px; border-radius: 20px; }
           .info-section { padding: 30px 20px; }
@@ -294,4 +285,3 @@ export default function MakeLanding() {
     </div>
   );
 }
-// --- КІНЕЦЬ ФАЙЛУ ---
