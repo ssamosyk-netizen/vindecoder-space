@@ -8,10 +8,10 @@ export default function handler(req) {
   try {
     const { searchParams } = new URL(req.url);
 
-    // Отримуємо дані та відразу ставимо дефолтні значення, щоб не було null
-    const vin = searchParams.get('vin') || 'VIN UNKNOWN';
-    const make = searchParams.get('make') || '';
-    const model = searchParams.get('model') || '';
+    // Отримуємо дані. Використовуємо .get() і додаємо дефолтні значення
+    const vin = searchParams.get('vin') || '';
+    const make = (searchParams.get('make') || '').toUpperCase();
+    const model = (searchParams.get('model') || '').toUpperCase();
     const year = searchParams.get('year') || '';
     const engine = searchParams.get('engine') || '';
 
@@ -25,57 +25,41 @@ export default function handler(req) {
             flexDirection: 'column',
             alignItems: 'flex-start',
             justifyContent: 'center',
-            backgroundColor: 'black',
+            backgroundColor: '#000000',
             padding: '80px',
           }}
         >
           {/* Логотип */}
           <div style={{ display: 'flex', marginBottom: '40px' }}>
             <div style={{ color: '#facc15', fontSize: 40, fontWeight: 900 }}>VIN</div>
-            <div style={{ color: 'white', fontSize: 40, fontWeight: 900 }}>DECODER</div>
+            <div style={{ color: '#ffffff', fontSize: 40, fontWeight: 900, marginLeft: '5px' }}>DECODER</div>
           </div>
 
           {/* VIN номер */}
-          <div
-            style={{
-              fontSize: 26,
-              color: '#666666',
-              marginBottom: '10px',
-              fontWeight: 'bold',
-            }}
-          >
+          <div style={{ fontSize: 24, color: '#666666', marginBottom: '10px', fontWeight: 'bold' }}>
             VIN: {vin}
           </div>
 
-          {/* Основний блок з авто */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              fontSize: 70,
-              fontWeight: 900,
-              color: 'white',
-              lineHeight: 1.1,
-            }}
-          >
-            <div style={{ display: 'flex' }}>
-              {year} <span style={{ color: '#facc15', marginLeft: '15px' }}>{make.toUpperCase()}</span>
-            </div>
-            <div style={{ display: 'flex' }}>
-              {model.toUpperCase()} {engine !== '—' ? engine : ''}
-            </div>
+          {/* Назва авто (Рік + Марка) */}
+          <div style={{ display: 'flex', fontSize: 75, fontWeight: 900, color: '#ffffff', lineHeight: 1 }}>
+            {year} <div style={{ color: '#facc15', marginLeft: '20px' }}>{make}</div>
           </div>
 
-          {/* Плашка верифікації */}
+          {/* Модель + Двигун */}
+          <div style={{ display: 'flex', fontSize: 75, fontWeight: 900, color: '#ffffff', lineHeight: 1, marginTop: '10px' }}>
+            {model} {engine !== '—' ? engine : ''}
+          </div>
+
+          {/* Плашка знизу */}
           <div
             style={{
               display: 'flex',
               marginTop: '50px',
               backgroundColor: '#facc15',
-              color: 'black',
-              padding: '12px 24px',
-              borderRadius: '12px',
-              fontSize: 24,
+              color: '#000000',
+              padding: '15px 30px',
+              borderRadius: '15px',
+              fontSize: 26,
               fontWeight: 'bold',
             }}
           >
@@ -89,7 +73,6 @@ export default function handler(req) {
       }
     );
   } catch (e) {
-    console.log(`${e.message}`);
-    return new Response(`Failed to generate the image`, { status: 500 });
+    return new Response(`Failed to generate image`, { status: 500 });
   }
 }
