@@ -91,7 +91,6 @@ export default function VinResult() {
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
 
-      {/* НОВИЙ СТИЛЬНИЙ HEADER З ВЕЛИКИМ ЗАГОЛОВКОМ АВТО */}
       <div className="header">
         <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}><span className="yellow">VIN</span><span className="white">DECODER</span></h1>
         
@@ -101,16 +100,22 @@ export default function VinResult() {
           <div className="hero-title">
             <h2>
               {data.ModelYear && data.ModelYear !== "—" ? `${data.ModelYear} ` : ''}
-              {data.Make && data.Make !== "—" ? `${data.Make} ` : 'UNKNOWN VEHICLE'}
+              {data.Make && data.Make !== "—" ? `${data.Make} ` : 'UNKNOWN VEHICLE '}
               {data.Model && data.Model !== "—" ? data.Model : ''}
             </h2>
+            
+            {/* Офіційний підзаголовок з VIN-кодом */}
+            <p className="subtitle hero-subtitle">{t.subtitle} <b>{id}</b></p>
+            
             <div className="hero-badges">
-              <span className="badge vin-badge">VIN: {id}</span>
               {(data.DisplacementL || data.EngineConfiguration) && (
                 <span className="badge engine-badge">
                   {data.DisplacementL && data.DisplacementL !== "—" ? `${data.DisplacementL}L ` : ''}
                   {val(data.EngineConfiguration) !== "—" ? data.EngineConfiguration : ''}
                 </span>
+              )}
+              {data.VehicleType && data.VehicleType !== "—" && (
+                <span className="badge type-badge">{data.VehicleType}</span>
               )}
             </div>
           </div>
@@ -208,13 +213,15 @@ export default function VinResult() {
         .yellow { color: #facc15; } .white { color: #fff; }
         .subtitle { color: #888; margin-top: 10px; }
         
-        /* СТИЛІ ДЛЯ НОВОГО ВЕЛИКОГО ЗАГОЛОВКУ МАШИНИ */
-        .hero-title { margin-top: 25px; animation: fadeInDown 0.5s ease-out; }
-        .hero-title h2 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; margin: 0 0 15px 0; color: #fff; text-transform: uppercase; letter-spacing: -1px; line-height: 1.1; }
+        /* СТИЛІ ДЛЯ ЗАГОЛОВКУ МАШИНИ ТА ПІДЗАГОЛОВКУ З ВІН-КОДОМ */
+        .hero-title { margin-top: 20px; animation: fadeInDown 0.5s ease-out; }
+        .hero-title h2 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; margin: 0 0 5px 0; color: #fff; text-transform: uppercase; letter-spacing: -1px; line-height: 1.1; }
+        .hero-subtitle { margin-bottom: 20px; font-size: 1rem; color: #aaa; }
+        
         .hero-badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .badge { padding: 6px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-        .vin-badge { background: #1a1a1a; color: #aaa; border: 1px solid #333; }
+        .badge { padding: 6px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         .engine-badge { background: #facc15; color: #000; box-shadow: 0 4px 15px rgba(250, 204, 21, 0.2); }
+        .type-badge { background: #1a1a1a; color: #888; border: 1px solid #333; }
 
         @keyframes fadeInDown {
           from { opacity: 0; transform: translateY(-10px); }
@@ -238,7 +245,8 @@ export default function VinResult() {
         .native-ad { height: 100px; margin: 25px 0; width: 100%; }
         .sidebar { display: none; }
         .sidebar-ad { width: 300px; height: 600px; position: sticky; top: 20px; }
-        .back-btn { background: #facc15; color: #000; border: none; padding: 14px 28px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; text-align: center; }
+        .back-btn { background: #facc15; color: #000; border: none; padding: 14px 28px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; text-align: center; transition: 0.2s; }
+        .back-btn:hover { background: #fff; }
         .footer { text-align: center; margin-top: 80px; color: #222; font-size: 11px; direction: ltr; }
         @media (min-width: 900px) {
           .results-wrapper { flex-direction: row; align-items: flex-start; }
