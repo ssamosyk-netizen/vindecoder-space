@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 export default function MakeLanding() {
   const router = useRouter();
   const { make } = router.query;
-  const capitalizedMake = make ? make.charAt(0).toUpperCase() + make.slice(1) : '';
+  const [vinInput, setVinInput] = useState('');
+  
+  const capitalizedMake = make ? make.charAt(0).toUpperCase() + make.slice(1).toLowerCase() : '';
+
+  const handleSearch = () => {
+    if (vinInput.trim().length > 5) {
+      router.push(`/vin/${vinInput.toUpperCase().trim()}`);
+    } else {
+      alert(make === 'uk' ? 'Будь ласка, введіть коректний VIN' : 'Please enter a valid VIN');
+    }
+  };
 
   return (
     <div className="container">
@@ -13,6 +23,14 @@ export default function MakeLanding() {
         <title>{capitalizedMake} VIN Decoder | Free {capitalizedMake} Specifications</title>
         <meta name="description" content={`Free ${capitalizedMake} VIN decoder. Get instant technical specifications, engine data, and manufacturing details for any ${capitalizedMake} vehicle.`} />
         <link rel="canonical" href={`https://vindecoder.space/make/${make}`} />
+        
+        {/* Додаємо OG теги і сюди для соцмереж */}
+        <meta property="og:title" content={`${capitalizedMake} VIN Decoder`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://vindecoder.space/make/${make}`} />
+        <meta property="og:image" content="https://vindecoder.space/api/og?make=${capitalizedMake}" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
       </Head>
 
       <div className="content">
@@ -29,11 +47,13 @@ export default function MakeLanding() {
           <input 
             type="text" 
             placeholder={`Enter ${capitalizedMake} VIN...`} 
+            value={vinInput}
+            onChange={(e) => setVinInput(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') router.push(`/vin/${e.target.value.toUpperCase()}`);
+              if (e.key === 'Enter') handleSearch();
             }}
           />
-          <button onClick={() => alert('Please enter VIN in the field')}>Search</button>
+          <button onClick={handleSearch}>Search</button>
         </div>
 
         <div className="info-section">
@@ -52,15 +72,22 @@ export default function MakeLanding() {
         .container { background: #000; color: #fff; min-height: 100vh; font-family: sans-serif; padding: 40px 20px; text-align: center; }
         .yellow { color: #facc15; } .white { color: #fff; }
         h1 { font-size: 2rem; font-weight: 900; margin-bottom: 60px; letter-spacing: -2px; }
-        .hero h2 { font-size: 3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
-        .hero p { color: #666; font-size: 1.2rem; margin-bottom: 40px; }
-        .search-box { max-width: 600px; margin: 0 auto 60px; display: flex; gap: 10px; }
-        input { flex: 1; padding: 20px; border-radius: 15px; border: 1px solid #333; background: #111; color: #fff; font-size: 1.1rem; }
-        button { padding: 0 30px; border-radius: 15px; border: none; background: #facc15; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        .hero h2 { font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 900; text-transform: uppercase; margin-bottom: 10px; line-height: 1; }
+        .hero p { color: #666; font-size: 1.1rem; margin-bottom: 40px; }
+        .search-box { max-width: 650px; margin: 0 auto 60px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 20px; border: 1px solid #222; }
+        input { flex: 1; padding: 15px 20px; border-radius: 12px; border: none; background: transparent; color: #fff; font-size: 1.1rem; outline: none; }
+        button { padding: 0 35px; border-radius: 12px; border: none; background: #facc15; color: #000; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: transform 0.2s; }
+        button:active { transform: scale(0.95); }
         .info-section { max-width: 800px; margin: 0 auto; text-align: left; background: #0a0a0a; padding: 40px; border-radius: 30px; border: 1px solid #1a1a1a; }
-        .info-section h3 { color: #facc15; margin-bottom: 20px; }
-        .info-section p { color: #aaa; line-height: 1.6; }
-        .info-section ul { color: #888; line-height: 2; margin-top: 20px; }
+        .info-section h3 { color: #facc15; margin-bottom: 20px; font-size: 1.5rem; }
+        .info-section p { color: #aaa; line-height: 1.6; font-size: 1.1rem; }
+        .info-section ul { color: #888; line-height: 2; margin-top: 20px; padding-left: 20px; }
+        
+        @media (max-width: 600px) {
+          .search-box { flex-direction: column; background: transparent; border: none; padding: 0; }
+          input { background: #111; border: 1px solid #222; margin-bottom: 10px; }
+          button { padding: 18px; }
+        }
       `}</style>
     </div>
   );
