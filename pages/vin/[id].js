@@ -75,7 +75,7 @@ export default function VinResult({ serverData, vin }) {
   // Динамічний заголовок для месенджерів та вкладки
   const shareTitle = `${vin} | ${carYear} ${carMake} ${carModel} ${carEngine !== '—' ? carEngine : ''}`;
   // URL для генератора картинок
-  const ogImageUrl = `/api/og?vin=${vin}&make=${carMake}&model=${carModel}&year=${carYear}&engine=${carEngine}`;
+  const ogImageUrl = `https://vindecoder.space/api/og?vin=${vin}&make=${carMake}&model=${carModel}&year=${carYear}&engine=${carEngine}`;
 
   return (
     <div dir={t.dir} className="container">
@@ -86,6 +86,8 @@ export default function VinResult({ serverData, vin }) {
         <meta property="og:description" content={`Full technical specification report for ${carYear} ${carMake} ${carModel}.`} />
         <meta property="og:image" content={ogImageUrl} />
         <meta property="og:type" content="article" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={ogImageUrl} />
       </Head>
