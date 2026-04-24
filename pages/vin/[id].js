@@ -43,7 +43,8 @@ export default function VinReport() {
   return (
     <div className="container" dir={t.dir}>
       <Head>
-        <title>{id} | {vehicleData?.Make || ''} {vehicleData?.Model || ''}</title>
+        <title>{id} | {vehicleData?.Make || ''} {vehicleData?.Model || ''} Report</title>
+        <meta property="og:title" content={`${id} Report | VIN DECODER`} />
         <meta property="og:image" content={ogImg} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={ogImg} />
@@ -60,15 +61,17 @@ export default function VinReport() {
 
       <main className="content">
         <h1 className="report-title">{t.title} <span className="yellow">{id}</span></h1>
-
         {loading ? (
           <div className="status-box"><div className="spinner"></div><p>{t.loading}</p></div>
         ) : !vehicleData ? (
-          <div className="status-box"><p>{t.error}</p><button className="back-btn" onClick={() => router.push('/')}>Back</button></div>
+          <div className="status-box"><p>{t.error}</p><button className="back-btn" onClick={() => router.push('/')}>Go Back</button></div>
         ) : (
           <>
             <div className="cta-box">
-              <div className="cta-text"><h3>{t.getHistoryTitle || "Full History Check"}</h3><p>Accidents, mileage, auctions & photos.</p></div>
+              <div className="cta-text">
+                <h3>{lang === 'uk' ? 'Потрібна історія авто?' : 'Need Full History?'}</h3>
+                <p>{lang === 'uk' ? 'ДТП, пробіг та фото з аукціонів.' : 'Accidents, mileage and auction photos.'}</p>
+              </div>
               <a href={`https://www.epicvin.com/en/check-vin-number-report?vin=${id}&affiliate=YOUR_ID`} target="_blank" rel="noreferrer" className="action-btn">{t.getHistoryBtn}</a>
             </div>
 
@@ -80,14 +83,14 @@ export default function VinReport() {
                   <li><span>Model:</span> {vehicleData.Model}</li>
                   <li><span>Year:</span> {vehicleData.ModelYear}</li>
                   <li><span>Body Style:</span> {vehicleData.BodyClass}</li>
-                  <li><span>Drive:</span> {vehicleData.DriveType}</li>
+                  <li><span>Drive Type:</span> {vehicleData.DriveType}</li>
                 </ul>
               </div>
               <div className="card">
                 <h3>{t.engine}</h3>
                 <ul>
-                  <li><span>Capacity:</span> {vehicleData.DisplacementL}L</li>
-                  <li><span>Config:</span> {vehicleData.EngineConfiguration}{vehicleData.EngineCylinders}</li>
+                  <li><span>Displacement:</span> {vehicleData.DisplacementL}L</li>
+                  <li><span>Configuration:</span> {vehicleData.EngineConfiguration}{vehicleData.EngineCylinders}</li>
                   <li><span>Power:</span> {vehicleData.EngineHP} HP</li>
                   <li><span>Fuel:</span> {vehicleData.FuelTypePrimary}</li>
                 </ul>
@@ -96,7 +99,8 @@ export default function VinReport() {
                 <h3>{t.production}</h3>
                 <ul>
                   <li><span>Manufacturer:</span> {vehicleData.Manufacturer}</li>
-                  <li><span>Plant:</span> {vehicleData.PlantCity}, {vehicleData.PlantCountry}</li>
+                  <li><span>Country:</span> {vehicleData.PlantCountry}</li>
+                  <li><span>Plant:</span> {vehicleData.PlantCity}, {vehicleData.PlantState}</li>
                 </ul>
               </div>
             </div>
@@ -105,35 +109,43 @@ export default function VinReport() {
       </main>
 
       <footer className="footer">
-        <div className="footer-links"><span onClick={() => router.push('/privacy')}>{t.policy}</span> • <span onClick={() => router.push('/terms')}>{t.terms}</span></div>
+        <div className="footer-links">
+          <span onClick={() => router.push('/privacy')}>{t.policy}</span> • <span onClick={() => router.push('/terms')}>{t.terms}</span>
+        </div>
         <p>{t.footer}</p>
       </footer>
 
-      <style jsx global>{`body{background:#000;color:#fff;margin:0;font-family:-apple-system,sans-serif;}`}</style>
+      <style jsx global>{`
+        body { background:#000; color:#fff; margin:0; font-family:-apple-system, BlinkMacSystemFont, sans-serif; overflow-x:hidden; }
+      `}</style>
       <style jsx>{`
-        .container{padding:0 20px;max-width:1000px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
-        .header{display:flex;justify-content:space-between;align-items:center;padding:25px 0;}
-        .logo{font-size:1.4rem;font-weight:900;letter-spacing:-1px;}
-        .yellow{color:#facc15;}
-        .lang-switcher{display:flex;gap:8px;font-size:10px;font-weight:bold;}
-        .lang-switcher span{cursor:pointer;padding:4px 8px;color:#444;}
-        .lang-switcher span.active{color:#facc15;border:1px solid #facc15;border-radius:4px;}
-        .report-title{font-size:1.8rem;text-align:center;margin-bottom:30px;text-transform:uppercase;}
-        .status-box{text-align:center;padding:60px;background:#0a0a0a;border-radius:20px;border:1px solid #1a1a1a;}
-        .spinner{width:30px;height:30px;border:3px solid #222;border-left-color:#facc15;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;}
-        @keyframes spin{100%{transform:rotate(360deg);}}
-        .cta-box{background:#111;padding:25px;border-radius:18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;border:1px solid #333;}
-        .action-btn{background:#facc15;color:#000;text-decoration:none;padding:12px 24px;border-radius:10px;font-weight:900;font-size:13px;}
-        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-bottom:40px;}
-        .card{background:#0a0a0a;padding:20px;border-radius:15px;border:1px solid #1a1a1a;}
-        .card h3{color:#facc15;font-size:11px;text-transform:uppercase;border-bottom:1px solid #222;padding-bottom:8px;margin-bottom:15px;}
-        .card ul{list-style:none;padding:0;margin:0;}
-        .card li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #080808;font-size:13px;}
-        .card li span{color:#555;font-weight:bold;}
-        .footer{padding:40px 0;text-align:center;font-size:11px;color:#333;}
-        .footer-links{margin-bottom:10px;}
-        .footer-links span{cursor:pointer;margin:0 5px;}
-        @media(max-width:768px){.cta-box{flex-direction:column;text-align:center;gap:20px;}.action-btn{width:100%;}}
+        .container { padding: 0 20px; max-width: 1000px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 25px 0; }
+        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; }
+        .yellow { color: #facc15; }
+        .lang-switcher { display: flex; gap: 8px; font-size: 10px; font-weight: bold; }
+        .lang-switcher span { cursor: pointer; padding: 4px 8px; color: #444; }
+        .lang-switcher span.active { color: #facc15; border: 1px solid #facc15; border-radius: 4px; }
+        .content { flex: 1; width: 100%; max-width: 900px; margin: 0 auto; }
+        .report-title { font-size: clamp(1.4rem, 4vw, 2rem); text-align: center; margin-bottom: 30px; text-transform: uppercase; }
+        .status-box { text-align: center; padding: 60px 20px; background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 20px; }
+        .spinner { width: 30px; height: 30px; border: 3px solid #222; border-left-color: #facc15; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .back-btn { background: #222; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 15px; }
+        .cta-box { background: #111; padding: 25px 30px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border: 1px solid #333; }
+        .cta-text h3 { margin: 0 0 5px; font-size: 1.1rem; }
+        .cta-text p { margin: 0; color: #777; font-size: 0.9rem; }
+        .action-btn { background: #facc15; color: #000; text-decoration: none; padding: 12px 24px; border-radius: 12px; font-weight: 900; font-size: 13px; text-transform: uppercase; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .card { background: #0a0a0a; padding: 25px; border-radius: 15px; border: 1px solid #1a1a1a; }
+        .card h3 { color: #facc15; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 8px; margin-bottom: 15px; letter-spacing: 1px; }
+        .card ul { list-style: none; padding: 0; margin: 0; }
+        .card li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #080808; font-size: 14px; color: #eee; }
+        .card li span { color: #555; font-weight: bold; }
+        .footer { padding: 40px 0; text-align: center; font-size: 11px; color: #333; }
+        .footer-links { margin-bottom: 10px; color: #555; }
+        .footer-links span { cursor: pointer; margin: 0 8px; }
+        @media (max-width: 768px) { .cta-box { flex-direction: column; text-align: center; gap: 20px; } .action-btn { width: 100%; text-align: center; } }
       `}</style>
     </div>
   );
