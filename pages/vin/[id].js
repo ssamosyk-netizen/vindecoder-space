@@ -12,8 +12,7 @@ const translations = {
       make: "Make", model: "Model", year: "Year", trim: "Trim", series: "Series", type: "Vehicle Type", body: "Body Class", doors: "Doors",
       engine: "Engine", cylinders: "Cylinders", hp: "Horsepower", fuel: "Fuel Type", injection: "Injection Type", drive: "Drive Type", transmission: "Transmission",
       brakes: "Brake System", steering: "Steering", axles: "Axles", wheelbase: "Wheelbase", gvwr: "Gross Weight",
-      abs: "ABS", esc: "ESC", tpms: "TPMS", seatbelts: "Seat Belts", airbagF: "Front Airbags", airbagS: "Side Airbags", airbagK: "Knee Airbags", airbagC: "Curtain Airbags",
-      country: "Country", plantCity: "Plant City", manufacturer: "Manufacturer"
+      abs: "ABS", esc: "ESC", tpms: "TPMS", seatbelts: "Seat Belts", airbagF: "Front Airbags", airbagS: "Side Airbags", airbagK: "Knee Airbags", country: "Country", plantCity: "Plant City", manufacturer: "Manufacturer"
     }
   },
   uk: { 
@@ -25,8 +24,7 @@ const translations = {
       make: "Марка", model: "Модель", year: "Рік", trim: "Комплектація", series: "Серія", type: "Тип ТЗ", body: "Клас кузова", doors: "Двері",
       engine: "Двигун", cylinders: "Циліндри", hp: "Кінські сили", fuel: "Паливо", injection: "Тип впорскування", drive: "Привід", transmission: "Трансмісія",
       brakes: "Гальма", steering: "Кермо", axles: "Осі", wheelbase: "Колісна база", gvwr: "Повна маса",
-      abs: "ABS", esc: "ESC", tpms: "Тиск у шинах", seatbelts: "Ремені безпеки", airbagF: "Передні Airbag", airbagS: "Бокові Airbag", airbagK: "Колінні Airbag", airbagC: "Шторки безпеки",
-      country: "Країна", plantCity: "Місто заводу", manufacturer: "Виробник"
+      abs: "ABS", esc: "ESC", tpms: "Тиск у шинах", seatbelts: "Ремені безпеки", airbagF: "Передні Airbag", airbagS: "Бокові Airbag", airbagK: "Колінні Airbag", country: "Країна", plantCity: "Місто заводу", manufacturer: "Виробник"
     }
   }
 };
@@ -37,16 +35,20 @@ const fixEuroYear = (vin) => {
   return yearMap[yearChar] || null;
 };
 
+// СЕРВЕРНА ЧАСТИНА: Завантажуємо дані до віддачі сторінки
 export async function getServerSideProps(context) {
   const { id } = context.params;
   try {
     const res = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvaluesextended/${id}?format=json`);
     const result = await res.json();
     let carData = result.Results[0];
+
+    // Фікс року для Європи (ZZZ)
     if (id.toUpperCase().includes('ZZZ')) {
       const cYear = fixEuroYear(id);
       if (cYear) carData.ModelYear = cYear;
     }
+
     return { props: { serverData: carData, vin: id.toUpperCase() } };
   } catch (error) {
     return { props: { serverData: null, vin: id.toUpperCase() } };
@@ -67,18 +69,34 @@ export default function VinResult({ serverData, vin }) {
   const t = translations[lang] || translations.en;
   const val = (v) => (!v || v === "" || v === "Not Applicable" || v === "null" || v === "None") ? "—" : v;
 
-  const pageTitle = serverData && serverData.Make ? `${serverData.ModelYear} ${serverData.Make} ${serverData.Model}` : `VIN: ${vin}`;
+  // --- ФОРМУЄМО ДАНІ ДЛЯ МЕСЕНДЖЕРІВ ---
+  const carNameShort = serverData && serverData.Make 
+    ? `${serverData.Make} ${serverData.Model}` 
+    : 'Vehicle Report';
+    
+  // Ідеальний заголовок: VIN | Рік Марка Модель Двигун
+  const shareTitle = serverData && serverData.Make
+    ? `${vin} | ${serverData.ModelYear} ${serverData.Make} ${serverData.Model} ${data.DisplacementL ? DisplacementL + 'L' : ''}`
+    : `VIN Report: ${vin}`;
+    
+  const shareDesc = `Full technical specification report for ${val(serverData.ModelYear)} ${carNameShort}. Check engine, safety and manufacturing data.`;
+
+  // ПОСИЛАННЯ НА ДИНАМІЧНУ КАРТИНКУ
+  const ogImageUrl = `https://vindecoder.space/api/og?vin=${vin}&make=${val(serverData.Make)}&model=${val(serverData.Model)}&year=${val(serverData.ModelYear)}`;
 
   return (
     <div dir={t.dir} className="container">
       <Head>
-        <title>{pageTitle} | VIN DECODER</title>
-        {/* ФАВІКОН ДЛЯ СТОРІНКИ ВІН КОДУ */}
+        <title>{shareTitle} | VIN DECODER</title>
         <link rel="icon" type="image/png" href="/favicon.png" />
         
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:image" content="https://vindecoder.space/og-image.jpg" />
+        {/* МЕТА-ТЕГИ ДЛЯ СОЦМЕРЕЖ */}
+        <meta property="og:title" content={shareTitle} />
+        <meta property="og:description" content={shareDesc} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={ogImageUrl} />
       </Head>
 
       <div className="header">
@@ -132,7 +150,7 @@ export default function VinResult({ serverData, vin }) {
                     <div className="item"><span>{t.fields.fuel}</span><b>{val(serverData.FuelTypePrimary)}</b></div>
                     <div className="item"><span>{t.fields.injection}</span><b>{val(serverData.FuelInjectionType)}</b></div>
                     <div className="item"><span>{t.fields.drive}</span><b>{val(serverData.DriveType)}</b></div>
-                    <div className="item"><span>{t.fields.transmission}</span><b>{val(serverData.TransmissionStyle)}</b></div>
+                    <div className="item"><span>{t.fields.transmission}</span><span>{val(serverData.TransmissionStyle)}</span></div>
                   </div>
                 </section>
 
@@ -158,7 +176,6 @@ export default function VinResult({ serverData, vin }) {
                     <div className="item"><span>{t.fields.airbagF}</span><b>{val(serverData.AirBagLocFront)}</b></div>
                     <div className="item"><span>{t.fields.airbagS}</span><b>{val(serverData.AirBagLocSide)}</b></div>
                     <div className="item"><span>{t.fields.airbagK}</span><b>{val(serverData.AirBagLocKnee)}</b></div>
-                    <div className="item"><span>{t.fields.airbagC}</span><b>{val(serverData.AirBagLocCurtain)}</b></div>
                   </div>
                 </section>
               </>
@@ -170,7 +187,7 @@ export default function VinResult({ serverData, vin }) {
               <div className="grid">
                 <div className="item"><span>{t.fields.manufacturer}</span><b>{val(serverData.Manufacturer)}</b></div>
                 <div className="item"><span>{t.fields.country}</span><b>{val(serverData.PlantCountry)}</b></div>
-                <div className="item"><span>{t.fields.plantCity}</span><b>{val(serverData.PlantCity)}, {val(serverData.PlantState)}</b></div>
+                <div className="item"><span>{t.fields.plantCity}</span><b>{val(serverData.PlantCity)}</b></div>
               </div>
             </section>
 
@@ -195,7 +212,7 @@ export default function VinResult({ serverData, vin }) {
         .wrapper { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
         .main { flex: 1; min-width: 0; }
         .section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 20px; text-align: left; margin-bottom: 25px; }
-        .section h3 { color: #facc15; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 12px; margin-bottom: 20px; }
+        .section h3 { color: #facc15; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 12px; margin-bottom: 20px; letter-spacing: 1px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
         .item span { color: #555; font-size: 10px; font-weight: bold; text-transform: uppercase; }
         .item b { display: block; font-size: 16px; margin-top: 6px; word-break: break-word; color: #eee; line-height: 1.2; }
@@ -214,6 +231,7 @@ export default function VinResult({ serverData, vin }) {
         .footer a { color: #444; text-decoration: none; margin-left: 10px; }
         @media (min-width: 900px) {
           .wrapper { flex-direction: row; align-items: flex-start; }
+          .main { flex: 1; }
           .sidebar { display: block; width: 300px; position: sticky; top: 20px; }
         }
       `}</style>
