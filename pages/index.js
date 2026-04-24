@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
@@ -14,7 +13,6 @@ const translations = {
 const popularVins = ["1FA6P8CF5G", "1J8G2E8A03Y515470", "3VW637AJ7H"];
 
 export default function Home() {
-  const router = useRouter();
   const [lang, setLang] = useState('en');
   const [vin, setVin] = useState('');
   const [region, setRegion] = useState('us');
@@ -38,8 +36,8 @@ export default function Home() {
 
   const t = translations[lang] || translations.en;
 
-  const handleSearch = (e) => {
-    e.preventDefault();
+  // БРОНЕБІЙНА ФУНКЦІЯ ПЕРЕХОДУ
+  const handleSearch = () => {
     const cleanVin = vin.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     if (cleanVin.length === 17) {
       try {
@@ -47,9 +45,18 @@ export default function Home() {
         const newHistory = [cleanVin, ...safeHistory.filter(h => h !== cleanVin)].slice(0, 5);
         localStorage.setItem('vinHistory', JSON.stringify(newHistory));
       } catch (err) {}
-      router.push(`/vin/${cleanVin}?region=${region}`);
+      
+      // Жорсткий перехід браузером (працює 100%)
+      window.location.href = `/vin/${cleanVin}?region=${region}`;
     } else {
       alert(lang === 'uk' ? `Потрібно 17 символів! (Введено: ${cleanVin.length})` : `17 symbols required! (Entered: ${cleanVin.length})`);
+    }
+  };
+
+  // Щоб працював Enter з клавіатури
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
     }
   };
 
@@ -73,6 +80,7 @@ export default function Home() {
         <p className="subtitle">{t.subtitle}</p>
       </div>
       
+      {/* Замінили <form> на <div>, щоб браузер не блокував запит */}
       <div className="vin-form">
         <div className="region-selector">
           {Object.entries(t.regions).map(([key, label]) => (
@@ -82,23 +90,24 @@ export default function Home() {
           ))}
         </div>
 
-        <form onSubmit={handleSearch} className="input-group">
+        <div className="input-group">
           <input 
             type="text" 
             value={vin} 
             onChange={(e) => setVin(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder={t.placeholder}
-            maxLength="20"
+            maxLength="25"
           />
-          <button type="submit">{t.button}</button>
-        </form>
+          <button type="button" onClick={handleSearch}>{t.button}</button>
+        </div>
       </div>
 
       <div className="history-section">
         <p>{t.history}</p>
         <div className="history-chips">
           {history.map((h, i) => (
-            <span key={i} onClick={() => router.push(`/vin/${h}?region=${region}`)} className="chip">{h}</span>
+            <span key={i} onClick={() => { window.location.href = `/vin/${h}?region=${region}`; }} className="chip">{h}</span>
           ))}
         </div>
       </div>
@@ -109,7 +118,7 @@ export default function Home() {
         body { background-color: #000; margin: 0; padding: 0; color: #fff; }
         .container { min-height: 100vh; padding: 20px; font-family: sans-serif; box-sizing: border-box; text-align: center; }
         .lang-switcher { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 30px; direction: ltr; }
-        .lang-switcher button { background: #111; color: #fff; border: 1px solid #222; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .lang-switcher button { background: #111; color: #fff; border: 1px solid #222; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s; }
         .lang-switcher button.active { background: #facc15; color: #000; border-color: #facc15; }
         .header { margin-bottom: 40px; }
         .header h1 { font-size: clamp(2.5rem, 10vw, 4rem); font-weight: 900; margin: 0; letter-spacing: -3px; line-height: 1; direction: ltr; }
@@ -122,25 +131,4 @@ export default function Home() {
         .input-group { display: flex; flex-direction: column; gap: 10px; }
         .input-group input { padding: 18px; font-size: 18px; border: 1px solid #333; background: #0a0a0a; color: #fff; text-align: center; outline: none; width: 100%; box-sizing: border-box; }
         .input-group button { padding: 18px; font-size: 18px; background: #facc15; border: none; font-weight: bold; color: #000; cursor: pointer; width: 100%; }
-        .history-section { margin-bottom: 40px; }
-        .history-section p { color: #444; font-size: 11px; text-transform: uppercase; margin-bottom: 12px; font-weight: bold; }
-        .history-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        .chip { background: #0a0a0a; border: 1px solid #222; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; color: #888; }
-        .chip:hover { border-color: #facc15; color: #facc15; }
-        .footer { text-align: center; margin-top: 60px; color: #222; font-size: 11px; direction: ltr; }
-
-        @media (min-width: 600px) {
-          .input-group { flex-direction: row; gap: 0; }
-          
-          /* Логіка для LTR мов (UA, EN...) */
-          [dir='ltr'] .input-group input { border-radius: 12px 0 0 12px; border-right: none; }
-          [dir='ltr'] .input-group button { border-radius: 0 12px 12px 0; width: auto; padding: 0 40px; }
-          
-          /* Логіка для RTL мов (AR) */
-          [dir='rtl'] .input-group input { border-radius: 0 12px 12px 0; border-left: none; text-align: center; }
-          [dir='rtl'] .input-group button { border-radius: 12px 0 0 12px; width: auto; padding: 0 40px; }
-        }
-      `}</style>
-    </div>
-  );
-}
+        .history-section { margin-bottom:
