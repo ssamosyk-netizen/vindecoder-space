@@ -67,8 +67,8 @@ const fallbackModels = {
   '5YJ3': 'Model 3', '5YJS': 'Model S', '5YJX': 'Model X', '7SAY': 'Model Y',
   // Nissan
   'TCN': 'X-Trail / Rogue', 'U11': 'Leaf', 'ZE1': 'Leaf', 'E12': 'Leaf', 'J11': 'Qashqai', 'F15': 'Juke',
-  // VAG Group (Audi/VW/Skoda)
-  '8K': 'A4', '4G': 'A6', '8R': 'Q5', '4M': 'Q7', '4H': 'A8', 'FY': 'Q5', '8U': 'Q3', '5N': 'Tiguan', '3C': 'Passat', '1K': 'Golf/Jetta', '1Z': 'Octavia', '5E': 'Octavia', '3T': 'Superb',
+  // Audi/VW/Skoda
+  '8K': 'A4', '4G': 'A6', '8R': 'Q5', '4M': 'Q7', '4H': 'A8', 'FY': 'Q5', '8U': 'Q3', '5N': 'Tiguan', '3C': 'Passat', '1K': 'Golf/Jetta', '1Z': 'Octavia', '5E': 'Octavia', '3T': 'Superb', '6Y': 'Fabia', '5J': 'Fabia',
   // BMW & Jeep & Honda
   'F30': '3 Series', 'F10': '5 Series', 'G20': '3 Series', 'G30': '5 Series', 'F15': 'X5', 'F25': 'X3', 'E90': '3 Series',
   'WK': 'Grand Cherokee', 'WL': 'Grand Cherokee', 'BU': 'Renegade', 'MP': 'Compass', 'WD': 'Durango',
