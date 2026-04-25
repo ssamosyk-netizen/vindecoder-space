@@ -29,7 +29,7 @@ export default function Home() {
     const sLang = localStorage.getItem('userLanguage');
     if (sLang && tr[sLang]) setLang(sLang);
     
-    // 2. Запит до API для отримання реальних кодів
+    // 2. ЧИТАЄМО з API історію кодів
     fetch('/api/vins')
       .then(res => res.json())
       .then(data => {
@@ -48,7 +48,6 @@ export default function Home() {
     localStorage.setItem('userLanguage', l); 
   };
 
-  // Розумний обробник вводу: залишає тільки букви/цифри, робить великими, обрізає до 17
   const handleVinInput = (e) => {
     const cleanValue = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (cleanValue.length <= 17) {
@@ -60,13 +59,21 @@ export default function Home() {
     const fVin = searchVin.toUpperCase().trim();
     if (fVin.length === 17) {
       setShowModal(false);
+      
+      // 3. ЗАПИСУЄМО В БАЗУ (відправляємо POST-запит до твого API)
+      fetch('/api/vins', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vin: fVin })
+      }).catch(err => console.error("Помилка запису в базу:", err));
+
+      // 4. Одразу перекидаємо користувача на сторінку результату
       router.push(`/vin/${fVin}`);
     } else {
-      setShowModal(true); // Показуємо модальне вікно замість alert()
+      setShowModal(true);
     }
   };
 
-  // Логіка підсвітки (червоний якщо є текст але менше 17, зелений якщо рівно 17)
   const isError = vin.length > 0 && vin.length < 17;
   const isSuccess = vin.length === 17;
 
@@ -119,7 +126,6 @@ export default function Home() {
         <h1 className="title">{t.title}</h1>
         <p className="subtitle">{t.sub}</p>
 
-        {/* НОВИЙ РОЗУМНИЙ БЛОК ПОШУКУ */}
         <div className={`search-box ${isError ? 'box-error' : isSuccess ? 'box-success' : ''}`}>
           <div className="input-wrapper">
             <input 
@@ -129,7 +135,6 @@ export default function Home() {
               onChange={handleVinInput} 
               onKeyDown={(e)=>e.key==='Enter'&&handleSearch()} 
             />
-            {/* ЛІЧИЛЬНИК СИМВОЛІВ */}
             <span className={`char-count ${isError ? 'text-red' : isSuccess ? 'text-green' : ''}`}>
               {vin.length}/17
             </span>
@@ -171,7 +176,6 @@ export default function Home() {
       <style jsx>{`
         .container{min-height:100vh;display:flex;flex-direction:column;padding:0 20px;max-width:1200px;margin:0 auto;box-sizing:border-box;}
         
-        /* СТИЛІ МОДАЛЬНОГО ВІКНА */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
         .modal-content { background: #111; border: 1px solid #333; padding: 40px 30px; border-radius: 20px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: popIn 0.3s ease-out; }
         @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -194,7 +198,6 @@ export default function Home() {
         .title{font-size:clamp(1.8rem,5vw,3.5rem);font-weight:900;margin:0;line-height:1.1;letter-spacing:-1px;text-transform:uppercase;}
         .subtitle{color:#777;margin:15px 0 40px;font-size:clamp(0.9rem,2vw,1.1rem);max-width:600px;line-height:1.5;}
         
-        /* СТИЛІ ПОШУКОВОГО БЛОКУ ТА ЛІЧИЛЬНИКА */
         .search-box{width:100%;max-width:700px;display:flex;gap:10px;background:#111;padding:10px;border-radius:25px;border:1px solid #222;margin-bottom:80px; transition: 0.3s border-color, 0.3s box-shadow;}
         .box-error { border-color: #ef4444; box-shadow: 0 0 15px rgba(239,68,68,0.2); }
         .box-success { border-color: #22c55e; box-shadow: 0 0 15px rgba(34,197,94,0.2); }
