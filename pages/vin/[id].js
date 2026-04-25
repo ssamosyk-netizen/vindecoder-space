@@ -19,7 +19,7 @@ const langs = [
 const decodeWMI = (vin) => {
   if (!vin) return {};
   const w = vin.substring(0,3).toUpperCase(), y = vin.charAt(9).toUpperCase();
-  const map = { 'TMA':{m:'HYUNDAI',c:'Czech'},'TMB':{m:'SKODA',c:'Czech'},'WDB':{m:'MERCEDES-BENZ',c:'Germany'},'WBA':{m:'BMW',c:'Germany'},'WAU':{m:'AUDI',c:'Germany'},'TRU':{m:'AUDI',c:'Hungary'},'WVW':{m:'VOLKSWAGEN',c:'Germany'},'ZAR':{m:'ALFA ROMEO',c:'Italy'},'ZFA':{m:'FIAT',c:'Italy'},'VF3':{m:'PEUGEOT',c:'France'},'UU1':{m:'DACIA',c:'Romania'},'VSS':{m:'SEAT',c:'Spain'},'JHM':{m:'HONDA',c:'Japan'},'JT1':{m:'TOYOTA',c:'Japan'},'KL3':{m:'CHEVROLET',c:'Korea'},'KNA':{m:'KIA',c:'Korea'},'SJ3':{m:'NISSAN',c:'UK'},'SAL':{m:'LAND ROVER',c:'UK'},'1J8':{m:'JEEP',c:'USA'},'1FA':{m:'FORD',c:'USA'} };
+  const map = { 'TMA':{m:'HYUNDAI',c:'Czech Republic'},'TMB':{m:'SKODA',c:'Czech Republic'},'WDB':{m:'MERCEDES-BENZ',c:'Germany'},'WBA':{m:'BMW',c:'Germany'},'WAU':{m:'AUDI',c:'Germany'},'TRU':{m:'AUDI',c:'Hungary'},'WVW':{m:'VOLKSWAGEN',c:'Germany'},'ZAR':{m:'ALFA ROMEO',c:'Italy'},'ZFA':{m:'FIAT',c:'Italy'},'VF3':{m:'PEUGEOT',c:'France'},'UU1':{m:'DACIA',c:'Romania'},'VSS':{m:'SEAT',c:'Spain'},'JHM':{m:'HONDA',c:'Japan'},'JT1':{m:'TOYOTA',c:'Japan'},'KL3':{m:'CHEVROLET',c:'South Korea'},'KNA':{m:'KIA',c:'South Korea'},'SJ3':{m:'NISSAN',c:'UK'},'SAL':{m:'LAND ROVER',c:'UK'},'1J8':{m:'JEEP',c:'USA'},'1FA':{m:'FORD',c:'USA'},'3FA':{m:'FORD',c:'Mexico'},'1G1':{m:'CHEVROLET',c:'USA'} };
   const yrs = { 'V':1997,'W':1998,'X':1999,'Y':2000,'1':2001,'2':2002,'3':2003,'4':2004,'5':2005,'6':2006,'7':2007,'8':2008,'9':2009,'A':2010,'B':2011,'C':2012,'D':2013,'E':2014,'F':2015,'G':2016,'H':2017,'J':2018,'K':2019,'L':2020,'M':2021,'N':2022,'P':2023,'R':2024,'S':2025 };
   let mkt = { n:"Global", i:"🌍" };
   if (['1','2','3','4','5'].includes(vin[0])) mkt = { n:"North America", i:"🇺🇸" };
@@ -50,18 +50,32 @@ export default function VinResult({ data, vin }) {
   const t = tr[lang] || tr.en;
   const dec = decodeWMI(vin);
   
-  const hasNhtsaMake = data && data.Make && data.Make !== "Not Applicable" && data.Make !== "";
-  const isEuroStub = vin.includes('ZZZ'); 
-  const full = hasNhtsaMake && !isEuroStub; 
-  const val = (v) => (!v || v === "Not Applicable" || v === "null") ? "—" : v;
+  // ФУНКЦІЯ ОЧИСТКИ ДАНИХ (прибирає пусті поля та "Not Applicable")
+  const val = (v) => {
+    if (!v) return "—";
+    const s = String(v).trim();
+    return (s === "" || s.toLowerCase() === "not applicable" || s === "null") ? "—" : s;
+  };
 
-  const mk = full ? data.Make : (dec.make || (hasNhtsaMake ? data.Make : "Unknown"));
-  let yr = full ? data.ModelYear : (dec.year || (hasNhtsaMake ? data.ModelYear : "—"));
-  if (isEuroStub && yr === "1981") yr = dec.year || "2011";
+  const isEuroStub = vin.includes('ZZZ');
+  const nhtsaMake = val(data?.Make);
+  const hasNhtsa = nhtsaMake !== "—";
+  const full = hasNhtsa && !isEuroStub; 
+
+  // ЗЛИТТЯ ДАНИХ З ФІКСАМИ
+  const mk = full ? nhtsaMake : (dec.make || (hasNhtsa ? nhtsaMake : "Unknown"));
+  let yr = full ? val(data?.ModelYear) : (dec.year || (hasNhtsa ? val(data?.ModelYear) : "—"));
+  if (isEuroStub && yr === "1981") yr = dec.year || "2011"; // Фікс Audi 1981
   
-  const cy = full && data.PlantCountry ? data.PlantCountry : dec.country;
-  const md = full && data.Model ? data.Model : "—";
-  const eng = full && data.DisplacementL ? `${data.DisplacementL}L` : '';
+  // ФІКС FORD: Якщо Model порожня, беремо дані з Series
+  let md = "—";
+  if (full) {
+    md = val(data?.Model);
+    if (md === "—") md = val(data?.Series);
+  }
+
+  const cy = full && val(data?.PlantCountry) !== "—" ? data.PlantCountry : dec.country;
+  const eng = full && val(data?.DisplacementL) !== "—" ? `${data.DisplacementL}L` : '';
 
   const title = `${yr!=="—"?yr:''} ${mk!=="Unknown"?mk:''} ${md!=="—"?md:''} ${eng}`.trim() || vin;
   const ogImg = `https://vindecoder.space/api/og?vin=${vin}&make=${encodeURIComponent(mk)}&model=${encodeURIComponent(md)}&year=${yr}`;
@@ -104,7 +118,6 @@ export default function VinResult({ data, vin }) {
             <p className="v-sub">VIN: <b>{vin}</b></p>
           </div>
 
-          {/* GENERAL INFO (РОЗШИРЕНА) */}
           <section className="section">
             <h3>{t.s.gen}</h3>
             <div className="grid">
@@ -134,7 +147,6 @@ export default function VinResult({ data, vin }) {
             </div>
           ) : (
             <>
-              {/* ENGINE & CHASSIS (РОЗШИРЕНА) */}
               <section className="section">
                 <h3>{t.s.eng}</h3>
                 <div className="grid">
@@ -147,7 +159,6 @@ export default function VinResult({ data, vin }) {
                 </div>
               </section>
 
-              {/* SAFETY (РОЗШИРЕНА) */}
               <section className="section">
                 <h3>{t.s.saf}</h3>
                 <div className="grid">
@@ -160,7 +171,6 @@ export default function VinResult({ data, vin }) {
                 </div>
               </section>
 
-              {/* MANUFACTURING (НОВА СЕКЦІЯ ДЛЯ США) */}
               <section className="section">
                 <h3>{t.s.org}</h3>
                 <div className="grid">
@@ -176,7 +186,6 @@ export default function VinResult({ data, vin }) {
         </main>
 
         <aside className="sidebar">
-          {/* СТІКІ БЛОК (ЛИПНЕ ПРИ ПРОКРУТЦІ НА ДЕСКТОПІ) */}
           <div className="sticky-box">
             <div className="premium-card">
               <h4>{t.pTitle}</h4>
@@ -195,7 +204,7 @@ export default function VinResult({ data, vin }) {
         <p>{t.footer} | <span onClick={()=>router.push('/privacy')} style={{cursor:'pointer',textDecoration:'underline'}}>{t.privacy}</span></p>
       </footer>
 
-      {/* ФІКСОВАНА ПАНЕЛЬ ДЛЯ МОБІЛЬНИХ (ПЛАВАЄ ЗНИЗУ) */}
+      {/* Мобільна плаваюча кнопка знизу */}
       <div className="mob-cta">
         <div className="mob-cta-text">
           <h4>{t.pTitle}</h4>
