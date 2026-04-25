@@ -134,25 +134,38 @@ export default function MakeLanding() {
   const displayMake = formatMakeName(make);
 
   useEffect(() => {
+    if (!router.isReady) return; // Чекаємо поки Next.js зчитає URL
+
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang && translations[savedLang]) {
       setLang(savedLang);
     }
 
-    // ТЯГНЕМО ІСТОРІЮ САМЕ ДЛЯ ЦІЄЇ МАРКИ
     if (make) {
+      // 1. Пробуємо знайти коди саме для цієї марки
       fetch(`/api/vins?make=${make}`)
         .then(res => res.json())
         .then(data => {
           const codes = Array.isArray(data) ? data : (data.vins || []);
-          if (codes.length > 0) {
-            const cleanCodes = codes.filter(c => isValidVin(c));
+          const cleanCodes = codes.filter(c => isValidVin(c));
+          
+          if (cleanCodes.length > 0) {
             setHistory(cleanCodes.slice(0, 15));
+          } else {
+            // 2. ФОЛБЕК: Якщо для цієї марки ще нічого немає, підтягуємо загальну історію
+            fetch('/api/vins')
+              .then(resG => resG.json())
+              .then(dataG => {
+                const codesG = Array.isArray(dataG) ? dataG : (dataG.vins || []);
+                const cleanCodesG = codesG.filter(c => isValidVin(c));
+                setHistory(cleanCodesG.slice(0, 15));
+              })
+              .catch(err => console.error("Помилка глобальної історії:", err));
           }
         })
-        .catch(err => console.error("Помилка завантаження історії кодів:", err));
+        .catch(err => console.error("Помилка завантаження історії:", err));
     }
-  }, [make]); // Оновлюємо історію, якщо змінилась марка в URL
+  }, [router.isReady, make]); // Перезапускаємо, коли з'являється make
 
   const toggleLang = (newLang) => {
     setLang(newLang);
@@ -185,11 +198,11 @@ export default function MakeLanding() {
     if (isValidVin(fVin)) {
       setShowModal(false);
       
-      // ВІДПРАВЛЯЄМО В БАЗУ РАЗОМ ІЗ МАРКОЮ (щоб база зберегла це в 2 списки)
+      // Відправляємо в базу (разом з маркою, щоб база поклала в обидва списки)
       fetch('/api/vins', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ vin: fVin, make: make }) // додано make!
+        body: JSON.stringify({ vin: fVin, make: make })
       }).catch(err => console.error("Помилка запису в базу:", err));
 
       router.push(`/vin/${fVin}`);
