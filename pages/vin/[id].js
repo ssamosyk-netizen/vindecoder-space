@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-// 1. СЛОВНИКИ ТА ПЕРЕКЛАДИ
 const translations = {
-  en: { dir: 'ltr', sub: "Vehicle Report", back: "Back to Search", privacy: "Privacy", ad: "ADVERTISEMENT", market: "Market:", base: "Decoded by:", nhtsa: "NHTSA (USA)", wmi: "WMI (Basic Data)", pTitle: "Full History Report", pDesc: "Check for hidden damages and mileage rollbacks.", pBtn: "GET FULL REPORT", lTitle: "🔒 Technical Data Protected", lDesc: "European manufacturers restrict detailed specs in free databases. Unlock for full history.", unBtn: "UNLOCK REPORT", s: { gen: "General Info", eng: "Engine & Performance", saf: "Safety & Features", org: "Manufacturing" }, f: { make: "Make", model: "Model", year: "Year", trim: "Trim", series: "Series", type: "Vehicle Type", body: "Body Class", doors: "Doors", eng: "Engine", cyl: "Cylinders", hp: "Horsepower", fuel: "Fuel Type", drive: "Drive Type", trans: "Transmission", brk: "Brake System", abs: "ABS", tpms: "TPMS", cntry: "Country", city: "Plant City", mfr: "Manufacturer" } },
-  uk: { dir: 'ltr', sub: "Звіт про авто", back: "Назад до пошуку", privacy: "Політика конфіденційності", ad: "МІСЦЕ ДЛЯ РЕКЛАМИ", market: "Ринок:", base: "База даних:", nhtsa: "NHTSA (США)", wmi: "WMI (Базовий стандарт)", pTitle: "Повна історія авто", pDesc: "Перевірте скручений пробіг та історію ДТП.", pBtn: "ОТРИМАТИ ПОВНИЙ ЗВІТ", lTitle: "🔒 Технічні дані захищені", lDesc: "Європейські виробники обмежують дані у безкоштовних базах. Розблокуйте повну історію.", unBtn: "РОЗБЛОКУВАТИ ЗВІТ", s: { gen: "Загальна інформація", eng: "Двигун та трансмісія", saf: "Безпека", org: "Дані виробництва" }, f: { make: "Марка", model: "Модель", year: "Рік", trim: "Комплектація", series: "Серія", type: "Тип ТЗ", body: "Клас кузова", doors: "Двері", eng: "Двигун", cyl: "Циліндри", hp: "Кінські сили", fuel: "Паливо", drive: "Привід", trans: "Трансмісія", brk: "Гальма", abs: "ABS", tpms: "Тиск у шинах", cntry: "Країна", city: "Місто заводу", mfr: "Виробник" } },
-  es: { dir: 'ltr', sub: "Informe del Vehículo", back: "Volver", privacy: "Privacidad", ad: "ANUNCIO", market: "Mercado:", base: "Base de datos:", nhtsa: "NHTSA (EE. UU.)", wmi: "WMI (Datos Básicos)", pTitle: "Informe Completo", pDesc: "Comprueba daños y kilometraje.", pBtn: "OBTENER INFORME", lTitle: "🔒 Datos Protegidos", lDesc: "Desbloquea el historial completo.", unBtn: "DESBLOQUEAR", s: { gen: "General", eng: "Motor", saf: "Seguridad", org: "Fabricación" }, f: { make: "Marca", model: "Modelo", year: "Año", trim: "Versión", series: "Serie", type: "Tipo", body: "Carrocería", doors: "Puertas", eng: "Motor", cyl: "Cilindros", hp: "CV", fuel: "Combustible", drive: "Tracción", trans: "Transmisión", brk: "Frenos", abs: "ABS", tpms: "TPMS", cntry: "País", city: "Planta", mfr: "Fabricante" } },
-  de: { dir: 'ltr', sub: "Fahrzeugbericht", back: "Zurück", privacy: "Datenschutz", ad: "WERBUNG", market: "Markt:", base: "Datenbank:", nhtsa: "NHTSA (USA)", wmi: "WMI (Basisdaten)", pTitle: "Vollständiger Bericht", pDesc: "Überprüfen Sie Unfälle und Kilometerstand.", pBtn: "BERICHT ABRUFEN", lTitle: "🔒 Daten Geschützt", lDesc: "Historie freischalten.", unBtn: "FREISCHALTEN", s: { gen: "Allgemein", eng: "Motor", saf: "Sicherheit", org: "Herstellung" }, f: { make: "Marke", model: "Modell", year: "Jahr", trim: "Ausstattung", series: "Serie", type: "Typ", body: "Karosserie", doors: "Türen", eng: "Motor", cyl: "Zylinder", hp: "PS", fuel: "Kraftstoff", drive: "Antrieb", trans: "Getriebe", brk: "Bremsen", abs: "ABS", tpms: "RDKS", cntry: "Land", city: "Werk", mfr: "Hersteller" } },
-  zh: { dir: 'ltr', sub: "车辆报告", back: "返回", privacy: "隐私政策", ad: "广告", market: "市场:", base: "数据库:", nhtsa: "NHTSA (美国)", wmi: "WMI (基本数据)", pTitle: "完整历史记录", pDesc: "检查隐藏的损坏和里程表倒转。", pBtn: "获取完整报告", lTitle: "🔒 数据受保护", lDesc: "解锁完整历史。", unBtn: "解锁报告", s: { gen: "常规信息", eng: "发动机", saf: "安全", org: "制造" }, f: { make: "品牌", model: "型号", year: "年份", trim: "配置", series: "系列", type: "类型", body: "车身", doors: "车门", eng: "发动机", cyl: "气缸", hp: "马力", fuel: "燃料", drive: "驱动", trans: "变速箱", brk: "刹车", abs: "ABS", tpms: "TPMS", cntry: "国家", city: "工厂城市", mfr: "制造商" } },
-  ar: { dir: 'rtl', sub: "تقرير المركبة", back: "رجوع", privacy: "الخصوصية", ad: "إعلان", market: "السوق:", base: "قاعدة البيانات:", nhtsa: "NHTSA (أمريكا)", wmi: "WMI (بيانات أساسية)", pTitle: "تقرير كامل", pDesc: "تحقق من الحوادث والمسافة.", pBtn: "احصل على التقرير", lTitle: "🔒 بيانات محمية", lDesc: "افتح السجل الكامل.", unBtn: "افتح التقرير", s: { gen: "عام", eng: "المحرك", saf: "أمان", org: "تصنيع" }, f: { make: "الماركة", model: "الموديل", year: "السنة", trim: "الفئة", series: "السلسلة", type: "النوع", body: "الهيكل", doors: "الأبواب", eng: "المحرك", cyl: "أسطوانات", hp: "قوة الحصان", fuel: "الوقود", drive: "الدفع", trans: "ناقل الحركة", brk: "الفرامل", abs: "ABS", tpms: "TPMS", cntry: "البلد", city: "المصنع", mfr: "الشركة المصنعة" } }
+  en: { dir: 'ltr', sub: "Vehicle Report", back: "Back to Search", privacy: "Privacy", ad: "ADVERTISEMENT", market: "Market:", base: "Decoded by:", nhtsa: "NHTSA (USA)", wmi: "WMI (Basic Data)", pTitle: "Full History Report", pDesc: "Check for hidden damages and mileage rollbacks.", pBtn: "GET FULL REPORT", lTitle: "🔒 Technical Data Protected", lDesc: "European manufacturers restrict detailed specs in free databases. Unlock for full history.", unBtn: "UNLOCK REPORT", s: { gen: "General Info", eng: "Engine & Performance", saf: "Safety & Features", org: "Manufacturing" }, f: { make: "Make", model: "Model", year: "Year", trim: "Trim", series: "Series", type: "Vehicle Type", body: "Body", doors: "Doors", eng: "Engine", cyl: "Cylinders", hp: "HP", fuel: "Fuel Type", drive: "Drive Type", trans: "Transmission", brk: "Brakes", abs: "ABS", tpms: "TPMS", cntry: "Country", city: "Plant City", mfr: "Manufacturer" }, footer: "© 2026 VIN DECODER" },
+  uk: { dir: 'ltr', sub: "Звіт про авто", back: "Назад", privacy: "Політика конфіденційності", ad: "МІСЦЕ ДЛЯ РЕКЛАМИ", market: "Ринок:", base: "База даних:", nhtsa: "NHTSA (США)", wmi: "WMI (Базовий стандарт)", pTitle: "Повна історія авто", pDesc: "Перевірте скручений пробіг та історію ДТП.", pBtn: "ОТРИМАТИ ПОВНИЙ ЗВІТ", lTitle: "🔒 Технічні дані захищені", lDesc: "Європейські виробники обмежують дані. Розблокуйте повну історію.", unBtn: "РОЗБЛОКУВАТИ ЗВІТ", s: { gen: "Загальна інформація", eng: "Двигун та трансмісія", saf: "Безпека", org: "Виробництво" }, f: { make: "Марка", model: "Модель", year: "Рік", trim: "Комплектація", series: "Серія", type: "Тип", body: "Кузов", doors: "Двері", eng: "Двигун", cyl: "Циліндри", hp: "К.С.", fuel: "Паливо", drive: "Привід", trans: "Трансмісія", brk: "Гальма", abs: "ABS", tpms: "Тиск у шинах", cntry: "Країна", city: "Місто заводу", mfr: "Виробник" }, footer: "© 2026 VIN DECODER" },
+  es: { dir: 'ltr', sub: "Informe del Vehículo", back: "Volver", privacy: "Privacidad", ad: "ANUNCIO", market: "Mercado:", base: "Base de datos:", nhtsa: "NHTSA (EE. UU.)", wmi: "WMI (Datos Básicos)", pTitle: "Informe Completo", pDesc: "Comprueba daños y kilometraje.", pBtn: "OBTENER INFORME", lTitle: "🔒 Datos Protegidos", lDesc: "Desbloquea el historial completo.", unBtn: "DESBLOQUEAR", s: { gen: "General", eng: "Motor", saf: "Seguridad", org: "Fabricación" }, f: { make: "Marca", model: "Modelo", year: "Año", trim: "Versión", series: "Serie", type: "Tipo", body: "Carrocería", doors: "Puertas", eng: "Motor", cyl: "Cilindros", hp: "CV", fuel: "Combustible", drive: "Tracción", trans: "Transmisión", brk: "Frenos", abs: "ABS", tpms: "TPMS", cntry: "País", city: "Planta", mfr: "Fabricante" }, footer: "© 2026 VIN DECODER" },
+  de: { dir: 'ltr', sub: "Fahrzeugbericht", back: "Zurück", privacy: "Datenschutz", ad: "WERBUNG", market: "Markt:", base: "Datenbank:", nhtsa: "NHTSA (USA)", wmi: "WMI (Basisdaten)", pTitle: "Vollständiger Bericht", pDesc: "Überprüfen Sie Unfälle und Kilometerstand.", pBtn: "BERICHT ABRUFEN", lTitle: "🔒 Daten Geschützt", lDesc: "Historie freischalten.", unBtn: "FREISCHALTEN", s: { gen: "Allgemein", eng: "Motor", saf: "Sicherheit", org: "Herstellung" }, f: { make: "Marke", model: "Modell", year: "Jahr", trim: "Ausstattung", series: "Serie", type: "Typ", body: "Karosserie", doors: "Türen", eng: "Motor", cyl: "Zylinder", hp: "PS", fuel: "Kraftstoff", drive: "Antrieb", trans: "Getriebe", brk: "Bremsen", abs: "ABS", tpms: "RDKS", cntry: "Land", city: "Werk", mfr: "Hersteller" }, footer: "© 2026 VIN DECODER" },
+  zh: { dir: 'ltr', sub: "车辆报告", back: "返回", privacy: "隐私", ad: "广告", market: "市场:", base: "数据库:", nhtsa: "NHTSA (美国)", wmi: "WMI (基本数据)", pTitle: "完整历史记录", pDesc: "检查隐藏的损坏和里程表倒转。", pBtn: "获取完整报告", lTitle: "🔒 数据受保护", lDesc: "解锁完整历史。", unBtn: "解锁报告", s: { gen: "常规信息", eng: "发动机", saf: "安全", org: "制造" }, f: { make: "品牌", model: "型号", year: "年份", trim: "配置", series: "系列", type: "类型", body: "车身", doors: "车门", eng: "发动机", cyl: "气缸", hp: "马力", fuel: "燃料", drive: "驱动", trans: "变速箱", brk: "刹车", abs: "ABS", tpms: "TPMS", cntry: "国家", city: "工厂", mfr: "制造商" }, footer: "© 2026 VIN DECODER" },
+  ar: { dir: 'rtl', sub: "تقرير المركبة", back: "رجوع", privacy: "الخصوصية", ad: "إعلان", market: "السوق:", base: "قاعدة البيانات:", nhtsa: "NHTSA (أمريكا)", wmi: "WMI (بيانات أساسية)", pTitle: "تقرير كامل", pDesc: "تحقق من الحوادث والمسافة.", pBtn: "احصل على التقرير", lTitle: "🔒 بيانات محمية", lDesc: "افتح السجل الكامل.", unBtn: "افتح التقرير", s: { gen: "عام", eng: "المحرك", saf: "أمان", org: "تصنيع" }, f: { make: "الماركة", model: "الموديل", year: "السنة", trim: "الفئة", series: "السلسلة", type: "النوع", body: "الهيكل", doors: "الأبواب", eng: "المحرك", cyl: "أسطوانات", hp: "قوة", fuel: "الوقود", drive: "الدفع", trans: "ناقل الحركة", brk: "الفرامل", abs: "ABS", tpms: "TPMS", cntry: "البلد", city: "المصنع", mfr: "صانع" }, footer: "© 2026 VIN DECODER" }
 };
 
 const languages = [
@@ -17,12 +16,10 @@ const languages = [
   { code: 'de', label: 'DE' }, { code: 'zh', label: 'ZH' }, { code: 'ar', label: 'AR' }
 ];
 
-// 2. РОЗУМНИЙ ДЕКОДЕР РИНКУ ТА WMI
 const decodeVinBasics = (vin) => {
   if (!vin) return {};
   const wmi = vin.substring(0, 3).toUpperCase();
   const yearChar = vin.charAt(9).toUpperCase();
-  
   const wmiMap = {
     'TMA': { make: 'HYUNDAI', country: 'Czech Republic' }, 'TMB': { make: 'SKODA', country: 'Czech Republic' },
     'WDB': { make: 'MERCEDES-BENZ', country: 'Germany' }, 'WBA': { make: 'BMW', country: 'Germany' },
@@ -33,9 +30,8 @@ const decodeVinBasics = (vin) => {
     'JHM': { make: 'HONDA', country: 'Japan' }, 'JT1': { make: 'TOYOTA', country: 'Japan' },
     'KL3': { make: 'CHEVROLET', country: 'South Korea' }, 'KNA': { make: 'KIA', country: 'South Korea' },
     'SJ3': { make: 'NISSAN', country: 'UK' }, 'SAL': { make: 'LAND ROVER', country: 'UK' },
-    '1J8': { make: 'JEEP', country: 'USA' }
+    '1J8': { make: 'JEEP', country: 'USA' }, '1FA': { make: 'FORD', country: 'USA' }
   };
-
   const yearMap = { 'V':1997, 'W':1998, 'X':1999, 'Y':2000, '1':2001, '2':2002, '3':2003, '4':2004, '5':2005, '6':2006, '7':2007, '8':2008, '9':2009, 'A':2010, 'B':2011, 'C':2012, 'D':2013, 'E':2014, 'F':2015, 'G':2016, 'H':2017, 'J':2018, 'K':2019, 'L':2020, 'M':2021, 'N':2022, 'P':2023, 'R':2024, 'S':2025 };
 
   const first = vin[0];
@@ -47,7 +43,6 @@ const decodeVinBasics = (vin) => {
   return { make: wmiMap[wmi]?.make || null, country: wmiMap[wmi]?.country || market.name, year: yearMap[yearChar] || null, market };
 };
 
-// 3. SERVER-SIDE ДАНИХ NHTSA
 export async function getServerSideProps(context) {
   const { id } = context.params;
   try {
@@ -57,7 +52,6 @@ export async function getServerSideProps(context) {
   } catch (error) { return { props: { serverData: null, vin: id.toUpperCase() } }; }
 }
 
-// 4. ГОЛОВНИЙ КОМПОНЕНТ
 export default function VinResult({ serverData, vin }) {
   const router = useRouter();
   const [lang, setLang] = useState('en');
@@ -73,7 +67,6 @@ export default function VinResult({ serverData, vin }) {
   const hasFullData = serverData && serverData.Make && serverData.Make !== "" && serverData.Make !== "Not Applicable";
   const val = (v) => (!v || v === "" || v === "Not Applicable" || v === "null") ? "—" : v;
 
-  // Злиття та виправлення (напр. Audi 1981 -> 2011)
   const finalMake = hasFullData ? serverData.Make : (decoded.make || "Unknown");
   let finalYear = hasFullData ? serverData.ModelYear : (decoded.year || "—");
   if (finalYear === "1981" && vin.includes('ZZZ')) finalYear = "2011";
@@ -82,15 +75,28 @@ export default function VinResult({ serverData, vin }) {
   const finalModel = hasFullData ? serverData.Model : "—";
   const carEngine = serverData?.DisplacementL ? `${serverData.DisplacementL}L` : '';
 
-  // Формування красивого заголовку (Рік Марка Модель Двигун)
-  const fullTitle = `${finalYear !== "—" ? finalYear : ''} ${finalMake !== "Unknown" ? finalMake : ''} ${finalModel !== "—" ? finalModel : ''} ${carEngine}`.trim() || vin;
+  // Головний Title: Рік Марка Модель
+  const fullTitle = `${finalYear !== "—" ? finalYear : ''} ${finalMake !== "Unknown" ? finalMake : ''} ${finalModel !== "—" ? finalModel : ''}`.trim() || vin;
+  
+  // Генерація картинки для Telegram/Viber
+  const ogImageUrl = `https://vindecoder.space/api/og?vin=${vin}&make=${encodeURIComponent(finalMake)}&model=${encodeURIComponent(finalModel)}&year=${finalYear}`;
   const affiliateLink = `https://www.epicvin.com/en/check-vin-number-report?vin=${vin}&affiliate=YOUR_ID`;
 
   return (
     <div dir={t.dir} className="container">
       <Head>
         <title>{fullTitle} | VIN DECODER</title>
+        <meta name="description" content={`${t.sub} ${fullTitle}. VIN: ${vin}`} />
         <link rel="icon" type="image/png" href="/favicon.png" />
+        {/* КАРТИНКА ДЛЯ СОЦМЕРЕЖ */}
+        <meta property="og:title" content={`${fullTitle} | Free VIN Report`} />
+        <meta property="og:description" content={`Full technical report. Region: ${decoded.market.name}`} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:secure_url" content={ogImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={ogImageUrl} />
       </Head>
 
       <header className="header">
@@ -109,7 +115,6 @@ export default function VinResult({ serverData, vin }) {
       <div className="wrapper">
         <main className="main">
           
-          {/* ГЕРОЙ-БЛОК (База, Ринок, Заголовок) */}
           <div className="hero">
             <div className="badges-row">
               <div className="badge market-badge">
@@ -122,7 +127,8 @@ export default function VinResult({ serverData, vin }) {
             </div>
             
             <h2 className="vehicle-title">
-              {finalYear !== "—" ? finalYear : ''} <span className="yellow">{finalMake}</span> {finalModel !== "—" ? finalModel : ''} {carEngine && <span className="engine-tag">{carEngine}</span>}
+              {finalYear !== "—" ? finalYear : ''} <span className="yellow">{finalMake}</span> {finalModel !== "—" ? finalModel : ''} 
+              {carEngine && <span className="engine-tag">{carEngine}</span>}
             </h2>
             <p className="vin-subtitle">VIN: <b>{vin}</b></p>
           </div>
@@ -181,26 +187,23 @@ export default function VinResult({ serverData, vin }) {
         </main>
 
         <aside className="sidebar">
-          {/* БЛОК ПАРТНЕРКИ */}
           <div className="premium-card">
             <h4>{t.pTitle}</h4>
             <p>{t.pDesc}</p>
             <a href={affiliateLink} target="_blank" rel="noreferrer" className="partner-btn-sm">{t.pBtn}</a>
           </div>
           
-          {/* ЗАГЛУШКА ПІД РЕКЛАМУ (AdSense) */}
           <div className="ad-placeholder-vert">
-            <span>{t.ad}</span>
-            <br/><br/>300 x 600
+            <span style={{ color: '#666', marginBottom: '10px' }}>{t.ad}</span>
+            <div style={{ color: '#444' }}>300 x 600</div>
           </div>
         </aside>
       </div>
 
       <footer className="footer">
-        <p>© 2026 VIN DECODER | <span onClick={() => router.push('/privacy')} style={{cursor: 'pointer', textDecoration: 'underline'}}>{t.privacy}</span></p>
+        <p>{t.footer} | <span onClick={() => router.push('/privacy')} style={{cursor: 'pointer', textDecoration: 'underline'}}>{t.privacy}</span></p>
       </footer>
 
-      {/* 5. СТИЛІ (CSS) */}
       <style jsx global>{`
         body { background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; }
       `}</style>
@@ -227,7 +230,7 @@ export default function VinResult({ serverData, vin }) {
         .badge b { color: #fff; font-weight: 800; }
         
         .vehicle-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; text-transform: uppercase; margin: 0 0 10px 0; line-height: 1.1; letter-spacing: -1px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-        .engine-tag { background: #222; padding: 4px 12px; border-radius: 8px; font-size: clamp(1rem, 2vw, 1.5rem); color: #ccc; border: 1px solid #333; }
+        .engine-tag { background: #1a1a1a; padding: 4px 12px; border-radius: 8px; font-size: clamp(1rem, 2vw, 1.5rem); color: #ccc; border: 1px solid #333; }
         .vin-subtitle { color: #666; margin: 0; font-size: 1.2rem; font-family: monospace; letter-spacing: 1px; }
 
         .section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 30px; border-radius: 20px; margin-bottom: 30px; }
