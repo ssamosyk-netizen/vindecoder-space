@@ -134,7 +134,7 @@ export default function MakeLanding() {
   const displayMake = formatMakeName(make);
 
   useEffect(() => {
-    if (!router.isReady) return; // Чекаємо поки Next.js зчитає URL
+    if (!router.isReady) return; 
 
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang && translations[savedLang]) {
@@ -142,30 +142,19 @@ export default function MakeLanding() {
     }
 
     if (make) {
-      // 1. Пробуємо знайти коди саме для цієї марки
+      // Суворо тягнемо тільки коди цієї марки. Ніяких фолбеків на загальну базу!
       fetch(`/api/vins?make=${make}`)
         .then(res => res.json())
         .then(data => {
           const codes = Array.isArray(data) ? data : (data.vins || []);
           const cleanCodes = codes.filter(c => isValidVin(c));
           
-          if (cleanCodes.length > 0) {
-            setHistory(cleanCodes.slice(0, 15));
-          } else {
-            // 2. ФОЛБЕК: Якщо для цієї марки ще нічого немає, підтягуємо загальну історію
-            fetch('/api/vins')
-              .then(resG => resG.json())
-              .then(dataG => {
-                const codesG = Array.isArray(dataG) ? dataG : (dataG.vins || []);
-                const cleanCodesG = codesG.filter(c => isValidVin(c));
-                setHistory(cleanCodesG.slice(0, 15));
-              })
-              .catch(err => console.error("Помилка глобальної історії:", err));
-          }
+          // Якщо масив порожній, setHistory([]) приховає блок історії
+          setHistory(cleanCodes.slice(0, 15));
         })
         .catch(err => console.error("Помилка завантаження історії:", err));
     }
-  }, [router.isReady, make]); // Перезапускаємо, коли з'являється make
+  }, [router.isReady, make]); 
 
   const toggleLang = (newLang) => {
     setLang(newLang);
@@ -198,7 +187,6 @@ export default function MakeLanding() {
     if (isValidVin(fVin)) {
       setShowModal(false);
       
-      // Відправляємо в базу (разом з маркою, щоб база поклала в обидва списки)
       fetch('/api/vins', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -287,6 +275,7 @@ export default function MakeLanding() {
           <button onClick={() => handleSearch()}>{t.searchBtn}</button>
         </div>
 
+        {/* ІСТОРІЯ ТЕПЕР ПОКАЗУЄТЬСЯ ТІЛЬКИ ЯКЩО Є ХОЧА Б 1 КОД САМЕ ЦІЄЇ МАРКИ */}
         {history.length > 0 && (
           <div className="history-section">
             <div className="history-chips">
