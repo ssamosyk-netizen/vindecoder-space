@@ -3,12 +3,12 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const tr = {
-  en: { dir:'ltr', mTitle:"VIN DECODER | Free Vehicle Specifications Report", mDesc:"Free online VIN decoder. Check any vehicle specs, engine data, and manufacturing details instantly.", title:"FREE VEHICLE CHECK", sub:"Get full vehicle specifications and manufacturing details instantly.", place:"Enter 17-character VIN...", btn:"DECODE", pop:"Popular Brands", hist:"Recent Searches", foot:"© 2026 VIN DECODER | PROFESSIONAL DATA", pol:"Privacy Policy", terms:"Terms of Service", alert:"Please enter a valid 17-character VIN code.", errTitle:"Error" },
-  uk: { dir:'ltr', mTitle:"VIN ДЕКОДЕР | Безкоштовна перевірка авто", mDesc:"Безкоштовний онлайн VIN декодер. Миттєво перевіряйте характеристики авто та деталі виробництва.", title:"БЕЗКОШТОВНА ПЕРЕВІРКА", sub:"Отримайте повні технічні характеристики та дані про заводське складання.", place:"Введіть 17-значний VIN...", btn:"ПЕРЕВІРИТИ", pop:"Популярні марки", hist:"Останні пошуки", foot:"© 2026 VIN DECODER | ПРОФЕСІЙНІ ДАНІ", pol:"Політика конфіденційності", terms:"Умови використання", alert:"Будь ласка, введіть рівно 17 символів VIN коду.", errTitle:"Помилка" },
-  es: { dir:'ltr', mTitle:"DECODIFICADOR VIN | Informe de especificaciones", mDesc:"Decodificador VIN gratuito. Verifique las especificaciones del vehículo al instante.", title:"VERIFICACIÓN DE VEHÍCULOS", sub:"Obtenga especificaciones completas del vehículo y detalles de fabricación.", place:"Ingrese el VIN de 17 caracteres...", btn:"DECODIFICAR", pop:"Marcas populares", hist:"Búsquedas recientes", foot:"© 2026 VIN DECODER | DATOS PROFESIONALES", pol:"Privacidad", terms:"Términos de servicio", alert:"Ingrese un código VIN válido de 17 caracteres.", errTitle:"Error" },
-  de: { dir:'ltr', mTitle:"VIN DECODER | Kostenloser Fahrzeugbericht", mDesc:"Kostenloser Online-VIN-Decoder. Prüfen Sie sofort Fahrzeugspezifikationen.", title:"KOSTENLOSE FAHRZEUGPRÜFUNG", sub:"Erhalten Sie sofort vollständige Fahrzeugspezifikationen und Details.", place:"17-stellige VIN eingeben...", btn:"DEKODIEREN", pop:"Beliebte Marken", hist:"Letzte Suchen", foot:"© 2026 VIN DECODER | PROFESSIONELLE DATEN", pol:"Datenschutz", terms:"Nutzungsbedingungen", alert:"Bitte geben Sie einen gültigen 17-stelligen VIN-Code ein.", errTitle:"Fehler" },
-  zh: { dir:'ltr', mTitle:"车架号解码器 | 免费车辆规格报告", mDesc:"免费在线车架号解码器。立即查询车辆规格和制造详情。", title:"免费车辆信息查询", sub:"立即获取完整的车辆规格和制造详情。", place:"输入17位车架号...", btn:"解码", pop:"热门品牌", hist:"最近搜索", foot:"© 2026 VIN DECODER | 专业数据", pol:"隐私政策", terms:"服务条款", alert:"请输入有效的 17 位车架号 (VIN)。", errTitle:"错误" },
-  ar: { dir:'rtl', mTitle:"فك تشفير رقم الشاسيه | تقرير مواصفات السيارة", mDesc:"أداة فك تشفير رقم الشاسيه مجانية. تحقق من مواصفات السيارة فوراً.", title:"فحص مجاني للسيارة", sub:"احصل على مواصفات السيارة الكاملة وتفاصيل التصنيع.", place:"أدخل رقم الشاسيه...", btn:"فك التشفير", pop:"ماركات شعبية", hist:"عمليات البحث الأخيرة", foot:"© 2026 VIN DECODER | بيانات احترافية", pol:"سياسة الخصوصية", terms:"شروط الخدمة", alert:"يرجى إدخال رقم شاسيه صحيح مكون من 17 حرفاً.", errTitle:"خطأ" }
+  en: { dir:'ltr', mTitle:"VIN DECODER | Free Vehicle Specifications Report", mDesc:"Free online VIN decoder. Check any vehicle specs, engine data, and manufacturing details instantly.", title:"FREE VEHICLE CHECK", sub:"Get full vehicle specifications and manufacturing details instantly.", place:"Enter 17-character VIN...", btn:"DECODE", pop:"Popular Brands", hist:"Recent Searches", foot:"© 2026 VIN DECODER | PROFESSIONAL DATA", pol:"Privacy Policy", terms:"Terms of Service", alert:"Please enter a valid 17-character VIN code. VINs cannot contain I, O, or Q.", errTitle:"Invalid VIN" },
+  uk: { dir:'ltr', mTitle:"VIN ДЕКОДЕР | Безкоштовна перевірка авто", mDesc:"Безкоштовний онлайн VIN декодер. Миттєво перевіряйте характеристики авто та деталі виробництва.", title:"БЕЗКОШТОВНА ПЕРЕВІРКА", sub:"Отримайте повні технічні характеристики та дані про заводське складання.", place:"Введіть 17-значний VIN...", btn:"ПЕРЕВІРИТИ", pop:"Популярні марки", hist:"Останні пошуки", foot:"© 2026 VIN DECODER | ПРОФЕСІЙНІ ДАНІ", pol:"Політика конфіденційності", terms:"Умови використання", alert:"Введіть коректний VIN-код (17 символів). VIN не може містити літери I, O, Q або бути фейковим.", errTitle:"Помилка" },
+  es: { dir:'ltr', mTitle:"DECODIFICADOR VIN | Informe de especificaciones", mDesc:"Decodificador VIN gratuito. Verifique las especificaciones del vehículo al instante.", title:"VERIFICACIÓN DE VEHÍCULOS", sub:"Obtenga especificaciones completas del vehículo y detalles de fabricación.", place:"Ingrese el VIN de 17 caracteres...", btn:"DECODIFICAR", pop:"Marcas populares", hist:"Búsquedas recientes", foot:"© 2026 VIN DECODER | DATOS PROFESIONALES", pol:"Privacidad", terms:"Términos de servicio", alert:"Ingrese un código VIN válido. No puede contener I, O, Q.", errTitle:"Error" },
+  de: { dir:'ltr', mTitle:"VIN DECODER | Kostenloser Fahrzeugbericht", mDesc:"Kostenloser Online-VIN-Decoder. Prüfen Sie sofort Fahrzeugspezifikationen.", title:"KOSTENLOSE FAHRZEUGPRÜFUNG", sub:"Erhalten Sie sofort vollständige Fahrzeugspezifikationen und Details.", place:"17-stellige VIN eingeben...", btn:"DEKODIEREN", pop:"Beliebte Marken", hist:"Letzte Suchen", foot:"© 2026 VIN DECODER | PROFESSIONELLE DATEN", pol:"Datenschutz", terms:"Nutzungsbedingungen", alert:"Bitte geben Sie eine gültige VIN ein (keine I, O, Q).", errTitle:"Fehler" },
+  zh: { dir:'ltr', mTitle:"车架号解码器 | 免费车辆规格报告", mDesc:"免费在线车架号解码器。立即查询车辆规格和制造详情。", title:"免费车辆信息查询", sub:"立即获取完整的车辆规格和制造详情。", place:"输入17位车架号...", btn:"解码", pop:"热门品牌", hist:"最近搜索", foot:"© 2026 VIN DECODER | 专业数据", pol:"隐私政策", terms:"服务条款", alert:"请输入有效的 17 位车架号。不能包含 I、O、Q。", errTitle:"错误" },
+  ar: { dir:'rtl', mTitle:"فك تشفير رقم الشاسيه | تقرير مواصفات السيارة", mDesc:"أداة فك تشفير رقم الشاسيه مجانية. تحقق من مواصفات السيارة فوراً.", title:"فحص مجاني للسيارة", sub:"احصل على مواصفات السيارة الكاملة وتفاصيل التصنيع.", place:"أدخل رقم الشاسيه...", btn:"فك التشفير", pop:"ماركات شعبية", hist:"عمليات البحث الأخيرة", foot:"© 2026 VIN DECODER | بيانات احترافية", pol:"سياسة الخصوصية", terms:"شروط الخدمة", alert:"يرجى إدخال رقم شاسيه صحيح. لا يمكن أن يحتوي على I, O, Q.", errTitle:"خطأ" }
 };
 
 const popMakes = [
@@ -29,13 +29,15 @@ export default function Home() {
     const sLang = localStorage.getItem('userLanguage');
     if (sLang && tr[sLang]) setLang(sLang);
     
-    // 2. ЧИТАЄМО з API історію кодів
+    // 2. Читаємо історію з API
     fetch('/api/vins')
       .then(res => res.json())
       .then(data => {
         const codes = Array.isArray(data) ? data : (data.vins || []);
         if (codes.length > 0) {
-          setHistory(codes.slice(0, 20));
+          // Фільтруємо сміття, якщо воно вже потрапило в базу раніше
+          const cleanCodes = codes.filter(c => isValidVin(c));
+          setHistory(cleanCodes.slice(0, 20));
         }
       })
       .catch(err => console.error("Помилка завантаження історії кодів:", err));
@@ -48,8 +50,27 @@ export default function Home() {
     localStorage.setItem('userLanguage', l); 
   };
 
+  // ЖОРСТКА ВАЛІДАЦІЯ VIN-КОДУ
+  const isValidVin = (testVin) => {
+    if (!testVin || testVin.length !== 17) return false;
+    // Регулярка: тільки букви і цифри, АЛЕ БЕЗ I, O, Q
+    const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/i;
+    if (!vinRegex.test(testVin)) return false;
+
+    // Перевірка на "33333333333333333" або "AAAA..." (повинно бути хоча б 3 різних символи)
+    const uniqueChars = new Set(testVin.split(''));
+    if (uniqueChars.size < 3) return false;
+
+    // Перевірка на "12345678901234567"
+    if (testVin === '12345678901234567') return false;
+
+    return true;
+  };
+
+  // ОБРОБНИК ВВОДУ (забороняє вводити спецсимволи та літери I, O, Q)
   const handleVinInput = (e) => {
-    const cleanValue = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    // Видаляємо все, окрім дозволених символів, відразу при наборі
+    const cleanValue = e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
     if (cleanValue.length <= 17) {
       setVin(cleanValue);
     }
@@ -57,25 +78,28 @@ export default function Home() {
 
   const handleSearch = (searchVin = vin) => {
     const fVin = searchVin.toUpperCase().trim();
-    if (fVin.length === 17) {
+    
+    // Перевіряємо через нашу нову функцію
+    if (isValidVin(fVin)) {
       setShowModal(false);
       
-      // 3. ЗАПИСУЄМО В БАЗУ (відправляємо POST-запит до твого API)
+      // Відправляємо в базу тільки ВАЛІДНИЙ код
       fetch('/api/vins', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ vin: fVin })
       }).catch(err => console.error("Помилка запису в базу:", err));
 
-      // 4. Одразу перекидаємо користувача на сторінку результату
       router.push(`/vin/${fVin}`);
     } else {
+      // Показуємо помилку, якщо код не пройшов перевірку
       setShowModal(true);
     }
   };
 
-  const isError = vin.length > 0 && vin.length < 17;
-  const isSuccess = vin.length === 17;
+  // Логіка підсвітки (зелений тільки якщо 17 символів І пройшов валідацію)
+  const isError = (vin.length > 0 && vin.length < 17) || (vin.length === 17 && !isValidVin(vin));
+  const isSuccess = vin.length === 17 && isValidVin(vin);
 
   return (
     <div className="container" dir={t.dir}>
@@ -99,7 +123,6 @@ export default function Home() {
         <meta name="twitter:image" content="https://vindecoder.space/og-image.png" />
       </Head>
 
-      {/* МОДАЛЬНЕ ВІКНО ПОМИЛКИ */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
