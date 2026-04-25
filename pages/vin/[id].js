@@ -19,7 +19,7 @@ const langs = [
 const decodeWMI = (vin) => {
   if (!vin) return {};
   const w = vin.substring(0,3).toUpperCase(), y = vin.charAt(9).toUpperCase();
-  const map = { 'TMA':{m:'HYUNDAI',c:'Czech Republic'},'TMB':{m:'SKODA',c:'Czech Republic'},'WDB':{m:'MERCEDES-BENZ',c:'Germany'},'WBA':{m:'BMW',c:'Germany'},'WAU':{m:'AUDI',c:'Germany'},'TRU':{m:'AUDI',c:'Hungary'},'WVW':{m:'VOLKSWAGEN',c:'Germany'},'ZAR':{m:'ALFA ROMEO',c:'Italy'},'ZFA':{m:'FIAT',c:'Italy'},'VF3':{m:'PEUGEOT',c:'France'},'UU1':{m:'DACIA',c:'Romania'},'VSS':{m:'SEAT',c:'Spain'},'JHM':{m:'HONDA',c:'Japan'},'JT1':{m:'TOYOTA',c:'Japan'},'KL3':{m:'CHEVROLET',c:'South Korea'},'KNA':{m:'KIA',c:'South Korea'},'SJ3':{m:'NISSAN',c:'UK'},'SAL':{m:'LAND ROVER',c:'UK'},'1J8':{m:'JEEP',c:'USA'},'1FA':{m:'FORD',c:'USA'},'3FA':{m:'FORD',c:'Mexico'},'1G1':{m:'CHEVROLET',c:'USA'},'3C4':{m:'DODGE/JEEP',c:'Mexico'},'5YJ':{m:'TESLA',c:'USA'} };
+  const map = { 'W0L':{m:'OPEL',c:'Germany'},'VF1':{m:'RENAULT',c:'France'},'VF7':{m:'CITROEN',c:'France'},'YV1':{m:'VOLVO',c:'Sweden'},'YS3':{m:'SAAB',c:'Sweden'},'TMA':{m:'HYUNDAI',c:'Czech Republic'},'TMB':{m:'SKODA',c:'Czech Republic'},'WDB':{m:'MERCEDES-BENZ',c:'Germany'},'WBA':{m:'BMW',c:'Germany'},'WAU':{m:'AUDI',c:'Germany'},'TRU':{m:'AUDI',c:'Hungary'},'WVW':{m:'VOLKSWAGEN',c:'Germany'},'ZAR':{m:'ALFA ROMEO',c:'Italy'},'ZFA':{m:'FIAT',c:'Italy'},'VF3':{m:'PEUGEOT',c:'France'},'UU1':{m:'DACIA',c:'Romania'},'VSS':{m:'SEAT',c:'Spain'},'JHM':{m:'HONDA',c:'Japan'},'JT1':{m:'TOYOTA',c:'Japan'},'KL3':{m:'CHEVROLET',c:'South Korea'},'KNA':{m:'KIA',c:'South Korea'},'SJ3':{m:'NISSAN',c:'UK'},'SAL':{m:'LAND ROVER',c:'UK'},'1J8':{m:'JEEP',c:'USA'},'1FA':{m:'FORD',c:'USA'},'3FA':{m:'FORD',c:'Mexico'},'1G1':{m:'CHEVROLET',c:'USA'},'3C4':{m:'DODGE/JEEP',c:'Mexico'},'5YJ':{m:'TESLA',c:'USA'} };
   const yrs = { 'V':1997,'W':1998,'X':1999,'Y':2000,'1':2001,'2':2002,'3':2003,'4':2004,'5':2005,'6':2006,'7':2007,'8':2008,'9':2009,'A':2010,'B':2011,'C':2012,'D':2013,'E':2014,'F':2015,'G':2016,'H':2017,'J':2018,'K':2019,'L':2020,'M':2021,'N':2022,'P':2023,'R':2024,'S':2025 };
   
   let mkt = { n:"Global", i:"🌍" };
@@ -29,8 +29,6 @@ const decodeWMI = (vin) => {
   else if (f === '3') mkt = { n:"Mexico", i:"🇲🇽" };
   else if (['J','K','L'].includes(f)) mkt = { n:"Asia", i:"🇯🇵" };
   else if (['S','T','U','V','W','X','Y','Z'].includes(f)) mkt = { n:"Europe", i:"🇪🇺" };
-  else if (['6','7'].includes(f)) mkt = { n:"Oceania", i:"🇦🇺" };
-  else if (['8','9'].includes(f)) mkt = { n:"South America", i:"🇧🇷" };
   
   return { make: map[w]?.m||null, country: map[w]?.c||mkt.n, year: yrs[y]||null, mkt };
 };
@@ -57,39 +55,47 @@ export default function VinResult({ data, vin }) {
   const t = tr[lang] || tr.en;
   const dec = decodeWMI(vin);
   
-  // ФУНКЦІЯ ОЧИСТКИ
   const val = (v) => {
     if (v === undefined || v === null) return "—";
     const s = String(v).trim();
-    if (s === "" || s.toLowerCase() === "not applicable" || s.toLowerCase() === "null") return "—";
+    if (s === "" || s.toLowerCase() === "not applicable" || s.toLowerCase() === "null" || s.toLowerCase().includes("unspecified")) return "—";
     return s;
   };
 
   const isEuroStub = vin.includes('ZZZ');
   const nhtsaMake = val(data?.Make);
-  const hasNhtsa = nhtsaMake !== "—";
-  const full = hasNhtsa && !isEuroStub; 
+  const hasNhtsaMake = nhtsaMake !== "—";
 
-  const mk = full ? nhtsaMake : (dec.make || (hasNhtsa ? nhtsaMake : "Unknown"));
-  let yr = full ? val(data?.ModelYear) : (dec.year || (hasNhtsa ? val(data?.ModelYear) : "—"));
-  if (isEuroStub && yr === "1981") yr = dec.year || "2011";
-  
-  // АГРЕСИВНИЙ ПОШУК МОДЕЛІ + РЕЗЕРВНИЙ ФІКС ДЛЯ FORD MACH-E ТА TESLA
+  // 1. ВИЗНАЧАЄМО МАРКУ
+  const mk = hasNhtsaMake ? nhtsaMake : (dec.make || "Unknown");
+
+  // 2. АГРЕСИВНИЙ ПОШУК МОДЕЛІ
   let md = "—";
-  if (full || hasNhtsa) {
-    const cands = [data?.Model, data?.Series, data?.Trim];
+  if (hasNhtsaMake) {
+    const cands = [data?.Model, data?.Series, data?.Trim, data?.BodyClass];
     for (let c of cands) {
       let v = val(c);
-      if (v !== "—" && !v.toLowerCase().includes("unspecified")) { md = v; break; }
+      if (v !== "—") { md = v; break; }
     }
   }
-  // РЕЗЕРВНИЙ СЛОВНИК ЯКЩО NHTSA ВІДМОВИВ
+  // Резервний словник (Fallbacks для Ford EV, Tesla, Porsche)
   if (md === "—") {
     if (mk === "FORD" && vin.includes("P8M")) md = "Mustang Mach-E";
     else if (mk === "TESLA") {
       const v3 = vin[3];
       if (v3==='S') md="Model S"; else if(v3==='3') md="Model 3"; else if(v3==='X') md="Model X"; else if(v3==='Y') md="Model Y";
     }
+  }
+
+  // 3. ПЕРЕВІРКА ПОВНОТИ ДАНИХ
+  // NHTSA вважається повною ТІЛЬКИ якщо є Марка І Модель (не порожня) І це не європейська пустушка ZZZ
+  const full = hasNhtsaMake && md !== "—" && !isEuroStub;
+
+  // 4. ВИЗНАЧАЄМО РІК
+  let yr = full ? val(data?.ModelYear) : (dec.year || (hasNhtsaMake ? val(data?.ModelYear) : "—"));
+  // Фікс якщо американська база помилилась з роком для європейського авто
+  if (yr === "1981" && dec.year && dec.year !== 1981 && !['1','4','5'].includes(vin[0])) {
+    yr = dec.year;
   }
 
   const cy = full && val(data?.PlantCountry) !== "—" ? data.PlantCountry : dec.country;
@@ -259,26 +265,21 @@ export default function VinResult({ data, vin }) {
         .lock-icon{font-size:45px;margin-bottom:15px;}
         .partner-btn{display:inline-block;background:#facc15;color:#000;border:none;padding:18px 40px;font-weight:900;border-radius:12px;cursor:pointer;text-transform:uppercase;text-decoration:none;margin-top:15px;}
         .partner-btn-sm{display:block;background:#facc15;color:#000;width:100%;border:none;padding:15px;font-weight:900;border-radius:8px;cursor:pointer;text-transform:uppercase;text-align:center;text-decoration:none;box-sizing:border-box;}
-        
         .sidebar{width:100%;}
         .sticky-box { position: sticky; top: 30px; }
         .premium-card{background:#111;border:1px solid #333;padding:25px;border-radius:20px;margin-bottom:30px;}
         .premium-card h4{margin:0 0 10px 0;color:#facc15;font-size:14px;text-transform:uppercase;}
         .premium-card p{font-size:13px;color:#aaa;margin-bottom:20px;line-height:1.5;}
         .ad-box{background:#080808;border:1px solid #1a1a1a;height:600px;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#444;font-size:12px;font-weight:bold;letter-spacing:1px;}
-        
         .back-btn{background:transparent;color:#888;border:1px solid #333;padding:12px 30px;border-radius:10px;margin-top:10px;cursor:pointer;font-weight:bold;transition:0.2s;}
         .back-btn:hover{background:#222;color:#fff;}
         .footer{padding:40px 0;border-top:1px solid #111;margin-top:50px;font-size:13px;color:#555;text-align:center;}
-        
         .mob-cta { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,10,10,0.95); backdrop-filter: blur(10px); padding: 15px 20px; border-top: 1px solid #333; z-index: 100; box-shadow: 0 -5px 20px rgba(0,0,0,0.8); }
         .mob-cta-text h4 { margin:0 0 5px; color:#facc15; font-size: 14px; text-transform: uppercase; }
         .mob-cta-text p { margin:0; color:#aaa; font-size: 12px; }
         .mob-btn { display: block; background: #facc15; color:#000; text-align:center; padding: 12px; border-radius:8px; font-weight:900; text-transform:uppercase; text-decoration:none; margin-top:10px; }
-        
         .pulse{animation:pulse 2s infinite;}
         @keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.03);}100%{transform:scale(1);}}
-        
         @media(min-width:1000px){.wrapper{flex-direction:row;}.sidebar{width:300px;flex-shrink:0;}}
         @media(max-width:1000px){.mob-cta { display: block; } .footer { padding-bottom: 120px; }}
         @media(max-width:768px){.header{flex-direction:column;gap:20px;}.badges-row{flex-direction:column;align-items:flex-start;}}
