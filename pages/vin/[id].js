@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-// 1. СЛОВНИКИ ТА ПЕРЕКЛАДИ (6 МОВ)
 const translations = {
   en: { dir:'ltr', sub:"Vehicle Report", back:"Back to Search", privacy:"Privacy Policy", ad:"ADVERTISEMENT", market:"Market:", base:"Decoded by:", nhtsa:"NHTSA (USA)", wmi:"WMI (Basic Data)", pTitle:"Full History Report", pDesc:"Check for hidden damages and mileage rollbacks.", pBtn:"GET FULL REPORT", lTitle:"🔒 Technical Data Protected", lDesc:"European manufacturers restrict detailed specs in free databases. Unlock for full history.", unBtn:"UNLOCK REPORT ON CARVERTICAL", s:{ gen:"General Information", eng:"Engine & Performance", saf:"Safety & Interior" }, f:{ make:"Make", model:"Model", year:"Year", trim:"Trim", type:"Vehicle Type", body:"Body Class", doors:"Doors", eng:"Engine", hp:"Horsepower", fuel:"Fuel Type", drive:"Drive Type", trans:"Transmission", brk:"Brake System", abs:"ABS", tpms:"TPMS", cntry:"Country", city:"Plant City", mfr:"Manufacturer" }, footer:"© 2026 VIN DECODER" },
   uk: { dir:'ltr', sub:"Звіт про авто", back:"Назад до пошуку", privacy:"Політика конфіденційності", ad:"МІСЦЕ ДЛЯ РЕКЛАМИ", market:"Ринок:", base:"База даних:", nhtsa:"NHTSA (США)", wmi:"WMI (Базовий стандарт)", pTitle:"Повна історія авто", pDesc:"Перевірте скручений пробіг та історію ДТП.", pBtn:"ОТРИМАТИ ПОВНИЙ ЗВІТ", lTitle:"🔒 Технічні дані захищені", lDesc:"Європейські виробники обмежують дані у безкоштовних базах. Розблокуйте повну історію.", unBtn:"РОЗБЛОКУВАТИ НА CARVERTICAL", s:{ gen:"Загальна інформація", eng:"Двигун та трансмісія", saf:"Безпека" }, f:{ make:"Марка", model:"Модель", year:"Рік", trim:"Комплектація", type:"Тип ТЗ", body:"Клас кузова", doors:"Двері", eng:"Двигун", hp:"Кінські сили", fuel:"Паливо", drive:"Привід", trans:"Трансмісія", brk:"Гальма", abs:"ABS", tpms:"Тиск у шинах", cntry:"Країна", city:"Місто заводу", mfr:"Виробник" }, footer:"© 2026 VIN DECODER" },
@@ -17,7 +16,6 @@ const langs = [
   { c:'de', l:'DE' }, { c:'zh', l:'ZH' }, { c:'ar', l:'AR' }
 ];
 
-// 2. РОЗУМНИЙ ДЕКОДЕР РИНКУ ТА WMI (ВИЗНАЧАЄ ЄВРОПУ)
 const decodeWMI = (vin) => {
   if (!vin) return {};
   const w = vin.substring(0,3).toUpperCase(), y = vin.charAt(9).toUpperCase();
@@ -30,7 +28,6 @@ const decodeWMI = (vin) => {
   return { make: map[w]?.m||null, country: map[w]?.c||mkt.n, year: yrs[y]||null, mkt };
 };
 
-// 3. SERVER-SIDE FETCH (NHTSA)
 export async function getServerSideProps(ctx) {
   const { id } = ctx.params;
   try {
@@ -53,18 +50,20 @@ export default function VinResult({ data, vin }) {
   const t = translations[lang] || translations.en;
   const dec = decodeWMI(vin);
   
-  // КЛЮЧОВИЙ МОМЕНТ: ПЕРЕВІРКА ЧИ Є ДАНІ В NHTSA (США)
-  const full = data && data.Make && data.Make !== "Not Applicable" && data.Make !== "";
+  // ФІКС 1: Розумна перевірка бази NHTSA
+  // Якщо VIN містить ZZZ (Європа) або NHTSA не віддає Модель, ми відхиляємо дані NHTSA.
+  const isEuroSpec = vin.includes('ZZZ');
+  const hasValidModel = data && data.Model && data.Model !== "Not Applicable" && data.Model !== "";
+  const full = data && data.Make && data.Make !== "Not Applicable" && data.Make !== "" && !isEuroSpec && hasValidModel;
+
   const val = (v) => (!v || v === "Not Applicable" || v === "null") ? "—" : v;
 
-  // ЗЛИТТЯ ТА ФІКС AUDI 1981 -> 2011
-  const mk = full ? data.Make : (dec.make || "Unknown");
+  // ФІКС 2: Злиття даних. Якщо full = false, беремо рік з нашого розумного декодера!
+  const mk = full ? data.Make : (dec.make || (data?.Make !== "Not Applicable" ? data?.Make : "Unknown"));
   let yr = full ? data.ModelYear : (dec.year || "—");
-  if (yr === "1981" && vin.includes('ZZZ')) yr = "2011";
-  
   const cy = full && data.PlantCountry ? data.PlantCountry : dec.country;
   const md = full ? data.Model : "—";
-  const eng = data?.DisplacementL ? `${data.DisplacementL}L` : '';
+  const eng = full && data?.DisplacementL ? `${data.DisplacementL}L` : '';
 
   const title = `${yr!=="—"?yr:''} ${mk!=="Unknown"?mk:''} ${md!=="—"?md:''} ${eng}`.trim() || vin;
   const ogImg = `https://vindecoder.space/api/og?vin=${vin}&make=${encodeURIComponent(mk)}&model=${encodeURIComponent(md)}&year=${yr}`;
@@ -125,7 +124,6 @@ export default function VinResult({ data, vin }) {
             </div>
           </section>
 
-          {/* ЛОГІКА ЗАМОЧКА ДЛЯ ЄВРОПЕЙСЬКИХ АВТО */}
           {!full ? (
             <div className="europe-lock-card">
               <div className="lock-icon">🔒</div>
