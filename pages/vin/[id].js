@@ -50,11 +50,12 @@ export default function VinResult({ data, vin }) {
   const t = tr[lang] || tr.en;
   const dec = decodeWMI(vin);
   
-  // ФУНКЦІЯ ОЧИСТКИ ДАНИХ (прибирає пусті поля та "Not Applicable")
+  // Агресивна функція очистки: перетворює null, "", "Not Applicable" на "—"
   const val = (v) => {
-    if (!v) return "—";
+    if (v === undefined || v === null) return "—";
     const s = String(v).trim();
-    return (s === "" || s.toLowerCase() === "not applicable" || s === "null") ? "—" : s;
+    if (s === "" || s.toLowerCase() === "not applicable" || s.toLowerCase() === "null") return "—";
+    return s;
   };
 
   const isEuroStub = vin.includes('ZZZ');
@@ -62,16 +63,16 @@ export default function VinResult({ data, vin }) {
   const hasNhtsa = nhtsaMake !== "—";
   const full = hasNhtsa && !isEuroStub; 
 
-  // ЗЛИТТЯ ДАНИХ З ФІКСАМИ
   const mk = full ? nhtsaMake : (dec.make || (hasNhtsa ? nhtsaMake : "Unknown"));
   let yr = full ? val(data?.ModelYear) : (dec.year || (hasNhtsa ? val(data?.ModelYear) : "—"));
-  if (isEuroStub && yr === "1981") yr = dec.year || "2011"; // Фікс Audi 1981
+  if (isEuroStub && yr === "1981") yr = dec.year || "2011";
   
-  // ФІКС FORD: Якщо Model порожня, беремо дані з Series
+  // ФІКС МОДЕЛІ ДЛЯ FORD/EV: Шукаємо всюди, де NHTSA могла її заховати
   let md = "—";
-  if (full) {
+  if (full || hasNhtsa) {
     md = val(data?.Model);
-    if (md === "—") md = val(data?.Series);
+    if (md === "—") md = val(data?.Series); // Часто модель ховається в Series
+    if (md === "—") md = val(data?.Trim);   // Іноді в Trim
   }
 
   const cy = full && val(data?.PlantCountry) !== "—" ? data.PlantCountry : dec.country;
