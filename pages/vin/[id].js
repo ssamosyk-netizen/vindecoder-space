@@ -61,35 +61,101 @@ const decodeWMI = (vin) => {
   return { make: finalMake, country: map[w]?.c||mkt.n, year: yrs[y]||null, mkt };
 };
 
+// ВЕЛИКИЙ КАТАЛОГ МОДЕЛЕЙ З РОЗБИВКОЮ ПО МАРКАХ (Щоб уникнути конфліктів)
 const fallbackModels = {
-  // Ford & Tesla
-  'P8M': 'Mustang Mach-E', 'P8S': 'Mustang Mach-E', 'F25': 'F-250', 'F15': 'F-150', 'E14': 'Econoline', 'E35': 'E-350',
-  '5YJ3': 'Model 3', '5YJS': 'Model S', '5YJX': 'Model X', '7SAY': 'Model Y',
-  // Nissan
-  'TCN': 'X-Trail / Rogue', 'U11': 'Leaf', 'ZE1': 'Leaf', 'E12': 'Leaf', 'J11': 'Qashqai', 'F15': 'Juke',
-  // Audi/VW/Skoda
-  '8K': 'A4', '4G': 'A6', '8R': 'Q5', '4M': 'Q7', '4H': 'A8', 'FY': 'Q5', '8U': 'Q3', '5N': 'Tiguan', '3C': 'Passat', '1K': 'Golf/Jetta', '1Z': 'Octavia', '5E': 'Octavia', '3T': 'Superb', '6Y': 'Fabia', '5J': 'Fabia',
-  // BMW & Jeep & Honda
-  'F30': '3 Series', 'F10': '5 Series', 'G20': '3 Series', 'G30': '5 Series', 'F15': 'X5', 'F25': 'X3', 'E90': '3 Series',
-  'WK': 'Grand Cherokee', 'WL': 'Grand Cherokee', 'BU': 'Renegade', 'MP': 'Compass', 'WD': 'Durango',
-  'CRV': 'CR-V', 'HRV': 'HR-V', 'CVC': 'Civic', 'ACC': 'Accord',
-  // Opel, Renault, Peugeot
-  'TGF': 'Astra', 'VGF': 'Vectra', 'JBF': 'Insignia', 'MGF': 'Corsa',
-  'JZ': 'Scenic / Megane', 'JM': 'Megane / Scenic', 'BG': 'Laguna', 'KG': 'Megane', 'LM': 'Megane', 'BR': 'Clio', 'CR': 'Clio',
-  'WC': '207', 'WA': '207', 'CU': '208', '8E': '307', '8H': '307', '4A': '407', '4E': '407',
-  // Hyundai / Kia
-  'Z94C': 'Rio / Solaris', 'Z94G': 'Creta', 'Z94E': 'Solaris', 'CT4': 'Rio / Solaris', 'DG4': 'Accent'
+  'TESLA': { 
+    '5YJ3': 'Model 3', 'LRW3': 'Model 3', '5YJS': 'Model S', '5YJX': 'Model X', '7SAY': 'Model Y', '5YJY': 'Model Y' 
+  },
+  'FORD': { 
+    'P8M': 'Mustang Mach-E', 'P8S': 'Mustang Mach-E', 'F15': 'F-150', 'F25': 'F-250', 'F35': 'F-350', 'E14': 'Econoline', 'E35': 'E-350', 'DA3': 'Focus', 'DYB': 'Focus', 'BA7': 'Mondeo', 'CB1': 'Fiesta', 'CCN': 'Fiesta' 
+  },
+  'AUDI': { 
+    '8D': 'A4', '8E': 'A4', '8K': 'A4', '8W': 'A4', '4F': 'A6', '4G': 'A6', '4A': 'A6', '8T': 'A5', 'F5': 'A5', '8R': 'Q5', 'FY': 'Q5', '4L': 'Q7', '4M': 'Q7', '4H': 'A8', '8P': 'A3', '8V': 'A3', '8Y': 'A3', '8U': 'Q3', 'F3': 'Q3' 
+  },
+  'VOLKSWAGEN': { 
+    '1K': 'Golf / Jetta', '5K': 'Golf', '5G': 'Golf', 'CD': 'Golf', '3C': 'Passat', '3G': 'Passat', 'CB': 'Passat', '5N': 'Tiguan', '7L': 'Touareg', '7P': 'Touareg', 'CR': 'Touareg', '2K': 'Caddy', 'AW': 'Polo', '6R': 'Polo', '16': 'Jetta', '11': 'Beetle' 
+  },
+  'SKODA': { 
+    '1U': 'Octavia', '1Z': 'Octavia', '5E': 'Octavia', 'NX': 'Octavia', '3T': 'Superb', '3V': 'Superb', '6Y': 'Fabia', '5J': 'Fabia', 'NJ': 'Fabia', 'NS': 'Karoq', 'NU': 'Kodiaq' 
+  },
+  'SEAT': { 
+    '5F': 'Leon', 'KL': 'Leon', '6L': 'Ibiza', '6J': 'Ibiza', '6F': 'Ibiza' 
+  },
+  'PORSCHE': { 
+    '9P': 'Cayenne', '92': 'Cayenne', '95': 'Macan', '97': 'Panamera', '99': '911' 
+  },
+  'BMW': { 
+    'E46': '3 Series', 'E90': '3 Series', 'E91': '3 Series', 'E92': '3 Series', 'F30': '3 Series', 'F31': '3 Series', 'G20': '3 Series', 'E39': '5 Series', 'E60': '5 Series', 'F10': '5 Series', 'G30': '5 Series', 'E53': 'X5', 'E70': 'X5', 'F15': 'X5', 'G05': 'X5', 'E83': 'X3', 'F25': 'X3', 'G01': 'X3' 
+  },
+  'MERCEDES-BENZ': { 
+    'W203': 'C-Class', 'W204': 'C-Class', 'W205': 'C-Class', 'W211': 'E-Class', 'W212': 'E-Class', 'W213': 'E-Class', 'W221': 'S-Class', 'W222': 'S-Class', 'W164': 'M-Class', 'W166': 'GLE-Class', 'X166': 'GLS-Class' 
+  },
+  'RENAULT': { 
+    'JZ': 'Scenic / Megane', 'JM': 'Megane / Scenic', 'BG': 'Laguna', 'BT': 'Laguna', 'KG': 'Megane', 'LM': 'Megane', 'BR': 'Clio', 'CR': 'Clio', 'BH': 'Clio', 'SR': 'Logan', 'HS': 'Duster', 'FS': 'Logan' 
+  },
+  'DACIA': { 
+    'SR': 'Logan / Sandero', 'HS': 'Duster', 'FS': 'Logan' 
+  },
+  'PEUGEOT': { 
+    'WC': '207', 'WA': '207', 'CU': '208', '8E': '307', '8H': '307', '4A': '407', '4E': '407' 
+  },
+  'CITROEN': { 
+    'FC': 'C3', 'LA': 'C4', 'LC': 'C4' 
+  },
+  'HYUNDAI': { 
+    'Z94E': 'Solaris', 'Z94G': 'Creta', 'CT4': 'Solaris', 'MD': 'Elantra', 'AD': 'Elantra', 'TL': 'Tucson', 'NX4': 'Tucson', 'CM': 'Santa Fe', 'DM': 'Santa Fe', 'TM': 'Santa Fe', 'PB': 'Accent' 
+  },
+  'KIA': { 
+    'Z94C': 'Rio', 'UB': 'Rio', 'YB': 'Rio', 'SL': 'Sportage', 'QL': 'Sportage', 'NQ5': 'Sportage', 'XM': 'Sorento', 'UM': 'Sorento', 'MQ4': 'Sorento', 'JD': 'Ceed', 'CD': 'Ceed' 
+  },
+  'HYUNDAI / KIA': { 
+    'Z94': 'Rio / Solaris / Creta', 'X4X': 'Rio / Solaris' 
+  },
+  'NISSAN': { 
+    'TCN': 'X-Trail / Rogue', 'T31': 'X-Trail', 'T32': 'X-Trail / Rogue', 'T33': 'X-Trail', 'U11': 'Leaf', 'ZE1': 'Leaf', 'E12': 'Leaf', 'J10': 'Qashqai', 'J11': 'Qashqai', 'J12': 'Qashqai', 'F15': 'Juke', 'F16': 'Juke' 
+  },
+  'TOYOTA': { 
+    'XV40': 'Camry', 'XV50': 'Camry', 'XV70': 'Camry', 'E150': 'Corolla', 'E170': 'Corolla', 'E210': 'Corolla', 'XA30': 'RAV4', 'XA40': 'RAV4', 'XA50': 'RAV4' 
+  },
+  'JEEP': { 
+    'WK': 'Grand Cherokee', 'WL': 'Grand Cherokee', 'BU': 'Renegade', 'MP': 'Compass' 
+  },
+  'DODGE': { 
+    'WD': 'Durango', 'RT': 'Caravan', 'JC': 'Journey' 
+  },
+  'HONDA': { 
+    'CRV': 'CR-V', 'RM': 'CR-V', 'RW': 'CR-V', 'HRV': 'HR-V', 'RU': 'HR-V', 'CVC': 'Civic', 'FK': 'Civic', 'FC': 'Civic', 'ACC': 'Accord', 'CU': 'Accord', 'CR': 'Accord' 
+  },
+  'OPEL': { 
+    'TGF': 'Astra', 'VGF': 'Vectra', 'JBF': 'Insignia', 'MGF': 'Corsa' 
+  }
 };
 
+// РОЗУМНА ФУНКЦІЯ ПОШУКУ (Шукає тільки в межах визначеної марки)
 const identifyModelByVin = (vin, make) => {
-  for (const [key, value] of Object.entries(fallbackModels)) {
-    if (vin.includes(key)) {
-      if (key === 'F15' && make === 'FORD') return 'F-150';
-      if (key === 'F15' && make === 'NISSAN') return 'Juke';
-      if (key === 'F15' && make === 'BMW') return 'X5';
-      return value;
+  if (!make || make === "Unknown") return "—";
+  
+  const upperMake = make.toUpperCase();
+  
+  // Шукаємо точний збіг марки в нашому словнику
+  let modelsForMake = fallbackModels[upperMake];
+
+  // Якщо точного збігу немає, пробуємо знайти частковий (наприклад "MERCEDES" замість "MERCEDES-BENZ")
+  if (!modelsForMake) {
+    const foundKey = Object.keys(fallbackModels).find(k => upperMake.includes(k) || k.includes(upperMake));
+    if (foundKey) modelsForMake = fallbackModels[foundKey];
+  }
+
+  // Якщо марку знайдено, перевіряємо VIN на наявність коду моделі
+  if (modelsForMake) {
+    for (const [key, value] of Object.entries(modelsForMake)) {
+      if (vin.includes(key)) {
+        return value;
+      }
     }
   }
+  
+  // Якщо навіть так не знайшли — повертаємо прочерк
   return "—";
 };
 
