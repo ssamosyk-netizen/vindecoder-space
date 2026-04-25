@@ -17,7 +17,7 @@ const translations = {
     bullet4: "Safety features and braking systems",
     policy: "Privacy Policy",
     terms: "Terms of Service",
-    alert: "Please enter a valid 17-character VIN code. VINs cannot contain I, O, or Q.",
+    alert: "Please enter a valid 17-character VIN code. It cannot contain I, O, Q or be a fake sequence.",
     errTitle: "Invalid VIN"
   },
   uk: {
@@ -34,7 +34,7 @@ const translations = {
     bullet4: "Системи безпеки та гальмівні системи",
     policy: "Політика конфіденційності",
     terms: "Умови використання",
-    alert: "Введіть коректний VIN-код (17 символів). VIN не може містити літери I, O, Q або бути фейковим.",
+    alert: "Введіть коректний VIN-код (17 символів). Він не може містити літери I, O, Q або бути фейковим набором.",
     errTitle: "Помилка"
   },
   es: {
@@ -51,7 +51,7 @@ const translations = {
     bullet4: "Funciones de seguridad y sistemas de frenado",
     policy: "Política de privacidad",
     terms: "Términos de servicio",
-    alert: "Ingrese un código VIN válido de 17 caracteres. No puede contener I, O, Q.",
+    alert: "Ingrese un código VIN válido de 17 caracteres. No puede contener I, O, Q ni secuencias falsas.",
     errTitle: "Error"
   },
   de: {
@@ -68,7 +68,7 @@ const translations = {
     bullet4: "Sicherheitsmerkmale und Bremssysteme",
     policy: "Datenschutzrichtlinie",
     terms: "Nutzungsbedingungen",
-    alert: "Bitte geben Sie eine gültige 17-stellige VIN ein (keine I, O, Q).",
+    alert: "Bitte geben Sie eine gültige 17-stellige VIN ein (keine I, O, Q, keine gefälschten Wiederholungen).",
     errTitle: "Fehler"
   },
   zh: {
@@ -85,7 +85,7 @@ const translations = {
     bullet4: "安全功能和制动系统",
     policy: "隐私政策",
     terms: "服务条款",
-    alert: "请输入有效的 17 位车架号。不能包含 I、O、Q。",
+    alert: "请输入有效的 17 位车架号。不能包含 I、O、Q 或虚假的重复序列。",
     errTitle: "错误"
   },
   ar: {
@@ -121,6 +121,7 @@ export default function MakeLanding() {
   const { make } = router.query;
   const [vinInput, setVinInput] = useState('');
   const [lang, setLang] = useState('en');
+  const [history, setHistory] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
   const formatMakeName = (m) => {
@@ -133,10 +134,23 @@ export default function MakeLanding() {
   const displayMake = formatMakeName(make);
 
   useEffect(() => {
+    // 1. Відновлюємо мову
     const savedLang = localStorage.getItem('userLanguage');
     if (savedLang && translations[savedLang]) {
       setLang(savedLang);
     }
+
+    // 2. Читаємо глобальну історію з API
+    fetch('/api/vins')
+      .then(res => res.json())
+      .then(data => {
+        const codes = Array.isArray(data) ? data : (data.vins || []);
+        if (codes.length > 0) {
+          const cleanCodes = codes.filter(c => isValidVin(c));
+          setHistory(cleanCodes.slice(0, 15)); // Показуємо 15 кодів на сторінках марок
+        }
+      })
+      .catch(err => console.error("Помилка завантаження історії кодів:", err));
   }, []);
 
   const toggleLang = (newLang) => {
@@ -153,14 +167,15 @@ export default function MakeLanding() {
     if (!vinRegex.test(testVin)) return false;
 
     const uniqueChars = new Set(testVin.split(''));
-    if (uniqueChars.size < 3) return false;
+    if (uniqueChars.size < 5) return false;
 
-    if (testVin === '12345678901234567') return false;
+    if (/([1-9A-HJ-NPR-Z])\1{5,}/i.test(testVin)) return false;
+    if (testVin === '12345678901234567' || testVin === '01234567890123456') return false;
 
     return true;
   };
 
-  // РОЗУМНИЙ ВВІД: Тільки букви та цифри, без I, O, Q, капсом, макс 17
+  // РОЗУМНИЙ ВВІД (тільки букви/цифри, без I, O, Q, капсом, макс 17)
   const handleVinInput = (e) => {
     const cleanValue = e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
     if (cleanValue.length <= 17) {
@@ -168,12 +183,13 @@ export default function MakeLanding() {
     }
   };
 
-  const handleSearch = () => {
-    const fVin = vinInput.toUpperCase().trim();
+  const handleSearch = (searchVin = vinInput) => {
+    const fVin = searchVin.toUpperCase().trim();
+    
     if (isValidVin(fVin)) {
       setShowModal(false);
       
-      // Відправляємо в базу (POST)
+      // Записуємо в базу
       fetch('/api/vins', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -246,7 +262,7 @@ export default function MakeLanding() {
           <p>{t.heroSub.replace('{make}', displayMake)}</p>
         </div>
 
-        {/* НОВИЙ РОЗУМНИЙ БЛОК ПОШУКУ */}
+        {/* НОВИЙ РОЗУМНИЙ БЛОК ПОШУКУ З ЛІЧИЛЬНИКОМ */}
         <div className={`search-box ${isError ? 'box-error' : isSuccess ? 'box-success' : ''}`}>
           <div className="input-wrapper">
             <input 
@@ -258,13 +274,23 @@ export default function MakeLanding() {
                 if (e.key === 'Enter') handleSearch();
               }}
             />
-            {/* ЛІЧИЛЬНИК СИМВОЛІВ */}
             <span className={`char-count ${isError ? 'text-red' : isSuccess ? 'text-green' : ''}`}>
               {vinInput.length}/17
             </span>
           </div>
-          <button onClick={handleSearch}>{t.searchBtn}</button>
+          <button onClick={() => handleSearch()}>{t.searchBtn}</button>
         </div>
+
+        {/* ІСТОРІЯ ПЕРЕВІРОК */}
+        {history.length > 0 && (
+          <div className="history-section">
+            <div className="history-chips">
+              {history.map((h, i) => (
+                <span key={`${h}-${i}`} className="chip" onClick={() => handleSearch(h)}>{h}</span>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="info-section">
           <h3>{t.whyTitle.replace('{make}', displayMake)}</h3>
@@ -288,13 +314,17 @@ export default function MakeLanding() {
       </footer>
 
       <style jsx global>{`
-        html, body { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow-x: hidden; }
+        html, body {
+          margin: 0; padding: 0; background-color: #000; color: #fff;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          overflow-x: hidden;
+        }
       `}</style>
 
       <style jsx>{`
         .container { padding: 0 20px; text-align: center; max-width: 1200px; margin: 0 auto; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
         
-        /* СТИЛІ МОДАЛЬНОГО ВІКНА */
+        /* МОДАЛЬНЕ ВІКНО */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
         .modal-content { background: #111; border: 1px solid #333; padding: 40px 30px; border-radius: 20px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: popIn 0.3s ease-out; }
         @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -313,12 +343,12 @@ export default function MakeLanding() {
         .lang-switcher span.active { color: #facc15; border-color: #facc15; background: rgba(250, 204, 21, 0.05); }
         .lang-switcher span:hover:not(.active) { color: #aaa; border-color: #222; }
 
-        .content { flex: 1; }
+        .content { flex: 1; display: flex; flex-direction: column; align-items: center; }
         .hero h2 { font-size: clamp(1.8rem, 7vw, 3.5rem); font-weight: 900; text-transform: uppercase; margin: 0 0 15px; line-height: 1.1; }
         .hero p { color: #666; font-size: 1.1rem; margin-bottom: 40px; }
         
-        /* СТИЛІ ПОШУКОВОГО БЛОКУ ТА ЛІЧИЛЬНИКА */
-        .search-box { max-width: 700px; margin: 0 auto 80px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 25px; border: 1px solid #222; transition: 0.3s border-color, 0.3s box-shadow; }
+        /* БЛОК ПОШУКУ */
+        .search-box { width: 100%; max-width: 700px; margin: 0 auto 30px; display: flex; gap: 10px; background: #111; padding: 10px; border-radius: 25px; border: 1px solid #222; transition: 0.3s border-color, 0.3s box-shadow; }
         .box-error { border-color: #ef4444; box-shadow: 0 0 15px rgba(239,68,68,0.2); }
         .box-success { border-color: #22c55e; box-shadow: 0 0 15px rgba(34,197,94,0.2); }
         
@@ -331,8 +361,15 @@ export default function MakeLanding() {
 
         button { padding: 0 40px; border-radius: 18px; border: none; background: #facc15; color: #000; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: transform 0.2s; }
         button:active { transform: scale(0.95); }
+
+        /* ІСТОРІЯ ПЕРЕВІРОК */
+        .history-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 60px; width: 100%; max-width: 900px; }
+        .history-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .chip { background: #080808; border: 1px solid #1a1a1a; padding: 8px 16px; border-radius: 20px; font-size: 12px; color: #666; cursor: pointer; transition: 0.2s; font-family: monospace; letter-spacing: 0.5px; }
+        .chip:hover { border-color: #facc15; color: #facc15; }
         
-        .info-section { max-width: 800px; margin: 0 auto 60px; background: #0a0a0a; padding: 40px; border-radius: 30px; border: 1px solid #1a1a1a; text-align: left; }
+        /* БЛОК ІНФОРМАЦІЇ */
+        .info-section { width: 100%; max-width: 800px; margin: 0 auto 60px; background: #0a0a0a; padding: 40px; border-radius: 30px; border: 1px solid #1a1a1a; text-align: left; }
         .container[dir="rtl"] .info-section { text-align: right; }
         
         .info-section h3 { color: #facc15; margin-bottom: 20px; font-size: 1.4rem; }
