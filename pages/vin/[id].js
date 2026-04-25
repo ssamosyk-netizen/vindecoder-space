@@ -3,307 +3,360 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
-  en: { 
-    dir: 'ltr', subtitle: "Vehicle Specification Report", back: "Back to Search", privacy: "Privacy Policy", ad: "ADVERTISEMENT",
-    market: "Market Region", basicData: "Basic Data (Decoded from VIN)",
-    partnerTitle: "Full Report Available", partnerDesc: "Get hidden damages and mileage history.", partnerBtn: "GET FULL REPORT",
-    lockedTitle: "🔒 Technical Data Protected", lockedDesc: "European manufacturers restrict detailed specs in free databases. Unlock for full history.", unlockBtn: "UNLOCK REPORT",
-    sections: { general: "General Information", engine: "Engine & Performance", mechanical: "Mechanical & Chassis", safety: "Safety & Interior", origin: "Manufacturing Details" },
-    fields: { 
-      make: "Make", model: "Model", year: "Year", trim: "Trim", series: "Series", type: "Vehicle Type", body: "Body Class", doors: "Doors",
-      engine: "Engine", cylinders: "Cylinders", hp: "Horsepower", fuel: "Fuel Type", drive: "Drive Type", transmission: "Transmission",
-      brakes: "Brake System", steering: "Steering", axles: "Axles", wheelbase: "Wheelbase", gvwr: "Gross Weight",
-      abs: "ABS", esc: "ESC", tpms: "TPMS", country: "Country", plantCity: "Plant City", manufacturer: "Manufacturer"
-    }
+  en: {
+    dir: 'ltr',
+    title: "VIN Report for",
+    loading: "Decoding VIN, please wait...",
+    error: "Sorry, we couldn't decode this VIN. It might be invalid or too old.",
+    details: "Vehicle Specifications",
+    engine: "Engine & Performance",
+    production: "Manufacturing",
+    getHistoryTitle: "Want to know the car's hidden history?",
+    getHistoryText: "Check for accidents, mileage rollbacks, theft, and salvage titles.",
+    getHistoryBtn: "GET FULL HISTORY REPORT",
+    supportTitle: "Support our free project!",
+    supportBtn: "☕ Buy us a coffee",
+    policy: "Privacy Policy",
+    terms: "Terms of Service",
+    footer: "© 2026 VIN DECODER | PROFESSIONAL DATA"
   },
-  uk: { 
-    dir: 'ltr', subtitle: "Звіт про специфікації автомобіля", back: "Назад до пошуку", privacy: "Політика конфіденційності", ad: "РЕКЛАМА",
-    market: "Регіон ринку", basicData: "Базові дані (розшифровано з VIN)",
-    partnerTitle: "Доступний повний звіт", partnerDesc: "Перевірте скручений пробіг та історію ДТП.", partnerBtn: "ОТРИМАТИ ПОВНИЙ ЗВІТ",
-    lockedTitle: "🔒 Технічні дані захищені", lockedDesc: "Європейські виробники обмежують дані у безкоштовних базах. Розблокуйте повну історію.", unlockBtn: "РОЗБЛОКУВАТИ ЗВІТ",
-    sections: { general: "Загальна інформація", engine: "Двигун та трансмісія", mechanical: "Ходова та механіка", safety: "Безпека", origin: "Дані виробництва" },
-    fields: { 
-      make: "Марка", model: "Модель", year: "Рік", trim: "Комплектація", series: "Серія", type: "Тип ТЗ", body: "Клас кузова", doors: "Двері",
-      engine: "Двигун", cylinders: "Циліндри", hp: "Кінські сили", fuel: "Паливо", drive: "Привід", transmission: "Трансмісія",
-      brakes: "Гальма", steering: "Кермо", axles: "Осі", wheelbase: "Колісна база", gvwr: "Повна маса",
-      abs: "ABS", esc: "ESC", tpms: "Тиск у шинах", country: "Країна", plantCity: "Місто заводу", manufacturer: "Виробник"
-    }
+  uk: {
+    dir: 'ltr',
+    title: "Звіт по VIN-коду",
+    loading: "Розшифровуємо VIN, зачекайте...",
+    error: "Вибачте, ми не змогли розшифрувати цей VIN. Він може бути некоректним або застарілим.",
+    details: "Технічні характеристики",
+    engine: "Двигун та Трансмісія",
+    production: "Виробництво",
+    getHistoryTitle: "Бажаєте дізнатися приховану історію авто?",
+    getHistoryText: "Перевірте наявність ДТП, скручений пробіг, крадіжки та статус Salvage.",
+    getHistoryBtn: "ОТРИМАТИ ПОВНИЙ ЗВІТ (CARFAX/AUTOCHECK)",
+    supportTitle: "Підтримайте наш безкоштовний проект!",
+    supportBtn: "☕ Пригостити кавою",
+    policy: "Політика конфіденційності",
+    terms: "Умови використання",
+    footer: "© 2026 VIN DECODER | ПРОФЕСІЙНІ ДАНІ"
+  },
+  es: {
+    dir: 'ltr',
+    title: "Informe VIN para",
+    loading: "Decodificando VIN, por favor espere...",
+    error: "Lo sentimos, no pudimos decodificar este VIN. Puede ser inválido o muy antiguo.",
+    details: "Especificaciones del vehículo",
+    engine: "Motor y rendimiento",
+    production: "Fabricación",
+    getHistoryTitle: "¿Quieres conocer el historial oculto del coche?",
+    getHistoryText: "Comprueba si hay accidentes, retrocesos de kilometraje, robos y títulos de salvamento.",
+    getHistoryBtn: "OBTENER INFORME HISTÓRICO COMPLETO",
+    supportTitle: "¡Apoya nuestro proyecto gratuito!",
+    supportBtn: "☕ Cómpranos un café",
+    policy: "Política de privacidad",
+    terms: "Términos de servicio",
+    footer: "© 2026 VIN DECODER | DATOS PROFESIONALES"
+  },
+  de: {
+    dir: 'ltr',
+    title: "VIN-Bericht für",
+    loading: "VIN wird dekodiert, bitte warten...",
+    error: "Leider konnten wir diese VIN nicht dekodieren. Sie ist möglicherweise ungültig.",
+    details: "Fahrzeugspezifikationen",
+    engine: "Motor & Leistung",
+    production: "Herstellung",
+    getHistoryTitle: "Möchten Sie die verborgene Geschichte des Autos kennen?",
+    getHistoryText: "Prüfen Sie auf Unfälle, Tachomanipulationen, Diebstahl und Totalschäden.",
+    getHistoryBtn: "VOLLSTÄNDIGEN HISTORIENBERICHT ABRUFEN",
+    supportTitle: "Unterstützen Sie unser kostenloses Projekt!",
+    supportBtn: "☕ Spendieren Sie uns einen Kaffee",
+    policy: "Datenschutzrichtlinie",
+    terms: "Nutzungsbedingungen",
+    footer: "© 2026 VIN DECODER | PROFESSIONELLE DATEN"
+  },
+  zh: {
+    dir: 'ltr',
+    title: "车架号 (VIN) 报告",
+    loading: "正在解码车架号，请稍候...",
+    error: "抱歉，我们无法解码此车架号。它可能无效或太旧。",
+    details: "车辆规格",
+    engine: "发动机与性能",
+    production: "生产信息",
+    getHistoryTitle: "想知道这辆车的隐藏历史吗？",
+    getHistoryText: "检查是否有事故、里程表倒转、盗窃和报废记录。",
+    getHistoryBtn: "获取完整历史报告",
+    supportTitle: "支持我们的免费项目！",
+    supportBtn: "☕ 请我们喝杯咖啡",
+    policy: "隐私政策",
+    terms: "服务条款",
+    footer: "© 2026 VIN DECODER | 专业数据"
+  },
+  ar: {
+    dir: 'rtl',
+    title: "تقرير رقم الشاسيه لـ",
+    loading: "جاري فك تشفير رقم الشاسيه، يرجى الانتظار...",
+    error: "عذرًا، لم نتمكن من فك تشفير هذا الرقم. قد يكون غير صالح.",
+    details: "مواصفات السيارة",
+    engine: "المحرك والأداء",
+    production: "التصنيع",
+    getHistoryTitle: "هل تريد معرفة التاريخ المخفي للسيارة؟",
+    getHistoryText: "تحقق من الحوادث وتراجع الأميال والسرقة وسجلات الخردة.",
+    getHistoryBtn: "احصل على تقرير التاريخ الكامل",
+    supportTitle: "ادعم مشروعنا المجاني!",
+    supportBtn: "☕ اشتري لنا قهوة",
+    policy: "سياسة الخصوصية",
+    terms: "شروط الخدمة",
+    footer: "© 2026 VIN DECODER | بيانات احترافية"
   }
 };
 
-// --- ГЛОБАЛЬНИЙ ДЕКОДЕР WMI (Світ) ---
-const decodeVinBasics = (vin) => {
-  const wmi = vin.substring(0, 3);
-  const yearChar = vin.charAt(9).toUpperCase();
-  
-  const wmiMap = {
-    'TMA': { make: 'HYUNDAI', country: 'Czech Republic' },
-    'TMB': { make: 'SKODA', country: 'Czech Republic' },
-    'WDB': { make: 'MERCEDES-BENZ', country: 'Germany' },
-    'WBA': { make: 'BMW', country: 'Germany' },
-    'WVW': { make: 'VOLKSWAGEN', country: 'Germany' },
-    'ZAR': { make: 'ALFA ROMEO', country: 'Italy' },
-    'ZFA': { make: 'FIAT', country: 'Italy' },
-    'VF3': { make: 'PEUGEOT', country: 'France' },
-    'UU1': { make: 'DACIA', country: 'Romania' },
-    'VSS': { make: 'SEAT', country: 'Spain' },
-    'JHM': { make: 'HONDA', country: 'Japan' },
-    'JT1': { make: 'TOYOTA', country: 'Japan' },
-    'KL3': { make: 'CHEVROLET', country: 'South Korea' },
-    'KNA': { make: 'KIA', country: 'South Korea' },
-    'KPT': { make: 'SSANGYONG', country: 'South Korea' },
-    'SJ3': { make: 'NISSAN', country: 'United Kingdom' },
-    'SAL': { make: 'LAND ROVER', country: 'United Kingdom' },
-    'TRU': { make: 'AUDI', country: 'Hungary' },
-    'WF0': { make: 'FORD', country: 'Germany' }
-  };
+const languages = [
+  { code: 'en', label: 'EN' },
+  { code: 'uk', label: 'UK' },
+  { code: 'es', label: 'ES' },
+  { code: 'de', label: 'DE' },
+  { code: 'zh', label: 'ZH' },
+  { code: 'ar', label: 'AR' }
+];
 
-  const yearMap = { 'W':1998, 'X':1999, 'Y':2000, '1':2001, '2':2002, '3':2003, '4':2004, '5':2005, '6':2006, '7':2007, '8':2008, '9':2009, 'A':2010, 'B':2011, 'C':2012, 'D':2013, 'E':2014, 'F':2015, 'G':2016, 'H':2017, 'J':2018, 'K':2019, 'L':2020, 'M':2021, 'N':2022, 'P':2023, 'R':2024, 'S':2025 };
-
-  const first = vin[0];
-  let market = { name: "Global", icon: "🌍" };
-  if (['1','2','3','4','5'].includes(first)) market = { name: "North America", icon: "🇺🇸" };
-  else if (['J','K','L'].includes(first)) market = { name: "Asia", icon: "🇯🇵" };
-  else if (['S','T','U','V','W','X','Y','Z'].includes(first)) market = { name: "Europe", icon: "🇪🇺" };
-
-  return {
-    make: wmiMap[wmi]?.make || null,
-    country: wmiMap[wmi]?.country || market.name,
-    year: yearMap[yearChar] || null,
-    market: market
-  };
-};
-
-const getMarketInfo = (vin) => {
-  const first = vin[0];
-  if (['1','2','3','4','5'].includes(first)) return { name: "North America", icon: "🇺🇸" };
-  if (['J','K','L','M','N','P','R'].includes(first)) return { name: "Asia", icon: "🇯🇵" };
-  if (['S','T','U','V','W','X','Y','Z'].includes(first)) return { name: "Europe", icon: "🇪🇺" };
-  return { name: "Global", icon: "🌍" };
-};
-
-const fixEuroYear = (vin) => {
-  const yearChar = vin.charAt(9).toUpperCase();
-  const yearMap = { 'W':1998, 'X':1999, 'Y':2000, '1':2001, '2':2002, '3':2003, '4':2004, '5':2005, '6':2006, '7':2007, '8':2008, '9':2009, 'A':2010, 'B':2011, 'C':2012, 'D':2013, 'E':2014, 'F':2015, 'G':2016, 'H':2017, 'J':2018, 'K':2019, 'L':2020, 'M':2021, 'N':2022, 'P':2023, 'R':2024, 'S':2025 };
-  return yearMap[yearChar] || null;
-};
-
-export async function getServerSideProps(context) {
-  const { id } = context.params;
-  try {
-    const res = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvaluesextended/${id}?format=json`);
-    const result = await res.json();
-    let carData = result.Results[0];
-    if (id.toUpperCase().includes('ZZZ')) {
-      const cYear = fixEuroYear(id);
-      if (cYear) carData.ModelYear = cYear;
-    }
-    return { props: { serverData: carData, vin: id.toUpperCase() } };
-  } catch (error) {
-    return { props: { serverData: null, vin: id.toUpperCase() } };
-  }
-}
-
-export default function VinResult({ serverData, vin }) {
+export default function VinReport() {
   const router = useRouter();
+  const { id } = router.query;
   const [lang, setLang] = useState('en');
-  const market = getMarketInfo(vin);
-  const decoded = decodeVinBasics(vin);
-  
-  // Перевірка на наявність даних від NHTSA
-  const hasFullData = serverData && serverData.Make && serverData.Make !== "" && serverData.Make !== "Not Applicable" && serverData.Make !== "None";
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [vehicleData, setVehicleData] = useState(null);
 
   useEffect(() => {
-    document.body.style.backgroundColor = "#000";
     const savedLang = localStorage.getItem('userLanguage');
-    if (savedLang && translations[savedLang]) setLang(savedLang);
+    if (savedLang && translations[savedLang]) {
+      setLang(savedLang);
+    }
   }, []);
 
+  const toggleLang = (newLang) => {
+    setLang(newLang);
+    localStorage.setItem('userLanguage', newLang);
+  };
+
   const t = translations[lang] || translations.en;
-  const val = (v) => (!v || v === "" || v === "Not Applicable" || v === "null" || v === "None") ? "—" : v;
 
-  // Формуємо фінальні дані (Пріоритет базі, якщо ні — нашому декодеру)
-  const finalMake = hasFullData ? serverData.Make : (decoded.make || "Unknown");
-  const finalYear = hasFullData ? serverData.ModelYear : (decoded.year || "—");
-  const finalCountry = hasFullData ? serverData.PlantCountry : decoded.country;
-  const finalModel = hasFullData ? serverData.Model : "—";
-  const carEngine = serverData?.DisplacementL ? `${serverData.DisplacementL}L` : '—';
+  // Отримання даних VIN
+  useEffect(() => {
+    if (!id) return;
+    
+    const fetchVinData = async () => {
+      setLoading(true);
+      setError(false);
+      try {
+        const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${id}?format=json`);
+        const json = await response.json();
+        
+        if (json.Results && json.Results[0] && json.Results[0].Make) {
+          setVehicleData(json.Results[0]);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
+        console.error(err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const shareTitle = `${vin} | ${finalYear} ${finalMake} ${finalModel} ${carEngine !== '—' ? carEngine : ''}`;
-  const ogImageUrl = `https://vindecoder.space/api/og?vin=${vin}&make=${encodeURIComponent(finalMake)}&model=${encodeURIComponent(finalModel)}&year=${finalYear}&engine=${encodeURIComponent(carEngine)}`;
+    fetchVinData();
+  }, [id]);
+
+  // Партнерське посилання на CARFAX або інший сервіс (додай своє)
+  const affiliateLink = `https://your-affiliate-link.com/report?vin=${id}`;
+  
+  // Посилання на донати
+  const donationLink = `https://buymeacoffee.com/yourprofile`;
+
+  // Формуємо динамічне посилання на картинку для месенджерів (OG Image)
+  const currentVin = id || 'CHECK';
+  const ogImageUrl = `https://vindecoder.space/api/og?vin=${currentVin}`;
 
   return (
-    <div dir={t.dir} className="container">
+    <div className="container" dir={t.dir}>
       <Head>
-        <title>{shareTitle}</title>
+        <title>{id ? `VIN Report: ${id}` : 'VIN DECODER'} | Free Check</title>
+        <meta name="description" content={`Get full vehicle specifications and history report for VIN ${id}.`} />
         <link rel="icon" type="image/png" href="/favicon.png" />
-        <meta property="og:title" content={shareTitle} />
-        <meta property="og:description" content={`Full technical report for ${finalYear} ${finalMake}. Region: ${market.name}`} />
+        
+        {/* КАРТИНКА ДЛЯ МЕСЕНДЖЕРІВ, ЯКА ГЕНЕРУЄТЬСЯ ДЛЯ КОЖНОГО VIN */}
+        <meta property="og:title" content={`${id ? id : 'Vehicle'} | Free VIN Decoder`} />
+        <meta property="og:description" content={`Get full vehicle specifications and history report for VIN ${id}.`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://vindecoder.space/vin/${id}`} />
         <meta property="og:image" content={ogImageUrl} />
         <meta property="og:image:secure_url" content={ogImageUrl} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={`https://vindecoder.space/vin/${vin}`} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={ogImageUrl} />
       </Head>
 
-      <div className="header">
-        <h1 onClick={() => router.push('/')} style={{cursor: 'pointer'}}>
-          <span className="yellow">VIN</span><span className="white">DECODER</span>
-        </h1>
-        <div className="market-badge">{market.icon} {market.name} Market</div>
-      </div>
+      <header className="header">
+        <div className="logo" onClick={() => router.push('/')} style={{cursor: 'pointer'}}>
+          <span className="yellow">VIN</span>DECODER
+        </div>
+        
+        <div className="lang-switcher">
+          {languages.map((l) => (
+            <span 
+              key={l.code}
+              className={lang === l.code ? 'active' : ''} 
+              onClick={() => toggleLang(l.code)}
+            >
+              {l.label}
+            </span>
+          ))}
+        </div>
+      </header>
 
-      <div className="wrapper">
-        <main className="main">
-          <div className="hero">
-            {!hasFullData && <div className="notice-badge">{t.basicData}</div>}
-            <h2>{finalYear} <span className="yellow">{finalMake}</span> {finalModel} {carEngine !== '—' ? carEngine : ''}</h2>
-            <p className="subtitle">{t.subtitle} <b>{vin}</b></p>
+      <main className="content">
+        <h1 className="report-title">{t.title} <span className="yellow">{id}</span></h1>
+
+        {loading ? (
+          <div className="status-box">
+            <div className="spinner"></div>
+            <p>{t.loading}</p>
           </div>
-
-          {/* 1. GENERAL INFORMATION */}
-          <section className="section">
-            <h3>{t.sections.general}</h3>
-            <div className="grid">
-              <div className="item"><span>{t.fields.make}</span><b>{finalMake}</b></div>
-              <div className="item"><span>{t.fields.model}</span><b>{finalModel}</b></div>
-              <div className="item"><span>{t.fields.year}</span><b style={{color: vin.includes('ZZZ') || !hasFullData ? '#4ade80' : '#eee'}}>{finalYear}</b></div>
-              <div className="item"><span>{t.fields.country}</span><b>{val(finalCountry)}</b></div>
-              {hasFullData && (
-                <>
-                  <div className="item"><span>{t.fields.trim}</span><b>{val(serverData.Trim)}</b></div>
-                  <div className="item"><span>{t.fields.type}</span><b>{val(serverData.VehicleType)}</b></div>
-                </>
-              )}
-            </div>
-          </section>
-
-          <div className="ad-container horizontal"><span className="ad-tag">{t.ad}</span><div className="ad-placeholder-hor">728 x 90</div></div>
-
-          {!hasFullData ? (
-            <div className="europe-lock-card">
-              <div className="lock-icon">🔒</div>
-              <h3>{t.lockedTitle}</h3>
-              <p>{t.lockedDesc}</p>
-              <button className="partner-btn pulse" onClick={() => window.open('https://www.carvertical.com/', '_blank')}>
-                {t.unlockBtn}
-              </button>
-            </div>
-          ) : (
-            <>
-              {/* 2. ENGINE & PERFORMANCE */}
-              <section className="section">
-                <h3>{t.sections.engine}</h3>
-                <div className="grid">
-                  <div className="item"><span>{t.fields.engine}</span><b>{val(serverData.DisplacementL)}L {val(serverData.EngineConfiguration)}</b></div>
-                  <div className="item"><span>{t.fields.cylinders}</span><b>{val(serverData.EngineNumberofCylinders)}</b></div>
-                  <div className="item"><span>{t.fields.hp}</span><b>{val(serverData.EngineHP)} hp</b></div>
-                  <div className="item"><span>{t.fields.fuel}</span><b>{val(serverData.FuelTypePrimary)}</b></div>
-                  <div className="item"><span>{t.fields.drive}</span><b>{val(serverData.DriveType)}</b></div>
-                  <div className="item"><span>{t.fields.transmission}</span><b>{val(serverData.TransmissionStyle)}</b></div>
-                </div>
-              </section>
-
-              {/* 3. MECHANICAL & CHASSIS */}
-              <section className="section">
-                <h3>{t.sections.mechanical}</h3>
-                <div className="grid">
-                  <div className="item"><span>{t.fields.brakes}</span><b>{val(serverData.BrakeSystemType)}</b></div>
-                  <div className="item"><span>{t.fields.steering}</span><b>{val(serverData.SteeringLocation)}</b></div>
-                  <div className="item"><span>{t.fields.axles}</span><b>{val(serverData.Axles)}</b></div>
-                  <div className="item"><span>{t.fields.wheelbase}</span><b>{val(serverData.WheelBaseLong)} in</b></div>
-                  <div className="item"><span>{t.fields.gvwr}</span><b>{val(serverData.GVWR)}</b></div>
-                </div>
-              </section>
-
-              {/* 4. SAFETY */}
-              <section className="section">
-                <h3>{t.sections.safety}</h3>
-                <div className="grid">
-                  <div className="item"><span>{t.fields.abs}</span><b>{val(serverData.ABS)}</b></div>
-                  <div className="item"><span>{t.fields.esc}</span><b>{val(serverData.ESC)}</b></div>
-                  <div className="item"><span>{t.fields.tpms}</span><b>{val(serverData.TPMS)}</b></div>
-                  <div className="item"><span>{t.fields.airbagF}</span><b>{val(serverData.AirBagLocFront)}</b></div>
-                  <div className="item"><span>{t.fields.airbagS}</span><b>{val(serverData.AirBagLocSide)}</b></div>
-                </div>
-              </section>
-            </>
-          )}
-
-          {/* 5. ORIGIN (Якщо є дані бази) */}
-          {hasFullData && (
-            <section className="section">
-              <h3>{t.sections.origin}</h3>
-              <div className="grid">
-                <div className="item"><span>{t.fields.manufacturer}</span><b>{val(serverData.Manufacturer)}</b></div>
-                <div className="item"><span>{t.fields.country}</span><b>{val(serverData.PlantCountry)}</b></div>
-                <div className="item"><span>{t.fields.plantCity}</span><b>{val(serverData.PlantCity)}, {val(serverData.PlantState)}</b></div>
+        ) : error || !vehicleData ? (
+          <div className="status-box error">
+            <p>{t.error}</p>
+            <button className="back-btn" onClick={() => router.push('/')}>Go Back</button>
+          </div>
+        ) : (
+          <>
+            {/* БЛОК МОНЕТИЗАЦІЇ */}
+            <div className="monetization-banner">
+              <div className="banner-text">
+                <h3>⚠️ {t.getHistoryTitle}</h3>
+                <p>{t.getHistoryText}</p>
               </div>
-            </section>
-          )}
+              <a href={affiliateLink} target="_blank" rel="noopener noreferrer" className="action-btn">
+                {t.getHistoryBtn}
+              </a>
+            </div>
 
-          <button className="back-btn" onClick={() => router.push('/')}>← {t.back}</button>
-        </main>
+            <div className="data-grid">
+              <div className="data-card">
+                <h3>{t.details}</h3>
+                <ul>
+                  <li><span>Make:</span> {vehicleData.Make || 'N/A'}</li>
+                  <li><span>Model:</span> {vehicleData.Model || 'N/A'}</li>
+                  <li><span>Year:</span> {vehicleData.ModelYear || 'N/A'}</li>
+                  <li><span>Trim:</span> {vehicleData.Trim || 'N/A'}</li>
+                  <li><span>Body Style:</span> {vehicleData.BodyClass || 'N/A'}</li>
+                  <li><span>Drive Type:</span> {vehicleData.DriveType || 'N/A'}</li>
+                  <li><span>Vehicle Type:</span> {vehicleData.VehicleType || 'N/A'}</li>
+                </ul>
+              </div>
 
-        <aside className="sidebar">
-          <div className="premium-card">
-            <h4>{lang === 'uk' ? 'Історія та пробіг' : 'History & Mileage'}</h4>
-            <p>{lang === 'uk' ? 'Перевірте авто на приховані ДТП та скручений пробіг.' : 'Check for hidden accidents and odometer rollbacks.'}</p>
-            <button className="partner-btn-sm" onClick={() => window.open('https://www.carvertical.com/', '_blank')}>
-              {lang === 'uk' ? 'ПЕРЕВІРИТИ' : 'CHECK NOW'}
-            </button>
-          </div>
-          <div className="ad-container vertical">
-            <span className="ad-tag">{t.ad}</span>
-            <div className="ad-placeholder-vert">300 x 600</div>
-          </div>
-        </aside>
-      </div>
+              <div className="data-card">
+                <h3>{t.engine}</h3>
+                <ul>
+                  <li><span>Engine Model:</span> {vehicleData.EngineModel || 'N/A'}</li>
+                  <li><span>Cylinders:</span> {vehicleData.EngineCylinders || 'N/A'}</li>
+                  <li><span>Displacement (L):</span> {vehicleData.DisplacementL || 'N/A'}</li>
+                  <li><span>Horsepower:</span> {vehicleData.EngineHP || 'N/A'}</li>
+                  <li><span>Fuel Type:</span> {vehicleData.FuelTypePrimary || 'N/A'}</li>
+                  <li><span>Transmission:</span> {vehicleData.TransmissionStyle || 'N/A'}</li>
+                </ul>
+              </div>
 
-      <footer className="footer"><p>© 2026 VIN DECODER | <a href="/privacy">{t.privacy}</a></p></footer>
+              <div className="data-card">
+                <h3>{t.production}</h3>
+                <ul>
+                  <li><span>Manufacturer:</span> {vehicleData.Manufacturer || 'N/A'}</li>
+                  <li><span>Plant City:</span> {vehicleData.PlantCity || 'N/A'}</li>
+                  <li><span>Plant Country:</span> {vehicleData.PlantCountry || 'N/A'}</li>
+                  <li><span>Plant State:</span> {vehicleData.PlantState || 'N/A'}</li>
+                  <li><span>Series:</span> {vehicleData.Series || 'N/A'}</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="support-banner">
+              <h3>{t.supportTitle}</h3>
+              <a href={donationLink} target="_blank" rel="noopener noreferrer" className="donate-btn">
+                {t.supportBtn}
+              </a>
+            </div>
+          </>
+        )}
+      </main>
+
+      <footer className="footer">
+        <div className="footer-links">
+          <span onClick={() => router.push('/privacy')}>{t.policy}</span>
+          <span className="dot">•</span>
+          <span onClick={() => router.push('/terms')}>{t.terms}</span>
+        </div>
+        <p className="copyright">{t.footer}</p>
+      </footer>
 
       <style jsx global>{`
-        body { background-color: #000; color: #fff; font-family: sans-serif; margin: 0; }
-        .container { padding: 20px; min-height: 100vh; text-align: center; max-width: 1200px; margin: 0 auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .header h1 { font-size: 1.8rem; font-weight: 900; margin: 0; letter-spacing: -2px; }
-        .yellow { color: #facc15; } .white { color: #fff; }
-        .market-badge { background: #1a1a1a; padding: 8px 16px; border-radius: 30px; font-size: 11px; font-weight: bold; border: 1px solid #333; text-transform: uppercase; color: #aaa; }
-        .notice-badge { display: inline-block; background: #2563eb; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; }
-        .hero h2 { font-size: clamp(1.4rem, 5vw, 2.6rem); text-transform: uppercase; margin: 0; font-weight: 900; line-height: 1.1; }
-        .subtitle { color: #666; margin: 10px 0 40px; font-size: 14px; }
-        .wrapper { display: flex; flex-direction: column; gap: 30px; }
-        .main { flex: 1; text-align: left; }
-        .section { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 20px; margin-bottom: 25px; }
-        .section h3 { color: #facc15; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 15px; margin-bottom: 20px; letter-spacing: 1px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .item span { color: #555; font-size: 10px; font-weight: bold; text-transform: uppercase; }
-        .item b { display: block; font-size: 16px; margin-top: 6px; word-break: break-word; color: #eee; line-height: 1.2; }
-        .europe-lock-card { background: #080808; border: 1px dashed #333; padding: 50px 20px; border-radius: 20px; text-align: center; margin-bottom: 25px; }
-        .lock-icon { font-size: 45px; margin-bottom: 15px; }
-        .premium-card { background: #080808; border: 1px solid #facc15; padding: 25px; border-radius: 20px; margin-bottom: 25px; }
-        .premium-card h4 { margin: 0 0 10px 0; color: #facc15; text-transform: uppercase; font-size: 14px; }
-        .premium-card p { font-size: 13px; color: #888; margin-bottom: 20px; }
-        .partner-btn-sm { background: #facc15; width: 100%; border: none; padding: 12px; font-weight: 900; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
-        .partner-btn { background: #facc15; color: #000; border: none; padding: 18px 40px; font-weight: 900; cursor: pointer; border-radius: 12px; text-transform: uppercase; }
-        .pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
-        .ad-container { margin: 25px 0; text-align: center; }
-        .ad-tag { display: block; font-size: 9px; color: #333; margin-bottom: 5px; text-transform: uppercase; }
-        .ad-placeholder-hor { background: #080808; border: 1px solid #111; min-height: 90px; border-radius: 10px; }
-        .ad-placeholder-vert { background: #080808; border: 1px solid #111; width: 300px; height: 600px; border-radius: 15px; }
-        .sidebar { width: 100%; }
-        .back-btn { background: transparent; color: #444; border: 1px solid #222; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .footer { padding: 60px 0 30px; color: #222; font-size: 11px; }
-        .footer a { color: #444; text-decoration: none; margin-left: 10px; }
-        @media (min-width: 900px) {
-          .wrapper { flex-direction: row; align-items: flex-start; }
-          .sidebar { width: 300px; position: sticky; top: 20px; }
+        html, body { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow-x: hidden; }
+      `}</style>
+
+      <style jsx>{`
+        .container { padding: 0 20px; max-width: 1200px; margin: 0 auto; min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 30px 0 50px; }
+        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; }
+        .yellow { color: #facc15; }
+        
+        .lang-switcher { display: flex; gap: 8px; font-size: 10px; font-weight: bold; }
+        .lang-switcher span { cursor: pointer; padding: 6px 10px; border: 1px solid transparent; border-radius: 8px; transition: all 0.2s; color: #444; }
+        .lang-switcher span.active { color: #facc15; border-color: #facc15; background: rgba(250, 204, 21, 0.05); }
+        .lang-switcher span:hover:not(.active) { color: #aaa; border-color: #222; }
+
+        .content { flex: 1; width: 100%; max-width: 900px; margin: 0 auto; }
+        .report-title { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 900; margin-bottom: 30px; text-transform: uppercase; text-align: center; }
+        .report-title .yellow { word-break: break-all; }
+
+        .status-box { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 50px 20px; border-radius: 20px; text-align: center; color: #aaa; font-size: 1.1rem; }
+        .status-box.error { color: #ff4d4d; border-color: #331111; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(250, 204, 21, 0.1); border-left-color: #facc15; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .back-btn { background: #222; color: #fff; border: none; padding: 12px 30px; border-radius: 12px; margin-top: 20px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .back-btn:hover { background: #333; color: #facc15; }
+
+        .monetization-banner { background: linear-gradient(135deg, #111, #1a1a1a); border: 1px solid #333; padding: 25px 30px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .banner-text h3 { margin: 0 0 5px; color: #fff; font-size: 1.2rem; }
+        .banner-text p { margin: 0; color: #aaa; font-size: 0.95rem; }
+        .action-btn { background: #facc15; color: #000; text-decoration: none; padding: 14px 24px; border-radius: 12px; font-weight: 900; font-size: 0.9rem; text-transform: uppercase; white-space: nowrap; transition: 0.2s; box-shadow: 0 4px 15px rgba(250, 204, 21, 0.3); }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(250, 204, 21, 0.5); }
+
+        .data-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 40px; }
+        .data-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 25px; border-radius: 20px; }
+        .data-card h3 { color: #facc15; margin-top: 0; margin-bottom: 20px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        .data-card ul { list-style: none; padding: 0; margin: 0; }
+        .data-card li { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #111; font-size: 0.95rem; color: #eee; }
+        .data-card li:last-child { border-bottom: none; }
+        .data-card li span { color: #777; font-weight: bold; }
+
+        .support-banner { text-align: center; background: #080808; border: 1px dashed #333; padding: 30px; border-radius: 20px; margin-bottom: 20px; }
+        .support-banner h3 { color: #aaa; margin: 0 0 15px; font-size: 1rem; }
+        .donate-btn { display: inline-block; background: #222; color: #fff; text-decoration: none; padding: 10px 24px; border-radius: 12px; font-weight: bold; border: 1px solid #333; transition: 0.2s; }
+        .donate-btn:hover { background: #333; border-color: #facc15; color: #facc15; }
+
+        .footer { padding: 40px 0; color: #555; font-size: 12px; text-align: center; margin-top: 40px; }
+        .footer-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .footer-links span { cursor: pointer; transition: color 0.2s; }
+        .footer-links span:hover { color: #facc15; }
+        .dot { color: #333; cursor: default !important; }
+        .copyright { font-size: 10px; font-weight: bold; letter-spacing: 1px; color: #222; text-transform: uppercase; margin: 0; }
+
+        @media (max-width: 768px) {
+          .header { flex-direction: column; gap: 20px; padding-bottom: 30px; }
+          .monetization-banner { flex-direction: column; text-align: center; gap: 20px; padding: 25px 20px; }
+          .action-btn { width: 100%; text-align: center; box-sizing: border-box; }
+          .data-card li { flex-direction: column; gap: 5px; }
         }
       `}</style>
     </div>
   );
 }
+// --- КІНЕЦЬ ФАЙЛУ VIN/[ID].JS ---
