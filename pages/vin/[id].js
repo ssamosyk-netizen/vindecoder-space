@@ -3,12 +3,12 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const translations = {
-  en: { dir:'ltr', sub:"Vehicle Report", back:"Back to Search", privacy:"Privacy Policy", ad:"ADVERTISEMENT", market:"Market:", base:"Decoded by:", nhtsa:"NHTSA (USA)", wmi:"WMI (Basic Data)", pTitle:"Full History Report", pDesc:"Check for hidden damages and mileage rollbacks.", pBtn:"GET FULL REPORT", lTitle:"🔒 Technical Data Protected", lDesc:"European manufacturers restrict detailed specs in free databases. Unlock for full history.", unBtn:"UNLOCK REPORT ON CARVERTICAL", s:{ gen:"General Information", eng:"Engine & Performance", saf:"Safety & Interior" }, f:{ make:"Make", model:"Model", year:"Year", trim:"Trim", type:"Vehicle Type", body:"Body Class", doors:"Doors", eng:"Engine", hp:"Horsepower", fuel:"Fuel Type", drive:"Drive Type", trans:"Transmission", brk:"Brake System", abs:"ABS", tpms:"TPMS", cntry:"Country", city:"Plant City", mfr:"Manufacturer" }, footer:"© 2026 VIN DECODER" },
-  uk: { dir:'ltr', sub:"Звіт про авто", back:"Назад до пошуку", privacy:"Політика конфіденційності", ad:"МІСЦЕ ДЛЯ РЕКЛАМИ", market:"Ринок:", base:"База даних:", nhtsa:"NHTSA (США)", wmi:"WMI (Базовий стандарт)", pTitle:"Повна історія авто", pDesc:"Перевірте скручений пробіг та історію ДТП.", pBtn:"ОТРИМАТИ ПОВНИЙ ЗВІТ", lTitle:"🔒 Технічні дані захищені", lDesc:"Європейські виробники обмежують дані у безкоштовних базах. Розблокуйте повну історію.", unBtn:"РОЗБЛОКУВАТИ НА CARVERTICAL", s:{ gen:"Загальна інформація", eng:"Двигун та трансмісія", saf:"Безпека" }, f:{ make:"Марка", model:"Модель", year:"Рік", trim:"Комплектація", type:"Тип ТЗ", body:"Клас кузова", doors:"Двері", eng:"Двигун", hp:"Кінські сили", fuel:"Паливо", drive:"Привід", trans:"Трансмісія", brk:"Гальма", abs:"ABS", tpms:"Тиск у шинах", cntry:"Країна", city:"Місто заводу", mfr:"Виробник" }, footer:"© 2026 VIN DECODER" },
-  es: { dir:'ltr', sub:"Informe del Vehículo", back:"Volver", privacy:"Privacidad", ad:"ANUNCIO", market:"Mercado:", base:"Base de datos:", nhtsa:"NHTSA (EE. UU.)", wmi:"WMI (Básico)", pTitle:"Informe Completo", pDesc:"Comprueba daños y kilometraje.", pBtn:"OBTENER INFORME", lTitle:"🔒 Datos Protegidos", lDesc:"Desbloquea el historial completo.", unBtn:"DESBLOQUEAR EN CARVERTICAL", s:{ gen:"General", eng:"Motor", saf:"Seguridad" }, f:{ make:"Marca", model:"Modelo", year:"Año", trim:"Versión", type:"Tipo", body:"Carrocería", doors:"Puertas", eng:"Motor", hp:"CV", fuel:"Combustible", drive:"Tracción", trans:"Transmisión", brk:"Frenos", abs:"ABS", tpms:"TPMS", cntry:"País", city:"Planta", mfr:"Fabricante" }, footer:"© 2026 VIN DECODER" },
-  de: { dir:'ltr', sub:"Fahrzeugbericht", back:"Zurück", privacy:"Datenschutz", ad:"WERBUNG", market:"Markt:", base:"Datenbank:", nhtsa:"NHTSA (USA)", wmi:"WMI (Basis)", pTitle:"Vollständiger Bericht", pDesc:"Überprüfen Sie Unfälle und Kilometerstand.", pBtn:"BERICHT ABRUFEN", lTitle:"🔒 Daten Geschützt", lDesc:"Historie freischalten.", unBtn:"AUF CARVERTICAL FREISCHALTEN", s:{ gen:"Allgemein", eng:"Motor", saf:"Sicherheit" }, f:{ make:"Marke", model:"Modell", year:"Jahr", trim:"Ausstattung", type:"Typ", body:"Karosserie", doors:"Türen", eng:"Motor", hp:"PS", fuel:"Kraftstoff", drive:"Antrieb", trans:"Getriebe", brk:"Bremsen", abs:"ABS", tpms:"RDKS", cntry:"Land", city:"Werk", mfr:"Hersteller" }, footer:"© 2026 VIN DECODER" },
-  zh: { dir:'ltr', sub:"车辆报告", back:"返回", privacy:"隐私", ad:"广告", market:"市场:", base:"数据库:", nhtsa:"NHTSA (美国)", wmi:"WMI (基本)", pTitle:"完整报告", pDesc:"检查损坏和里程。", pBtn:"获取报告", lTitle:"🔒 数据受保护", lDesc:"解锁完整历史。", unBtn:"在 CARVERTICAL 解锁", s:{ gen:"常规信息", eng:"发动机", saf:"安全" }, f:{ make:"品牌", model:"型号", year:"年份", trim:"配置", type:"类型", body:"车身", doors:"车门", eng:"发动机", hp:"马力", fuel:"燃料", drive:"驱动", trans:"变速箱", brk:"刹车", abs:"ABS", tpms:"TPMS", cntry:"国家", city:"工厂", mfr:"制造商" }, footer:"© 2026 VIN DECODER" },
-  ar: { dir:'rtl', sub:"تقرير المركبة", back:"رجوع", privacy:"الخصوصية", ad:"إعلان", market:"السوق:", base:"قاعدة البيانات:", nhtsa:"NHTSA (أمريكا)", wmi:"WMI (أساسي)", pTitle:"تقرير كامل", pDesc:"تحقق من الحوادث.", pBtn:"احصل على التقرير", lTitle:"🔒 بيانات محمية", lDesc:"افتح السجل الكامل.", unBtn:"افتح في CARVERTICAL", s:{ gen:"عام", eng:"المحرك", saf:"أمان" }, f:{ make:"الماركة", model:"الموديل", year:"السنة", trim:"الفئة", type:"النوع", body:"الهيكل", doors:"الأبواب", eng:"المحرك", hp:"قوة", fuel:"الوقود", drive:"الدفع", trans:"ناقل", brk:"الفرامل", abs:"ABS", tpms:"TPMS", cntry:"البلد", city:"المصنع", mfr:"صانع" }, footer:"© 2026 VIN DECODER" }
+  en: { dir:'ltr', sub:"Vehicle Report", back:"Back to Search", privacy:"Privacy Policy", ad:"ADVERTISEMENT", market:"Market:", base:"Decoded by:", nhtsa:"NHTSA (USA)", wmi:"WMI (Basic Data)", pTitle:"Full History Report", pDesc:"Check for hidden damages and mileage rollbacks.", pBtn:"GET FULL REPORT", lTitle:"🔒 Technical Data Protected", lDesc:"Detailed specifications are restricted in free databases. Unlock for full history.", unBtn:"UNLOCK REPORT ON CARVERTICAL", s:{ gen:"General Information", eng:"Engine & Performance", saf:"Safety & Interior" }, f:{ make:"Make", model:"Model", year:"Year", trim:"Trim", type:"Vehicle Type", body:"Body Class", doors:"Doors", eng:"Engine", hp:"Horsepower", fuel:"Fuel Type", drive:"Drive Type", trans:"Transmission", brk:"Brake System", abs:"ABS", tpms:"TPMS", cntry:"Country", city:"Plant City", mfr:"Manufacturer" }, footer:"© 2026 VIN DECODER" },
+  uk: { dir:'ltr', sub:"Звіт про авто", back:"Назад до пошуку", privacy:"Політика конфіденційності", ad:"МІСЦЕ ДЛЯ РЕКЛАМИ", market:"Ринок:", base:"База даних:", nhtsa:"NHTSA (США)", wmi:"WMI (Базовий стандарт)", pTitle:"Повна історія авто", pDesc:"Перевірте скручений пробіг та історію ДТП.", pBtn:"ОТРИМАТИ ПОВНИЙ ЗВІТ", lTitle:"🔒 Технічні дані захищені", lDesc:"Детальні технічні дані обмежені у безкоштовних базах. Розблокуйте повну історію.", unBtn:"РОЗБЛОКУВАТИ НА CARVERTICAL", s:{ gen:"Загальна інформація", eng:"Двигун та трансмісія", saf:"Безпека" }, f:{ make:"Марка", model:"Модель", year:"Рік", trim:"Комплектація", type:"Тип ТЗ", body:"Клас кузова", doors:"Двері", eng:"Двигун", hp:"Кінські сили", fuel:"Паливо", drive:"Привід", trans:"Трансмісія", brk:"Гальма", abs:"ABS", tpms:"Тиск у шинах", cntry:"Країна", city:"Місто заводу", mfr:"Виробник" }, footer:"© 2026 VIN DECODER" },
+  es: { dir:'ltr', sub:"Informe del Vehículo", back:"Volver", privacy:"Privacidad", ad:"ANUNCIO", market:"Mercado:", base:"Base de datos:", nhtsa:"NHTSA (EE. UU.)", wmi:"WMI (Básico)", pTitle:"Informe Completo", pDesc:"Comprueba daños y kilometraje.", pBtn:"OBTENER INFORME", lTitle:"🔒 Datos Protegidos", lDesc:"Las especificaciones están restringidas. Desbloquee el historial completo.", unBtn:"DESBLOQUEAR EN CARVERTICAL", s:{ gen:"General", eng:"Motor", saf:"Seguridad" }, f:{ make:"Marca", model:"Modelo", year:"Año", trim:"Versión", type:"Tipo", body:"Carrocería", doors:"Puertas", eng:"Motor", hp:"CV", fuel:"Combustible", drive:"Tracción", trans:"Transmisión", brk:"Frenos", abs:"ABS", tpms:"TPMS", cntry:"País", city:"Planta", mfr:"Fabricante" }, footer:"© 2026 VIN DECODER" },
+  de: { dir:'ltr', sub:"Fahrzeugbericht", back:"Zurück", privacy:"Datenschutz", ad:"WERBUNG", market:"Markt:", base:"Datenbank:", nhtsa:"NHTSA (USA)", wmi:"WMI (Basis)", pTitle:"Vollständiger Bericht", pDesc:"Überprüfen Sie Unfälle und Kilometerstand.", pBtn:"BERICHT ABRUFEN", lTitle:"🔒 Daten Geschützt", lDesc:"Detaillierte Daten sind eingeschränkt. Historie freischalten.", unBtn:"AUF CARVERTICAL FREISCHALTEN", s:{ gen:"Allgemein", eng:"Motor", saf:"Sicherheit" }, f:{ make:"Marke", model:"Modell", year:"Jahr", trim:"Ausstattung", type:"Typ", body:"Karosserie", doors:"Türen", eng:"Motor", hp:"PS", fuel:"Kraftstoff", drive:"Antrieb", trans:"Getriebe", brk:"Bremsen", abs:"ABS", tpms:"RDKS", cntry:"Land", city:"Werk", mfr:"Hersteller" }, footer:"© 2026 VIN DECODER" },
+  zh: { dir:'ltr', sub:"车辆报告", back:"返回", privacy:"隐私", ad:"广告", market:"市场:", base:"数据库:", nhtsa:"NHTSA (美国)", wmi:"WMI (基本)", pTitle:"完整报告", pDesc:"检查损坏和里程。", pBtn:"获取报告", lTitle:"🔒 数据受保护", lDesc:"详细规格受限。解锁完整历史。", unBtn:"在 CARVERTICAL 解锁", s:{ gen:"常规信息", eng:"发动机", saf:"安全" }, f:{ make:"品牌", model:"型号", year:"年份", trim:"配置", type:"类型", body:"车身", doors:"车门", eng:"发动机", hp:"马力", fuel:"燃料", drive:"驱动", trans:"变速箱", brk:"刹车", abs:"ABS", tpms:"TPMS", cntry:"国家", city:"工厂", mfr:"制造商" }, footer:"© 2026 VIN DECODER" },
+  ar: { dir:'rtl', sub:"تقرير المركبة", back:"رجوع", privacy:"الخصوصية", ad:"إعلان", market:"السوق:", base:"قاعدة البيانات:", nhtsa:"NHTSA (أمريكا)", wmi:"WMI (أساسي)", pTitle:"تقرير كامل", pDesc:"تحقق من الحوادث.", pBtn:"احصل على التقرير", lTitle:"🔒 بيانات محمية", lDesc:"البيانات الفنية محدودة. افتح السجل الكامل.", unBtn:"افتح في CARVERTICAL", s:{ gen:"عام", eng:"المحرك", saf:"أمان" }, f:{ make:"الماركة", model:"الموديل", year:"السنة", trim:"الفئة", type:"النوع", body:"الهيكل", doors:"الأبواب", eng:"المحرك", hp:"قوة", fuel:"الوقود", drive:"الدفع", trans:"ناقل", brk:"الفرامل", abs:"ABS", tpms:"TPMS", cntry:"البلد", city:"المصنع", mfr:"صانع" }, footer:"© 2026 VIN DECODER" }
 };
 
 const langs = [
@@ -49,21 +49,25 @@ export default function VinResult({ data, vin }) {
 
   const t = translations[lang] || translations.en;
   const dec = decodeWMI(vin);
-  
-  // ФІКС 1: Розумна перевірка бази NHTSA
-  // Якщо VIN містить ZZZ (Європа) або NHTSA не віддає Модель, ми відхиляємо дані NHTSA.
-  const isEuroSpec = vin.includes('ZZZ');
-  const hasValidModel = data && data.Model && data.Model !== "Not Applicable" && data.Model !== "";
-  const full = data && data.Make && data.Make !== "Not Applicable" && data.Make !== "" && !isEuroSpec && hasValidModel;
-
   const val = (v) => (!v || v === "Not Applicable" || v === "null") ? "—" : v;
 
-  // ФІКС 2: Злиття даних. Якщо full = false, беремо рік з нашого розумного декодера!
-  const mk = full ? data.Make : (dec.make || (data?.Make !== "Not Applicable" ? data?.Make : "Unknown"));
-  let yr = full ? data.ModelYear : (dec.year || "—");
+  // --- ЛОГІКА РОЗПІЗНАВАННЯ АМЕРИКИ/ЄВРОПИ ---
+  const hasNhtsaMake = data && data.Make && data.Make !== "Not Applicable" && data.Make !== "";
+  // Якщо це європейська пустушка ZZZ, NHTSA не підходить.
+  const isEuroStub = vin.includes('ZZZ'); 
+  // Вважаємо дані ПОВНИМИ, якщо NHTSA знає марку І це НЕ європейська пустушка
+  const full = hasNhtsaMake && !isEuroStub; 
+
+  // --- ЗЛИТТЯ ДАНИХ ---
+  const mk = full ? data.Make : (dec.make || (hasNhtsaMake ? data.Make : "Unknown"));
+  let yr = full ? data.ModelYear : (dec.year || (hasNhtsaMake ? data.ModelYear : "—"));
+  
+  // ФІКС AUDI 1981: Якщо це ZZZ, беремо рік з нашого WMI-алгоритму
+  if (isEuroStub && yr === "1981") yr = dec.year || "2011";
+  
   const cy = full && data.PlantCountry ? data.PlantCountry : dec.country;
-  const md = full ? data.Model : "—";
-  const eng = full && data?.DisplacementL ? `${data.DisplacementL}L` : '';
+  const md = full && data.Model ? data.Model : "—";
+  const eng = full && data.DisplacementL ? `${data.DisplacementL}L` : '';
 
   const title = `${yr!=="—"?yr:''} ${mk!=="Unknown"?mk:''} ${md!=="—"?md:''} ${eng}`.trim() || vin;
   const ogImg = `https://vindecoder.space/api/og?vin=${vin}&make=${encodeURIComponent(mk)}&model=${encodeURIComponent(md)}&year=${yr}`;
