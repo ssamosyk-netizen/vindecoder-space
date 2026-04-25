@@ -22,7 +22,6 @@ const decodeWMI = (vin) => {
   const map = { 'TMA':{m:'HYUNDAI',c:'Czech Republic'},'TMB':{m:'SKODA',c:'Czech Republic'},'WDB':{m:'MERCEDES-BENZ',c:'Germany'},'WBA':{m:'BMW',c:'Germany'},'WAU':{m:'AUDI',c:'Germany'},'TRU':{m:'AUDI',c:'Hungary'},'WVW':{m:'VOLKSWAGEN',c:'Germany'},'ZAR':{m:'ALFA ROMEO',c:'Italy'},'ZFA':{m:'FIAT',c:'Italy'},'VF3':{m:'PEUGEOT',c:'France'},'UU1':{m:'DACIA',c:'Romania'},'VSS':{m:'SEAT',c:'Spain'},'JHM':{m:'HONDA',c:'Japan'},'JT1':{m:'TOYOTA',c:'Japan'},'KL3':{m:'CHEVROLET',c:'South Korea'},'KNA':{m:'KIA',c:'South Korea'},'SJ3':{m:'NISSAN',c:'UK'},'SAL':{m:'LAND ROVER',c:'UK'},'1J8':{m:'JEEP',c:'USA'},'1FA':{m:'FORD',c:'USA'},'3FA':{m:'FORD',c:'Mexico'},'1G1':{m:'CHEVROLET',c:'USA'},'3C4':{m:'DODGE/JEEP',c:'Mexico'} };
   const yrs = { 'V':1997,'W':1998,'X':1999,'Y':2000,'1':2001,'2':2002,'3':2003,'4':2004,'5':2005,'6':2006,'7':2007,'8':2008,'9':2009,'A':2010,'B':2011,'C':2012,'D':2013,'E':2014,'F':2015,'G':2016,'H':2017,'J':2018,'K':2019,'L':2020,'M':2021,'N':2022,'P':2023,'R':2024,'S':2025 };
   
-  // ФІКС РИНКІВ ТА ПРАПОРІВ
   let mkt = { n:"Global", i:"🌍" };
   const f = vin[0];
   if (['1','4','5'].includes(f)) mkt = { n:"USA", i:"🇺🇸" };
@@ -74,11 +73,13 @@ export default function VinResult({ data, vin }) {
   let yr = full ? val(data?.ModelYear) : (dec.year || (hasNhtsa ? val(data?.ModelYear) : "—"));
   if (isEuroStub && yr === "1981") yr = dec.year || "2011";
   
+  // АГРЕСИВНИЙ ПОШУК МОДЕЛІ (ФІКС ДЛЯ FORD MACH-E ТА ІНШИХ)
   let md = "—";
   if (full || hasNhtsa) {
     md = val(data?.Model);
     if (md === "—") md = val(data?.Series);
     if (md === "—") md = val(data?.Trim);
+    if (md === "—") md = val(data?.BodyClass);
   }
 
   const cy = full && val(data?.PlantCountry) !== "—" ? data.PlantCountry : dec.country;
@@ -248,12 +249,14 @@ export default function VinResult({ data, vin }) {
         .lock-icon{font-size:45px;margin-bottom:15px;}
         .partner-btn{display:inline-block;background:#facc15;color:#000;border:none;padding:18px 40px;font-weight:900;border-radius:12px;cursor:pointer;text-transform:uppercase;text-decoration:none;margin-top:15px;}
         .partner-btn-sm{display:block;background:#facc15;color:#000;width:100%;border:none;padding:15px;font-weight:900;border-radius:8px;cursor:pointer;text-transform:uppercase;text-align:center;text-decoration:none;box-sizing:border-box;}
+        
         .sidebar{width:100%;}
         .sticky-box { position: sticky; top: 30px; }
         .premium-card{background:#111;border:1px solid #333;padding:25px;border-radius:20px;margin-bottom:30px;}
         .premium-card h4{margin:0 0 10px 0;color:#facc15;font-size:14px;text-transform:uppercase;}
         .premium-card p{font-size:13px;color:#aaa;margin-bottom:20px;line-height:1.5;}
         .ad-box{background:#080808;border:1px solid #1a1a1a;height:600px;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#444;font-size:12px;font-weight:bold;letter-spacing:1px;}
+        
         .back-btn{background:transparent;color:#888;border:1px solid #333;padding:12px 30px;border-radius:10px;margin-top:10px;cursor:pointer;font-weight:bold;transition:0.2s;}
         .back-btn:hover{background:#222;color:#fff;}
         .footer{padding:40px 0;border-top:1px solid #111;margin-top:50px;font-size:13px;color:#555;text-align:center;}
