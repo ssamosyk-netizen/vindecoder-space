@@ -44,16 +44,20 @@ const fallbackModels = {
   '5YJ3': 'Model 3', '5YJS': 'Model S', '5YJX': 'Model X', '7SAY': 'Model Y',
   // Nissan
   'TCN': 'X-Trail / Rogue', 'U11': 'Leaf', 'ZE1': 'Leaf', 'E12': 'Leaf', 'J11': 'Qashqai', 'F15': 'Juke',
-  // Audi/VW
-  '8K': 'A4', '4G': 'A6', '8R': 'A4 / A5', '4M': 'A6', '4H': 'Q7', 'FY': 'Q5', '8U': 'Q5', '5N': 'Tiguan', '3C': 'Passat', '1K': 'Passat',
+  // Audi/VW/Skoda
+  '8K': 'A4', '4G': 'A6', '8R': 'Q5', '4M': 'Q7', '4H': 'A8', 'FY': 'Q5', '8U': 'Q3', '5N': 'Tiguan', '3C': 'Passat', '1K': 'Golf/Jetta', '1Z': 'Octavia', '5E': 'Octavia', '3T': 'Superb',
   // BMW
-  'F30': '3 Series', 'F10': '5 Series', 'G20': '3 Series', 'G30': '5 Series', 'F15': 'X5', 'F25': 'X5', 'E90': '3 Series',
+  'F30': '3 Series', 'F10': '5 Series', 'G20': '3 Series', 'G30': '5 Series', 'F15': 'X5', 'F25': 'X3', 'E90': '3 Series',
   // Jeep / Dodge
   'WK': 'Grand Cherokee', 'WL': 'Grand Cherokee', 'BU': 'Renegade', 'MP': 'Compass', 'WD': 'Durango',
   // Honda
   'CRV': 'CR-V', 'HRV': 'HR-V', 'CVC': 'Civic', 'ACC': 'Accord',
   // Opel
-  'TGF': 'Astra', 'VGF': 'Vectra', 'JBF': 'Insignia', 'MGF': 'Corsa'
+  'TGF': 'Astra', 'VGF': 'Vectra', 'JBF': 'Insignia', 'MGF': 'Corsa',
+  // Renault
+  'JZ': 'Scenic / Megane', 'JM': 'Megane / Scenic', 'BG': 'Laguna', 'KG': 'Megane', 'LM': 'Megane', 'BR': 'Clio', 'CR': 'Clio',
+  // Peugeot
+  'WC': '207', 'WA': '207', 'CU': '208', '8E': '307', '8H': '307', '4A': '407', '4E': '407'
 };
 
 const identifyModelByVin = (vin, make) => {
@@ -119,7 +123,6 @@ export default function VinResult({ data, vin }) {
   }
 
   // 3. ПЕРЕВІРКА ПОВНОТИ ДАНИХ (Замок)
-  // ТЕПЕР ЕЛЕКТРОМОБІЛІ НЕ БЛОКУЮТЬСЯ. Якщо є об'єм двигуна АБО тип палива АБО місто заводу - вважаємо дані повними.
   const hasDetailedData = val(data?.DisplacementL) !== "—" || val(data?.EngineHP) !== "—" || val(data?.FuelTypePrimary) !== "—" || val(data?.PlantCity) !== "—";
   const full = hasNhtsaMake && hasDetailedData && !isEuroStub;
 
@@ -131,10 +134,10 @@ export default function VinResult({ data, vin }) {
 
   const cy = full && val(data?.PlantCountry) !== "—" ? data.PlantCountry : dec.country;
   
-  // Для електромобілів не показуємо пусті літри
   const eng = full && val(data?.DisplacementL) !== "—" ? `${data.DisplacementL}L` : '';
 
-  const title = `${yr!=="—"?yr:''} ${mk!=="Unknown"?mk:''} ${md!=="—"?md:''} ${eng}`.trim() || vin;
+  // ТУТ ВИПРАВЛЕНО ПРОБІЛИ: Використовуємо шаблонні рядки для гарантованих пробілів між словами
+  const title = `${yr !== "—" ? yr : ''} ${mk !== "Unknown" ? mk : ''} ${md !== "—" ? md : ''} ${eng}`.trim() || vin;
   const ogImg = `https://vindecoder.space/api/og?vin=${vin}&make=${encodeURIComponent(mk)}&model=${encodeURIComponent(md)}&year=${yr}`;
   const cvLink = `https://www.carvertical.com/ua/landing/v3?a=YOUR_AFFILIATE_ID&b=YOUR_BANNER_ID&vin=${vin}`;
 
@@ -171,7 +174,15 @@ export default function VinResult({ data, vin }) {
               <div className="badge market-badge"><span className="icon">{dec.mkt.i}</span> {t.market} <b>{dec.mkt.n}</b></div>
               <div className="badge source-badge">{t.base} <b>{full ? t.nhtsa : t.wmi}</b></div>
             </div>
-            <h2 className="v-title">{yr!=="—"?yr:''} <span className="yellow">{mk}</span> {md!=="—"?md:''} {eng&&<span className="eng-tag">{eng}</span>}</h2>
+            
+            {/* ТУТ ТЕЖ ЖОРСТКО ПРОПИСАНІ ПРОБІЛИ (щоб React не з'їдав їх) */}
+            <h2 className="v-title">
+              {yr !== "—" ? `${yr} ` : ''}
+              <span className="yellow">{mk}</span>
+              {md !== "—" ? ` ${md}` : ''}
+              {eng && <span className="eng-tag">{eng}</span>}
+            </h2>
+            
             <p className="v-sub">VIN: <b>{vin}</b></p>
           </div>
 
@@ -207,12 +218,9 @@ export default function VinResult({ data, vin }) {
               <section className="section">
                 <h3>{t.s.eng}</h3>
                 <div className="grid">
-                  {/* Якщо машина електрична, не показуємо пусте поле конфігурації двигуна */}
                   <div className="item">
                     <span>{t.f.eng}</span>
-                    <b>
-                      {val(data.FuelTypePrimary) === "Electric" ? "Electric Motor" : `${eng} ${val(data.EngineConfiguration)}${val(data.EngineCylinders)}`.trim()}
-                    </b>
+                    <b>{val(data.FuelTypePrimary) === "Electric" ? "Electric Motor" : `${eng} ${val(data.EngineConfiguration)}${val(data.EngineCylinders)}`.trim()}</b>
                   </div>
                   <div className="item"><span>{t.f.hp}</span><b>{val(data.EngineHP)}</b></div>
                   <div className="item"><span>{t.f.fuel}</span><b>{val(data.FuelTypePrimary)}</b></div>
