@@ -37,7 +37,6 @@ const decodeWMI = (vin) => {
   return { make: finalMake, country: map[w]?.c||mkt.n, year: yrs[y]||null, mkt };
 };
 
-// РОЗШИРЕНИЙ СЛОВНИК МОДЕЛЕЙ (FALLBACK)
 const fallbackModels = {
   // Ford
   'P8M': 'Mustang Mach-E', 'P8S': 'Mustang Mach-E', 'F25': 'F-250', 'F15': 'F-150', 'E14': 'Econoline', 'E35': 'E-350',
@@ -60,7 +59,6 @@ const fallbackModels = {
 const identifyModelByVin = (vin, make) => {
   for (const [key, value] of Object.entries(fallbackModels)) {
     if (vin.includes(key)) {
-      // Перевіряємо конфлікти (наприклад, F15 є у Ford, Nissan і BMW)
       if (key === 'F15' && make === 'FORD') return 'F-150';
       if (key === 'F15' && make === 'NISSAN') return 'Juke';
       if (key === 'F15' && make === 'BMW') return 'X5';
@@ -116,15 +114,14 @@ export default function VinResult({ data, vin }) {
     }
   }
   
-  // ЯКЩО NHTSA НЕ ВПОРАЛАСЯ АБО ЦЄ ЄВРОПЕЄЦЬ -> БЕРЕМО НАШ РОЗШИРЕНИЙ СЛОВНИК
   if (md === "—" || isEuroStub) {
     md = identifyModelByVin(vin, mk);
   }
 
   // 3. ПЕРЕВІРКА ПОВНОТИ ДАНИХ (Замок)
-  // Вважаємо повною, якщо є Марка, є хоча б щось у двигуні (DisplacementL/HP), і це НЕ європейська пустушка
-  const hasEngineData = val(data?.DisplacementL) !== "—" || val(data?.EngineHP) !== "—";
-  const full = hasNhtsaMake && hasEngineData && !isEuroStub;
+  // ТЕПЕР ЕЛЕКТРОМОБІЛІ НЕ БЛОКУЮТЬСЯ. Якщо є об'єм двигуна АБО тип палива АБО місто заводу - вважаємо дані повними.
+  const hasDetailedData = val(data?.DisplacementL) !== "—" || val(data?.EngineHP) !== "—" || val(data?.FuelTypePrimary) !== "—" || val(data?.PlantCity) !== "—";
+  const full = hasNhtsaMake && hasDetailedData && !isEuroStub;
 
   // 4. ВИЗНАЧАЄМО РІК
   let yr = full ? val(data?.ModelYear) : (dec.year || (hasNhtsaMake ? val(data?.ModelYear) : "—"));
@@ -133,6 +130,8 @@ export default function VinResult({ data, vin }) {
   }
 
   const cy = full && val(data?.PlantCountry) !== "—" ? data.PlantCountry : dec.country;
+  
+  // Для електромобілів не показуємо пусті літри
   const eng = full && val(data?.DisplacementL) !== "—" ? `${data.DisplacementL}L` : '';
 
   const title = `${yr!=="—"?yr:''} ${mk!=="Unknown"?mk:''} ${md!=="—"?md:''} ${eng}`.trim() || vin;
@@ -208,7 +207,13 @@ export default function VinResult({ data, vin }) {
               <section className="section">
                 <h3>{t.s.eng}</h3>
                 <div className="grid">
-                  <div className="item"><span>{t.f.eng}</span><b>{eng} {val(data.EngineConfiguration)}{val(data.EngineCylinders)}</b></div>
+                  {/* Якщо машина електрична, не показуємо пусте поле конфігурації двигуна */}
+                  <div className="item">
+                    <span>{t.f.eng}</span>
+                    <b>
+                      {val(data.FuelTypePrimary) === "Electric" ? "Electric Motor" : `${eng} ${val(data.EngineConfiguration)}${val(data.EngineCylinders)}`.trim()}
+                    </b>
+                  </div>
                   <div className="item"><span>{t.f.hp}</span><b>{val(data.EngineHP)}</b></div>
                   <div className="item"><span>{t.f.fuel}</span><b>{val(data.FuelTypePrimary)}</b></div>
                   <div className="item"><span>{t.f.drive}</span><b>{val(data.DriveType)}</b></div>
