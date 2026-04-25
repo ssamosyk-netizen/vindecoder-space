@@ -19,7 +19,7 @@ const langs = [
 const decodeWMI = (vin) => {
   if (!vin) return {};
   const w = vin.substring(0,3).toUpperCase(), y = vin.charAt(9).toUpperCase();
-  const map = { 'TMA':{m:'HYUNDAI',c:'Czech Republic'},'TMB':{m:'SKODA',c:'Czech Republic'},'WDB':{m:'MERCEDES-BENZ',c:'Germany'},'WBA':{m:'BMW',c:'Germany'},'WAU':{m:'AUDI',c:'Germany'},'TRU':{m:'AUDI',c:'Hungary'},'WVW':{m:'VOLKSWAGEN',c:'Germany'},'ZAR':{m:'ALFA ROMEO',c:'Italy'},'ZFA':{m:'FIAT',c:'Italy'},'VF3':{m:'PEUGEOT',c:'France'},'UU1':{m:'DACIA',c:'Romania'},'VSS':{m:'SEAT',c:'Spain'},'JHM':{m:'HONDA',c:'Japan'},'JT1':{m:'TOYOTA',c:'Japan'},'KL3':{m:'CHEVROLET',c:'South Korea'},'KNA':{m:'KIA',c:'South Korea'},'SJ3':{m:'NISSAN',c:'UK'},'SAL':{m:'LAND ROVER',c:'UK'},'1J8':{m:'JEEP',c:'USA'},'1FA':{m:'FORD',c:'USA'},'3FA':{m:'FORD',c:'Mexico'},'1G1':{m:'CHEVROLET',c:'USA'},'3C4':{m:'DODGE/JEEP',c:'Mexico'} };
+  const map = { 'TMA':{m:'HYUNDAI',c:'Czech Republic'},'TMB':{m:'SKODA',c:'Czech Republic'},'WDB':{m:'MERCEDES-BENZ',c:'Germany'},'WBA':{m:'BMW',c:'Germany'},'WAU':{m:'AUDI',c:'Germany'},'TRU':{m:'AUDI',c:'Hungary'},'WVW':{m:'VOLKSWAGEN',c:'Germany'},'ZAR':{m:'ALFA ROMEO',c:'Italy'},'ZFA':{m:'FIAT',c:'Italy'},'VF3':{m:'PEUGEOT',c:'France'},'UU1':{m:'DACIA',c:'Romania'},'VSS':{m:'SEAT',c:'Spain'},'JHM':{m:'HONDA',c:'Japan'},'JT1':{m:'TOYOTA',c:'Japan'},'KL3':{m:'CHEVROLET',c:'South Korea'},'KNA':{m:'KIA',c:'South Korea'},'SJ3':{m:'NISSAN',c:'UK'},'SAL':{m:'LAND ROVER',c:'UK'},'1J8':{m:'JEEP',c:'USA'},'1FA':{m:'FORD',c:'USA'},'3FA':{m:'FORD',c:'Mexico'},'1G1':{m:'CHEVROLET',c:'USA'},'3C4':{m:'DODGE/JEEP',c:'Mexico'},'5YJ':{m:'TESLA',c:'USA'} };
   const yrs = { 'V':1997,'W':1998,'X':1999,'Y':2000,'1':2001,'2':2002,'3':2003,'4':2004,'5':2005,'6':2006,'7':2007,'8':2008,'9':2009,'A':2010,'B':2011,'C':2012,'D':2013,'E':2014,'F':2015,'G':2016,'H':2017,'J':2018,'K':2019,'L':2020,'M':2021,'N':2022,'P':2023,'R':2024,'S':2025 };
   
   let mkt = { n:"Global", i:"🌍" };
@@ -57,6 +57,7 @@ export default function VinResult({ data, vin }) {
   const t = tr[lang] || tr.en;
   const dec = decodeWMI(vin);
   
+  // ФУНКЦІЯ ОЧИСТКИ
   const val = (v) => {
     if (v === undefined || v === null) return "—";
     const s = String(v).trim();
@@ -73,13 +74,22 @@ export default function VinResult({ data, vin }) {
   let yr = full ? val(data?.ModelYear) : (dec.year || (hasNhtsa ? val(data?.ModelYear) : "—"));
   if (isEuroStub && yr === "1981") yr = dec.year || "2011";
   
-  // АГРЕСИВНИЙ ПОШУК МОДЕЛІ (ФІКС ДЛЯ FORD MACH-E ТА ІНШИХ)
+  // АГРЕСИВНИЙ ПОШУК МОДЕЛІ + РЕЗЕРВНИЙ ФІКС ДЛЯ FORD MACH-E ТА TESLA
   let md = "—";
   if (full || hasNhtsa) {
-    md = val(data?.Model);
-    if (md === "—") md = val(data?.Series);
-    if (md === "—") md = val(data?.Trim);
-    if (md === "—") md = val(data?.BodyClass);
+    const cands = [data?.Model, data?.Series, data?.Trim];
+    for (let c of cands) {
+      let v = val(c);
+      if (v !== "—" && !v.toLowerCase().includes("unspecified")) { md = v; break; }
+    }
+  }
+  // РЕЗЕРВНИЙ СЛОВНИК ЯКЩО NHTSA ВІДМОВИВ
+  if (md === "—") {
+    if (mk === "FORD" && vin.includes("P8M")) md = "Mustang Mach-E";
+    else if (mk === "TESLA") {
+      const v3 = vin[3];
+      if (v3==='S') md="Model S"; else if(v3==='3') md="Model 3"; else if(v3==='X') md="Model X"; else if(v3==='Y') md="Model Y";
+    }
   }
 
   const cy = full && val(data?.PlantCountry) !== "—" ? data.PlantCountry : dec.country;
