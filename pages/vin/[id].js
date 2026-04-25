@@ -18,8 +18,14 @@ const langs = [
 
 const decodeWMI = (vin) => {
   if (!vin) return {};
-  const w = vin.substring(0,3).toUpperCase(), y = vin.charAt(9).toUpperCase();
-  const map = { 'W0L':{m:'OPEL',c:'Germany'},'VF1':{m:'RENAULT',c:'France'},'VF7':{m:'CITROEN',c:'France'},'YV1':{m:'VOLVO',c:'Sweden'},'YS3':{m:'SAAB',c:'Sweden'},'TMA':{m:'HYUNDAI',c:'Czech Republic'},'TMB':{m:'SKODA',c:'Czech Republic'},'WDB':{m:'MERCEDES-BENZ',c:'Germany'},'WBA':{m:'BMW',c:'Germany'},'WAU':{m:'AUDI',c:'Germany'},'TRU':{m:'AUDI',c:'Hungary'},'WVW':{m:'VOLKSWAGEN',c:'Germany'},'ZAR':{m:'ALFA ROMEO',c:'Italy'},'ZFA':{m:'FIAT',c:'Italy'},'VF3':{m:'PEUGEOT',c:'France'},'UU1':{m:'DACIA',c:'Romania'},'VSS':{m:'SEAT',c:'Spain'},'JHM':{m:'HONDA',c:'Japan'},'JT1':{m:'TOYOTA',c:'Japan'},'KL3':{m:'CHEVROLET',c:'South Korea'},'KNA':{m:'KIA',c:'South Korea'},'SJ3':{m:'NISSAN',c:'UK'},'SAL':{m:'LAND ROVER',c:'UK'},'1J8':{m:'JEEP',c:'USA'},'1FA':{m:'FORD',c:'USA'},'3FA':{m:'FORD',c:'Mexico'},'1G1':{m:'CHEVROLET',c:'USA'},'3C4':{m:'DODGE/JEEP',c:'Mexico'},'5YJ':{m:'TESLA',c:'USA'} };
+  const w = vin.substring(0,3).toUpperCase(), w2 = vin.substring(0,2).toUpperCase(), y = vin.charAt(9).toUpperCase();
+  
+  // Точковий словник (для конкретних заводів)
+  const map = { 'TMA':{m:'HYUNDAI',c:'Czech'},'TMB':{m:'SKODA',c:'Czech'},'WDB':{m:'MERCEDES-BENZ',c:'Germany'},'WBA':{m:'BMW',c:'Germany'},'WAU':{m:'AUDI',c:'Germany'},'TRU':{m:'AUDI',c:'Hungary'},'WVW':{m:'VOLKSWAGEN',c:'Germany'},'WVG':{m:'VOLKSWAGEN',c:'Germany'},'WP0':{m:'PORSCHE',c:'Germany'},'ZAR':{m:'ALFA ROMEO',c:'Italy'},'ZFA':{m:'FIAT',c:'Italy'},'VF1':{m:'RENAULT',c:'France'},'VF3':{m:'PEUGEOT',c:'France'},'VF7':{m:'CITROEN',c:'France'},'UU1':{m:'DACIA',c:'Romania'},'VSS':{m:'SEAT',c:'Spain'},'VSK':{m:'NISSAN',c:'Spain'},'JHM':{m:'HONDA',c:'Japan'},'JT1':{m:'TOYOTA',c:'Japan'},'KL3':{m:'CHEVROLET',c:'Korea'},'KNA':{m:'KIA',c:'Korea'},'SJ3':{m:'NISSAN',c:'UK'},'SAL':{m:'LAND ROVER',c:'UK'},'1J8':{m:'JEEP',c:'USA'},'1FA':{m:'FORD',c:'USA'},'3FA':{m:'FORD',c:'Mexico'},'1G1':{m:'CHEVROLET',c:'USA'},'3C4':{m:'DODGE/JEEP',c:'Mexico'},'5YJ':{m:'TESLA',c:'USA'},'W0L':{m:'OPEL',c:'Germany'} };
+  
+  // Глобальний двосимвольний сканер (врятує, якщо завод невідомий)
+  const map2 = { 'WA':'AUDI', 'WV':'VOLKSWAGEN', 'WM':'MINI', 'WP':'PORSCHE', 'W0':'OPEL', 'JM':'MAZDA', 'JN':'NISSAN', 'JT':'TOYOTA', 'JH':'HONDA', 'JS':'SUZUKI', 'JF':'SUBARU', 'JA':'ISUZU', 'KM':'HYUNDAI', 'KN':'KIA', 'KL':'CHEVROLET', 'SA':'LAND ROVER', 'SB':'TOYOTA', 'SH':'HONDA', 'SJ':'NISSAN', 'VF':'RENAULT/PEUGEOT', 'VS':'NISSAN/SEAT', 'YV':'VOLVO', 'YS':'SAAB', 'ZA':'ALFA ROMEO', 'ZF':'FIAT', '1N':'NISSAN', '1H':'HONDA', '1G':'CHEVROLET', '2T':'TOYOTA', '3N':'NISSAN', '4T':'TOYOTA', '5N':'HYUNDAI', '7S':'TESLA' };
+  
   const yrs = { 'V':1997,'W':1998,'X':1999,'Y':2000,'1':2001,'2':2002,'3':2003,'4':2004,'5':2005,'6':2006,'7':2007,'8':2008,'9':2009,'A':2010,'B':2011,'C':2012,'D':2013,'E':2014,'F':2015,'G':2016,'H':2017,'J':2018,'K':2019,'L':2020,'M':2021,'N':2022,'P':2023,'R':2024,'S':2025 };
   
   let mkt = { n:"Global", i:"🌍" };
@@ -30,7 +36,8 @@ const decodeWMI = (vin) => {
   else if (['J','K','L'].includes(f)) mkt = { n:"Asia", i:"🇯🇵" };
   else if (['S','T','U','V','W','X','Y','Z'].includes(f)) mkt = { n:"Europe", i:"🇪🇺" };
   
-  return { make: map[w]?.m||null, country: map[w]?.c||mkt.n, year: yrs[y]||null, mkt };
+  const finalMake = map[w]?.m || map2[w2] || null;
+  return { make: finalMake, country: map[w]?.c||mkt.n, year: yrs[y]||null, mkt };
 };
 
 export async function getServerSideProps(ctx) {
@@ -58,7 +65,7 @@ export default function VinResult({ data, vin }) {
   const val = (v) => {
     if (v === undefined || v === null) return "—";
     const s = String(v).trim();
-    if (s === "" || s.toLowerCase() === "not applicable" || s.toLowerCase() === "null" || s.toLowerCase().includes("unspecified")) return "—";
+    if (s === "" || s.toLowerCase() === "not applicable" || s.toLowerCase() === "null" || s.toLowerCase().includes("unspec")) return "—";
     return s;
   };
 
@@ -66,34 +73,29 @@ export default function VinResult({ data, vin }) {
   const nhtsaMake = val(data?.Make);
   const hasNhtsaMake = nhtsaMake !== "—";
 
-  // 1. ВИЗНАЧАЄМО МАРКУ
+  // 1. ВИЗНАЧАЄМО МАРКУ (Тепер Nissan ніколи не буде Unknown)
   const mk = hasNhtsaMake ? nhtsaMake : (dec.make || "Unknown");
 
-  // 2. АГРЕСИВНИЙ ПОШУК МОДЕЛІ
+  // 2. ПОШУК МОДЕЛІ
   let md = "—";
-  if (hasNhtsaMake) {
+  if (mk === "FORD" && (vin.includes("P8M") || vin.includes("P8S"))) {
+    md = "Mustang Mach-E";
+  } else if (mk === "TESLA" || vin.startsWith("5YJ") || vin.startsWith("7SA")) {
+    const v3 = vin[3];
+    if (v3==='S') md="Model S"; else if(v3==='3') md="Model 3"; else if(v3==='X') md="Model X"; else if(v3==='Y') md="Model Y";
+  } else if (hasNhtsaMake) {
     const cands = [data?.Model, data?.Series, data?.Trim, data?.BodyClass];
     for (let c of cands) {
       let v = val(c);
       if (v !== "—") { md = v; break; }
     }
   }
-  // Резервний словник (Fallbacks для Ford EV, Tesla, Porsche)
-  if (md === "—") {
-    if (mk === "FORD" && vin.includes("P8M")) md = "Mustang Mach-E";
-    else if (mk === "TESLA") {
-      const v3 = vin[3];
-      if (v3==='S') md="Model S"; else if(v3==='3') md="Model 3"; else if(v3==='X') md="Model X"; else if(v3==='Y') md="Model Y";
-    }
-  }
 
-  // 3. ПЕРЕВІРКА ПОВНОТИ ДАНИХ
-  // NHTSA вважається повною ТІЛЬКИ якщо є Марка І Модель (не порожня) І це не європейська пустушка ZZZ
+  // 3. ПЕРЕВІРКА ПОВНОТИ (Замок для іноземців)
   const full = hasNhtsaMake && md !== "—" && !isEuroStub;
 
   // 4. ВИЗНАЧАЄМО РІК
   let yr = full ? val(data?.ModelYear) : (dec.year || (hasNhtsaMake ? val(data?.ModelYear) : "—"));
-  // Фікс якщо американська база помилилась з роком для європейського авто
   if (yr === "1981" && dec.year && dec.year !== 1981 && !['1','4','5'].includes(vin[0])) {
     yr = dec.year;
   }
